@@ -513,7 +513,8 @@ public final class SelfTest {
         loc(level, 0, 36).teleport(tp);
         TowerManager.startAssault(tp);
         TowerManager.engage(tp);
-        Scheduler.later(20 * 45, () -> {
+        // Fin du combat attendue (une attaque ratee peut le rallonger) : au plus 120 s
+        waitFor(() -> LOGS.keySet().stream().anyMatch(k -> k.startsWith("BTTera")), 120, () -> {
             boolean tera = false;
             String ai = "";
             for (Map.Entry<String, List<String>> e : LOGS.entrySet()) {
