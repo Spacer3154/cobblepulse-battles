@@ -199,6 +199,18 @@ if cob:
                 fh.write("### " + n + "\n" + z.read(n).decode("utf-8", "replace")[:4000] + "\n")
     dump_packages(jar, names, [C + "api/events/pokemon/ExperienceGainedEvent", C + "api/events/pokemon/EvGainedEvent",
                                C + "pokemon/status/", C + "api/pokemon/status/", C + "api/PrioritizedList", C + "api/events/Cancelable"], "api_events2.txt")
+    # Iteration 4 : corps de methodes (evenement Pokedex, construction des equipes PNJ, reponses du joueur)
+    out4 = []
+    for c in ["com.cobblemon.mod.common.api.events.pokemon.PokemonSeenEvent",
+              "com.cobblemon.mod.common.battles.interpreter.instructions.SwitchInstruction$Companion",
+              "com.cobblemon.mod.common.entity.npc.NPCBattleActor",
+              "com.cobblemon.mod.common.api.storage.party.PartyStore",
+              "com.cobblemon.mod.common.api.battles.model.actor.BattleActor",
+              "com.cobblemon.mod.common.battles.pokemon.BattlePokemon$Companion"]:
+        r = subprocess.run(["javap", "-c", "-p", "-l", "-cp", jar, c], capture_output=True, text=True)
+        out4.append(f"##### {c}\n" + r.stdout[:120000])
+    with open(os.path.join(OUT, "bodies4.txt"), "w") as fh:
+        fh.write("\n".join(out4))
     # Showdown embarque : regles disponibles, commandes du flux de combat
     sd = []
     for n in names:

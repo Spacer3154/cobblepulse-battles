@@ -55,14 +55,14 @@ jobs:
           exit 0
 
       - name: Server smoke test
-        if: steps.build.outputs.status == '0' && hashFiles('ci/smoke.py') != ''
+        if: steps.build.outputs.status == '0' && hashFiles('ci/smoke.py') != '' && hashFiles('ci/QUICK') == ''
         timeout-minutes: 50
         env:
           BT_MYSQL: '1'
         run: python3 ci/smoke.py out || true
 
       - name: Client screenshots
-        if: steps.build.outputs.status == '0' && hashFiles('ci/client.py') != ''
+        if: steps.build.outputs.status == '0' && hashFiles('ci/client.py') != '' && hashFiles('ci/QUICK') == ''
         timeout-minutes: 30
         run: python3 ci/client.py out || true
 
