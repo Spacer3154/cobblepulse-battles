@@ -14,6 +14,10 @@ public final class ShowdownFormat {
     private static final Map<String, String> FORM_SUFFIX = Map.of("alola", "alolan", "galar", "galarian", "hisui", "hisuian",
             "paldea", "paldean");
 
+    /** Especes dont le nom contient un tiret (ce n'est pas une forme). */
+    private static final java.util.Set<String> HYPHEN_NAMES = java.util.Set.of("ho-oh", "porygon-z", "jangmo-o", "hakamo-o", "kommo-o",
+            "chi-yu", "ting-lu", "chien-pao", "wo-chien", "nidoran-f", "nidoran-m");
+
     private ShowdownFormat() {}
 
     public static String id(String s) {
@@ -87,14 +91,15 @@ public final class ShowdownFormat {
             species = line.substring(open + 1, close).trim();
         }
         String form = "";
-        int dash = species.indexOf('-');
+        String lower = species.toLowerCase(Locale.ROOT);
+        String hyphenName = null;
+        for (String h : HYPHEN_NAMES) if (lower.equals(h) || lower.startsWith(h + "-")) hyphenName = h;
+        int dash = hyphenName != null ? (lower.length() > hyphenName.length() ? hyphenName.length() : -1) : species.indexOf('-');
         if (dash > 0) {
-            String suffix = species.substring(dash + 1).toLowerCase(Locale.ROOT);
-            String mapped = FORM_SUFFIX.get(suffix);
-            if (mapped != null) {
-                form = mapped;
-                species = species.substring(0, dash);
-            }
+            // Rotom-Wash -> rotom + "wash", Ninetales-Alola -> ninetales + "alolan", Urshifu-Rapid-Strike -> urshifu + "rapid-strike"
+            String suffix = lower.substring(dash + 1);
+            form = FORM_SUFFIX.getOrDefault(suffix, suffix);
+            species = species.substring(0, dash);
         }
         m.species = id(species);
         m.form = form;

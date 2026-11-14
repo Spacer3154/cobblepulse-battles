@@ -112,7 +112,7 @@ def run_server(label, commands):
 
 FULL = ["sleep 5", "battletower selftest", "sleep 5", "battletower selftest ascension", "sleep 85",
         "battletower selftest defeat", "sleep 45", "battletower selftest daily", "sleep 45",
-        "battletower selftest extreme", "sleep 115", "battletower selftest resume", "sleep 3", "battletower selftest report"]
+        "battletower selftest extreme", "sleep 200", "battletower selftest resume", "sleep 3", "battletower selftest report"]
 CHECK = ["sleep 5", "battletower selftest persisted", "sleep 3", "battletower selftest report"]
 
 QUICK = os.path.exists("ci/QUICKSMOKE")

@@ -227,6 +227,23 @@ public final class SelfTest {
         return t;
     }
 
+    /** Execute {@code then} des que {@code cond} est vraie (verifiee chaque seconde), ou au bout de {@code maxSeconds}. */
+    private static void waitFor(java.util.function.BooleanSupplier cond, int maxSeconds, Runnable then) {
+        long deadline = Scheduler.currentTick() + maxSeconds * 20L;
+        Runnable[] step = new Runnable[1];
+        step[0] = () -> {
+            boolean ok;
+            try {
+                ok = cond.getAsBoolean();
+            } catch (Throwable t) {
+                ok = false;
+            }
+            if (ok || Scheduler.currentTick() >= deadline) Scheduler.later(ok ? 40 : 1, then);
+            else Scheduler.later(20, step[0]);
+        };
+        Scheduler.later(20, step[0]);
+    }
+
     private static boolean forced;
 
     private static BlockPos base(ServerLevel level) {
@@ -298,6 +315,18 @@ public final class SelfTest {
         check(src, "factory.create", pk != null && errs.isEmpty() && pk.getLevel() == 50 && pk.getMoveSet().getMoves().size() == 4
                         && "life_orb".equals(net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(pk.heldItem().getItem()).getPath()),
                 errs.toString() + (pk == null ? "" : " ivAtk=" + pk.getIvs().get(com.cobblemon.mod.common.api.pokemon.stats.Stats.ATTACK)));
+        // Formes : import Showdown generique (Rotom-Wash, Ninetales-Alola, Ho-Oh)
+        List<MonSpec> forms = ShowdownFormat.parse("Rotom-Wash @ Leftovers\n- Hydro Pump\n\nNinetales-Alola\n- Moonblast\n\nHo-Oh\n- Sacred Fire\n");
+        List<String> ferrs = new ArrayList<>();
+        StringBuilder fdesc = new StringBuilder();
+        boolean formsOk = forms.size() == 3 && "hooh".equals(forms.get(2).species) && forms.get(2).form.isEmpty();
+        for (int i = 0; i < Math.min(2, forms.size()); i++) {
+            Pokemon fp = TrainerFactory.create(forms.get(i), ferrs);
+            String fn = fp == null ? "null" : fp.getForm().getName();
+            fdesc.append(forms.get(i).species).append('/').append(forms.get(i).form).append("->").append(fn).append(' ');
+            formsOk &= fp != null && fn.toLowerCase(java.util.Locale.ROOT).contains(i == 0 ? "wash" : "alola");
+        }
+        check(src, "factory.forms", formsOk && ferrs.isEmpty(), fdesc + ferrs.toString());
         // IA hors combat : chaque palier choisit une action valide
         for (Planner.Level lvl : Planner.Level.values()) {
             Model.AState st = new Model.AState();
@@ -511,7 +540,8 @@ public final class SelfTest {
             loc(level, 0, 48).teleport(xp);
             TowerManager.startAssault(xp);
             TowerManager.engage(xp);
-            Scheduler.later(20 * 60, () -> {
+            // Les animations (Mega-Evolution...) rallongent le combat : on attend sa fin (au plus 150 s)
+            waitFor(() -> LOGS.keySet().stream().anyMatch(k -> k.startsWith("BTExtreme")), 150, () -> {
                 boolean ended = false;
                 boolean mega = false;
                 String aiLine = "";

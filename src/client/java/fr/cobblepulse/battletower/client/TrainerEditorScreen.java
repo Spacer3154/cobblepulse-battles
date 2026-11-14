@@ -167,8 +167,9 @@ public final class TrainerEditorScreen extends Screen {
             addRenderableWidget(b);
             tx += w + (tab == i ? 8 : 0) + 3;
         }
+        int iw = font.width("Importer Showdown") + 12;
         addRenderableWidget(Button.builder(Component.literal("Importer Showdown"), b -> minecraft.setScreen(new ImportScreen(this)))
-                .bounds(px + pw - 186, py + 18, 96, 16).tooltip(Tooltip.create(Component.literal("Coller une équipe exportée depuis le teambuilder de Pokémon Showdown"))).build());
+                .bounds(px + pw - 90 - iw, py + 18, iw, 16).tooltip(Tooltip.create(Component.literal("Coller une équipe exportée depuis le teambuilder de Pokémon Showdown"))).build());
         addRenderableWidget(Button.builder(Component.literal("Exporter"), b -> {
             Minecraft.getInstance().keyboardHandler.setClipboard(ShowdownFormat.export(spec.team));
             setStatus("Équipe copiée dans le presse-papiers (format Showdown).", OK);
@@ -242,9 +243,10 @@ public final class TrainerEditorScreen extends Screen {
         cycle(c1, y, pw / 2 - 18, "Météo", WEATHERS, spec.weather, TrainerEditorScreen::weatherName, v -> spec.weather = v);
         cycle(c2, y, pw / 2 - 18, "Terrain", TERRAINS, spec.terrain, TrainerEditorScreen::terrainName, v -> spec.terrain = v);
         y += 30;
-        box(c1 + lw + 30, y, pw - lw - 50, spec.introMessage, 200, s -> spec.introMessage = s);
+        int mx = c1 + Math.max(font.width("Message d'intro"), font.width("Message de défaite")) + 8;
+        box(mx, y, px + pw - 10 - mx, spec.introMessage, 200, s -> spec.introMessage = s);
         y += 22;
-        box(c1 + lw + 30, y, pw - lw - 50, spec.defeatMessage, 200, s -> spec.defeatMessage = s);
+        box(mx, y, px + pw - 10 - mx, spec.defeatMessage, 200, s -> spec.defeatMessage = s);
     }
 
     private String tierName(String id) {
@@ -289,7 +291,8 @@ public final class TrainerEditorScreen extends Screen {
         int y0 = py + 42;
         for (int i = 0; i < 6; i++) {
             int idx = i;
-            String label = i < spec.team.size() ? (i + 1) + ". " + cap(spec.team.get(i).species) + " " + spec.team.get(i).level : "+ Ajouter";
+            String label = i < spec.team.size() ? (i + 1) + ". " + cap(spec.team.get(i).species)
+                    + (spec.team.get(i).form.isBlank() ? "" : "-" + cap(spec.team.get(i).form)) + " " + spec.team.get(i).level : "+ Ajouter";
             Button b = Button.builder(Component.literal((sel == i && i < spec.team.size() ? "> " : "") + label), btn -> {
                 if (idx >= spec.team.size()) {
                     if (spec.team.size() < 6) {
@@ -320,15 +323,15 @@ public final class TrainerEditorScreen extends Screen {
         y += 20;
         // Ligne 2 : niveau, nature, talent, sexe
         intBox(x + 40, y, 28, m.level, 1, 100, v -> m.level = v);
-        cycle(x + 74, y, 96, "Nature", natures, m.nature.isEmpty() ? natures.get(0) : m.nature, TrainerEditorScreen::cap, v -> m.nature = v);
-        box(x + 214, y, 80, m.ability, 40, s -> m.ability = s.trim().toLowerCase(Locale.ROOT));
-        cycle(x + 298, y, w - 302, "Sexe", GENDERS, m.gender, v -> v.isEmpty() ? "Auto" : "male".equals(v) ? "Mâle" : "female".equals(v) ? "Femelle" : "Asexué",
+        cycle(x + 74, y, 90, "Nature", natures, m.nature.isEmpty() ? natures.get(0) : m.nature, TrainerEditorScreen::cap, v -> m.nature = v);
+        box(x + 204, y, 66, m.ability, 40, s -> m.ability = s.trim().toLowerCase(Locale.ROOT));
+        cycle(x + 274, y, w - 278, "Sexe", GENDERS, m.gender, v -> v.isEmpty() ? "Auto" : "male".equals(v) ? "Mâle" : "female".equals(v) ? "Femelle" : "Asexué",
                 v -> m.gender = v);
         y += 20;
         // Ligne 3 : objet, shiny
         box(x + 40, y, 150, m.heldItem, 80, s -> m.heldItem = s.trim().toLowerCase(Locale.ROOT));
         cycle(x + 196, y, 70, "Shiny", List.of(false, true), m.shiny, v -> v ? "Oui" : "Non", v -> m.shiny = v);
-        y += 24;
+        y += 28;
         // IV / EV
         int sx = x + 30;
         int cw = (w - 34) / 6;
@@ -491,29 +494,30 @@ public final class TrainerEditorScreen extends Screen {
         g.drawString(font, "Surnom", x + 246, y, TEXT, false);
         y += 20;
         g.drawString(font, "Niveau", x, y, TEXT, false);
-        g.drawString(font, "Talent", x + 176, y, TEXT, false);
+        g.drawString(font, "Talent", x + 170, y, TEXT, false);
         y += 20;
         g.drawString(font, "Objet", x, y, TEXT, false);
-        y += 24;
+        // Memes ordonnees que les widgets (initTeam) : IV/EV puis capacites
+        int iy = py + 42 + 20 + 20 + 28;
         int sx = x + 30;
         int cw = (w - 34) / 6;
-        String[] labels = {"PV", "Atq", "Def", "AtqS", "DefS", "Vit"};
-        for (int i = 0; i < 6; i++) g.drawString(font, labels[i], sx + i * cw + 2, y - 9, MUTED, false);
-        g.drawString(font, "IV", x, y + 4, TEXT, false);
-        g.drawString(font, "EV", x, y + 22, TEXT, false);
+        String[] labels = {"PV", "Atq", "Déf", "AtqS", "DéfS", "Vit"};
+        for (int i = 0; i < 6; i++) g.drawString(font, labels[i], sx + i * cw + 2, iy - 10, MUTED, false);
+        g.drawString(font, "IV", x, iy + 4, TEXT, false);
+        g.drawString(font, "EV", x, iy + 22, TEXT, false);
         MonSpec m = spec.team.get(sel);
         int total = 0;
         for (String st : MonSpec.STATS) total += m.ev(st);
         String evTxt = "EV : " + total + "/510";
-        g.drawString(font, evTxt, x + w - font.width(evTxt) - 2, y - 20, total > 510 ? ERROR : MUTED, false);
-        y += 50;
+        g.drawString(font, evTxt, x + w - font.width(evTxt) - 2, iy - 24, total > 510 ? ERROR : MUTED, false);
+        int my0 = iy + 50;
         for (int i = 0; i < 4; i++) {
             int mx = x + (i % 2) * (w / 2);
-            int my = y + (i / 2) * 20 + 4;
+            int my = my0 + (i / 2) * 20 + 4;
             g.drawString(font, String.valueOf(i + 1), mx + 2, my, TEXT, false);
         }
         String ppTxt = "PP max / PP actuels (0 = normal)";
-        g.drawString(font, ppTxt, x + w - font.width(ppTxt) - 2, y - 11, MUTED, false);
+        g.drawString(font, ppTxt, x + w - font.width(ppTxt) - 2, my0 - 11, MUTED, false);
         String suggestion = suggestion();
         if (!suggestion.isEmpty()) g.drawString(font, suggestion, x, py + ph - 34, MUTED, false);
     }

@@ -56,9 +56,6 @@ public final class TrainerFactory {
         }
         StringBuilder props = new StringBuilder(species.getName().toLowerCase(Locale.ROOT).replace(" ", ""));
         props.append(" level=").append(spec.level);
-        if (!spec.form.isBlank()) {
-            for (String aspect : spec.form.split("[,\\s]+")) if (!aspect.isBlank()) props.append(' ').append(aspect.trim().toLowerCase(Locale.ROOT));
-        }
         if (!spec.nature.isBlank()) props.append(" nature=").append(id(spec.nature));
         if (!spec.ability.isBlank()) props.append(" ability=").append(id(spec.ability));
         if (!spec.gender.isBlank()) props.append(" gender=").append(spec.gender.toLowerCase(Locale.ROOT));
@@ -70,6 +67,7 @@ public final class TrainerFactory {
             errors.add("Creation impossible (" + spec.species + ") : " + t.getMessage());
             return null;
         }
+        if (!spec.form.isBlank()) applyForm(pk, species, spec.form, errors);
         for (String st : MonSpec.STATS) {
             try {
                 pk.setIV(stat(st), spec.iv(st));
@@ -139,6 +137,44 @@ public final class TrainerFactory {
         if (t.doubles() && t.team.size() < 2) errors.add("Format Duo : il faut au moins 2 Pokemon.");
         team(t, errors);
         return errors;
+    }
+
+    private static String formKey(String f) {
+        String k = id(f);
+        return switch (k) {
+            case "alolan" -> "alola";
+            case "galarian" -> "galar";
+            case "hisuian" -> "hisui";
+            case "paldean" -> "paldea";
+            default -> k;
+        };
+    }
+
+    private static boolean formMatches(FormData f, String key) {
+        if (f == null) return false;
+        if (formKey(f.formOnlyShowdownId()).equals(key) || formKey(f.getName()).equals(key)) return true;
+        for (String a : f.getAspects()) if (formKey(a).equals(key)) return true;
+        return false;
+    }
+
+    /** Applique la forme demandee (nom Showdown, nom de forme ou aspect Cobblemon : "alolan", "wash", "rapid-strike"...). */
+    static void applyForm(Pokemon pk, Species species, String form, List<String> errors) {
+        String key = formKey(form);
+        if (key.isEmpty() || formMatches(pk.getForm(), key)) return;
+        for (FormData f : species.getForms()) {
+            if (!formMatches(f, key)) continue;
+            try {
+                Set<String> forced = new java.util.HashSet<>(pk.getForcedAspects());
+                forced.addAll(f.getAspects());
+                pk.setForcedAspects(forced);
+                pk.updateAspects();
+                if (!formMatches(pk.getForm(), key)) pk.setForm(f);
+            } catch (Throwable t) {
+                errors.add("Forme " + form + " impossible pour " + species.getName() + " : " + t.getMessage());
+            }
+            return;
+        }
+        errors.add("Forme inconnue pour " + species.getName() + " : " + form);
     }
 
     /** Talents possibles d'une forme (pour l'editeur et l'IA). */

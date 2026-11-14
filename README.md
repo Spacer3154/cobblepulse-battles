@@ -62,9 +62,11 @@ Le panneau `/bt admin` regroupe tout cela en menus (état des 50 étages, télé
 | Facile | table des types parfaite, capacités STAB/super efficaces, placement au premier tour (Danse-Lames, Piège de Roc, écrans…) si non menacée de K.O., switch sur double faiblesse |
 | Moyen | + calcul de dégâts exact (IV/EV, nature, objets, météo, terrain, écrans, Inverse), K.O.-range, priorité pour achever, pivots, Méga/Téra offensive du sweeper |
 | Difficile | + pose/retrait des hazards, statuts ciblés (Feu Follet, Cage-Éclair, Toxik), préservation de la win-condition, Téra défensive anticipée |
-| Extrême | + recherche minimax sur 2 tours (prédiction des switchs, double-switch, dégâts résiduels au PV près), Méga/Téra gardée en joker |
+| Extrême | + recherche minimax sur 2 tours (prédiction des switchs, double-switch, dégâts résiduels au PV près), Téra gardée en joker, Méga immédiate |
 
-Les statistiques adverses sont estimées (IV 31, EV moyens) ; les capacités adverses sont celles déjà révélées, complétées par des attaques STAB supposées. La recherche Extrême est bornée par `ai.extreme_budget_ms` (40 ms par décision par défaut).
+Les statistiques adverses sont estimées (IV 31, EV moyens) ; les capacités adverses sont celles déjà révélées, complétées par des attaques STAB supposées. La recherche Extrême s'exécute sur le fil du serveur et reste bornée par `ai.extreme_budget_ms` (40 ms par décision par défaut, soit moins d'un tick) ; baissez cette valeur si le serveur est très chargé.
+
+Météo et terrain permanents : ils sont posés au début du combat, avec une durée infinie, puis reposés au tour suivant si une attaque les a remplacés et que cet effet a pris fin. Le Brouillard Épais (absent de la 9e génération) est recréé : précision ×0,6. Ces effets passent par le moteur Showdown embarqué de Cobblemon (service Graal par défaut) ; avec le service Showdown « socket » de débogage, ils sont ignorés et un avertissement est écrit dans la console.
 
 ## Commandes et permissions
 
