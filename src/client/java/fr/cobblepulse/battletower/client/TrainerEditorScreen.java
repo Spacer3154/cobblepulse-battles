@@ -67,7 +67,7 @@ public final class TrainerEditorScreen extends Screen {
     private int tab;
     private int sel;
     private int skinPage;
-    private float yaw = 200;
+    private float yaw = 20;
     private float pitch = 5;
     private String status = "";
     private int statusColor = MUTED;
