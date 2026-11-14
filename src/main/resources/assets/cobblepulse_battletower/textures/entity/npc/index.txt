@@ -1,15 +1,15 @@
-# nom|slim|libelle (skins embarques, generes par tools/gen_skins.py)
+# nom|slim|libellé (skins embarques, generes par tools/gen_skins.py)
 ace_trainer_m|default|As (homme)
 ace_trainer_f|slim|As (femme)
-veteran|default|Veteran
+veteran|default|Vétéran
 scientist|default|Scientifique
 champion|default|Champion
 shopkeeper|default|Marchand
 ranger_m|default|Ranger
 ranger_f|slim|Ranger (femme)
 black_belt|default|Ceinture Noire
-psychic_f|slim|Medium
+psychic_f|slim|Médium
 hiker|default|Montagnard
 gentleman|default|Gentleman
-tower_boss|default|Maitre de la Tour
+tower_boss|default|Maître de la Tour
 rival|default|Rival

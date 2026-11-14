@@ -195,17 +195,17 @@ def make(name, p, slim=False):
 SKINS = [
     ("ace_trainer_m", False, "As (homme)", dict(skin="#e7b48f", hair="#3a2414", top="#c62f2f", top2="#f2f2f2", pants="#2c3a5a", cap="#c62f2f", accent="#f2f2f2", sleeves="short", gloves="#202020")),
     ("ace_trainer_f", True, "As (femme)", dict(skin="#f0c4a2", hair="#c25a2a", top="#2f6fc6", top2="#f2f2f2", pants="#1f1f2a", long=True, sleeves="short", accent="#f2d24a")),
-    ("veteran", False, "Veteran", dict(skin="#d9a27c", hair="#bdbdbd", top="#4c5a2e", top2="#7b8a4a", pants="#3d3a2e", beard="#cfcfcf", coat="#5b4a32", accent="#c9a64a")),
+    ("veteran", False, "Vétéran", dict(skin="#d9a27c", hair="#bdbdbd", top="#4c5a2e", top2="#7b8a4a", pants="#3d3a2e", beard="#cfcfcf", coat="#5b4a32", accent="#c9a64a")),
     ("scientist", False, "Scientifique", dict(skin="#efc7a8", hair="#2e2e2e", top="#5a7aa8", pants="#3a3a3a", coat="#f4f4f4", glasses=True, accent="#7ad0e0")),
     ("champion", False, "Champion", dict(skin="#e4ad86", hair="#1c1c24", top="#1b1b2a", top2="#d4af37", pants="#1b1b2a", coat="#7a1020", accent="#d4af37", gloves="#f2f2f2")),
     ("shopkeeper", False, "Marchand", dict(skin="#e9b994", hair="#6b4426", top="#2f8a5a", top2="#f2f2f2", pants="#4a3a2a", accent="#f2c84a", sleeves="short", cap="#2f8a5a")),
     ("ranger_m", False, "Ranger", dict(skin="#c98e66", hair="#2a1a10", top="#3f7a3a", top2="#d8c27a", pants="#5a4a32", cap="#6b5a32", accent="#d8c27a", sleeves="long", gloves="#4a3a28")),
     ("ranger_f", True, "Ranger (femme)", dict(skin="#e6b08c", hair="#e8c45a", top="#3f7a3a", top2="#d8c27a", pants="#5a4a32", long=True, accent="#d8c27a")),
     ("black_belt", False, "Ceinture Noire", dict(skin="#d49a72", hair="#141414", top="#f2f2f2", top2="#dadada", pants="#f2f2f2", shoes="#d49a72", accent="#141414", sleeves="short", belt=True)),
-    ("psychic_f", True, "Medium", dict(skin="#f2d0b8", hair="#7a3ab8", top="#3a1f5a", top2="#c07ae0", pants="#2a1640", long=True, accent="#c07ae0", coat="#5a2a8a")),
+    ("psychic_f", True, "Médium", dict(skin="#f2d0b8", hair="#7a3ab8", top="#3a1f5a", top2="#c07ae0", pants="#2a1640", long=True, accent="#c07ae0", coat="#5a2a8a")),
     ("hiker", False, "Montagnard", dict(skin="#cf9670", hair="#5a3a1c", top="#b8562a", top2="#e8d4a0", pants="#4a4a3a", beard="#5a3a1c", cap="#8a6a3a", accent="#e8d4a0", shoes="#5a3a1c")),
     ("gentleman", False, "Gentleman", dict(skin="#eec3a4", hair="#7a7a7a", top="#2a2a3a", top2="#f2f2f2", pants="#2a2a3a", coat="#1a1a26", accent="#b03030", gloves="#f2f2f2", beard="#8a8a8a")),
-    ("tower_boss", False, "Maitre de la Tour", dict(skin="#c8916a", hair="#e6e6e6", top="#101018", top2="#7ad0ff", pants="#101018", coat="#26304a", accent="#7ad0ff", gloves="#101018", glasses=True)),
+    ("tower_boss", False, "Maître de la Tour", dict(skin="#c8916a", hair="#e6e6e6", top="#101018", top2="#7ad0ff", pants="#101018", coat="#26304a", accent="#7ad0ff", gloves="#101018", glasses=True)),
     ("rival", False, "Rival", dict(skin="#efbf98", hair="#d8a83a", top="#7a2ac6", top2="#1a1a1a", pants="#1a1a1a", accent="#f2f2f2", sleeves="short", gloves="#1a1a1a")),
 ]
 
@@ -228,7 +228,7 @@ for i, (name, slim, label, params) in enumerate(SKINS):
     fig.alpha_composite(img.crop((4, 20, 8, 32)), (4, 20))
     fig.alpha_composite(img.crop((20, 52, 24, 64)), (8, 20))
     sheet.alpha_composite(fig.resize((64, 128), Image.NEAREST), (i * 72 + 4, 10))
-with open(os.path.join(OUT, "index.txt"), "w") as fh:
+with open(os.path.join(OUT, "index.txt"), "w", encoding="utf-8") as fh:
     fh.write("\n".join(index) + "\n")
 sheet.save(sys.argv[2] if len(sys.argv) > 2 else "/tmp/skins_sheet.png")
 print("ok", len(SKINS))

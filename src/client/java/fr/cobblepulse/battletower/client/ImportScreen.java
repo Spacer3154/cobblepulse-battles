@@ -13,7 +13,7 @@ final class ImportScreen extends Screen {
     private MultiLineEditBox area;
 
     ImportScreen(TrainerEditorScreen parent) {
-        super(Component.literal("Importer une equipe Showdown"));
+        super(Component.literal("Importer une équipe Showdown"));
         this.parent = parent;
     }
 

@@ -406,8 +406,8 @@ public final class Planner {
     private void applyGimmick(AState s, AMon self, Decision d, List<AMon> foes, Threat worst) {
         if (d.kind != Decision.Kind.MOVE || s.ai.gimmickUsed) return;
         if (self.canMega) {
-            // La Mega-Evolution est toujours benefique : immediate, sauf en Extreme (joker, gere par la recherche)
-            if (level != Level.EXTREME) d.gimmick = "mega";
+            // La Mega-Evolution est toujours benefique et propre a ce Pokemon (une seule Mega-Gemme utile) : immediate.
+            d.gimmick = "mega";
             return;
         }
         if (!self.canTera || self.teraType.isEmpty() || !atLeast(Level.MEDIUM)) return;
@@ -557,9 +557,14 @@ public final class Planner {
         scored.sort(Comparator.comparingDouble((Decision d) -> -d.score));
         for (Decision d : scored.subList(0, Math.min(4, scored.size()))) {
             AMove m = byMove(self, d.moveId);
+            if (!s.ai.gimmickUsed && self.canMega) {
+                // Mega : jamais gardee en reserve (elle ne sert qu'a ce Pokemon)
+                out.add(new Action(true, Decision.move(d.moveId, d.target, "mega", d.score, d.reason + " + Mega"), m, null));
+                continue;
+            }
             out.add(new Action(true, d, m, null));
-            if (!s.ai.gimmickUsed && (self.canTera && !self.teraType.isEmpty() || self.canMega)) {
-                Decision g = Decision.move(d.moveId, d.target, self.canMega ? "mega" : "tera", d.score, d.reason + " + gimmick");
+            if (!s.ai.gimmickUsed && self.canTera && !self.teraType.isEmpty()) {
+                Decision g = Decision.move(d.moveId, d.target, "tera", d.score, d.reason + " + Tera");
                 out.add(new Action(true, g, m, null));
             }
         }

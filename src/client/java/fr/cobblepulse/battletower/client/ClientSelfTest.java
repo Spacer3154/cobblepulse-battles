@@ -34,7 +34,7 @@ final class ClientSelfTest {
 
     private static String meta() {
         JsonObject o = new JsonObject();
-        o.addProperty("title", "Etage 12 - Editeur du dresseur");
+        o.addProperty("title", "Étage 12 - Éditeur du dresseur");
         JsonArray skins = new JsonArray();
         try (InputStream in = ClientSelfTest.class.getResourceAsStream("/assets/cobblepulse_battletower/textures/entity/npc/index.txt")) {
             if (in != null) {

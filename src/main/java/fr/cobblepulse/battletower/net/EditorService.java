@@ -164,12 +164,12 @@ public final class EditorService {
             try {
                 floor = Integer.parseInt(payload.id());
             } catch (NumberFormatException e) {
-                reply(p, false, "Etage invalide", List.of());
+                reply(p, false, "Étage invalide", List.of());
                 return;
             }
             FloorEntry fe = TowerConfig.floor(floor);
             if (fe == null) {
-                reply(p, false, "Etage invalide", List.of());
+                reply(p, false, "Étage invalide", List.of());
                 return;
             }
             fe.trainer = spec;
