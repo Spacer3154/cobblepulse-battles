@@ -117,7 +117,7 @@ CHECK = ["sleep 5", "battletower selftest persisted", "sleep 3", "battletower se
 
 QUICK = os.path.exists("ci/QUICKSMOKE")
 if QUICK:
-    run_server("json-1", ["sleep 5", "battletower selftest", "sleep 5", "battletower selftest ascension", "sleep 85", "battletower selftest report"])
+    run_server("json-1", FULL)
     sys.exit(0)
 run_server("json-1", FULL)
 run_server("json-2", CHECK)

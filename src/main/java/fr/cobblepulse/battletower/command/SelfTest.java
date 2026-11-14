@@ -439,6 +439,7 @@ public final class SelfTest {
         startBot();
         ServerLevel level = src.getServer().overworld();
         TrainerSpec boss = trainer("Boss Test", "EXTREME", mon("caterpie", 5, "tackle"));
+        boss.weather = "fog";
         TowerConfig.bosses().bosses.put("selftest_boss", boss);
         TowerConfig.saveBosses();
         TowerConfig.data().bossArrival = loc(level, 0, 24);
@@ -460,6 +461,9 @@ public final class SelfTest {
             DailyBoss.start(dp);
             check(src, "daily.once_per_day", !TowerManager.inRun(dp.getUUID()) && DailyBoss.attemptedToday(d), null);
             check(src, "daily.rotation", !DailyBoss.bossFor(java.time.LocalDate.now()).isEmpty(), DailyBoss.bossFor(java.time.LocalDate.now()));
+            boolean fog = false;
+            for (List<String> lines : LOGS.values()) for (String l : lines) if (l.contains("-weather|Fog")) fog = true;
+            check(src, "modifiers.fog", fog, null);
         });
         return 1;
     }

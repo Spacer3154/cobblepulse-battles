@@ -198,6 +198,7 @@ public final class TowerBattle {
                 Live l = new Live(b.getBattleId(), player.getUUID(), npc.getUUID(), spec, ai, onEnd);
                 LIVE.put(b.getBattleId(), l);
                 PROTECTED_OWNERS.add(player.getUUID());
+                FieldModifiers.enforce(b, spec);
                 return null;
             }
             if (r instanceof ErroredBattleStart err) {

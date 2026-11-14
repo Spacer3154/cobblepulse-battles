@@ -66,8 +66,19 @@ final class ClientSelfTest {
 
     private static void tick(Minecraft mc) {
         ticks++;
+        if (ticks % 200 == 0) {
+            Battletower.LOG.info("[Battletower][clienttest] tick {} ecran={} overlay={}", ticks,
+                    mc.screen == null ? "aucun" : mc.screen.getClass().getSimpleName(), mc.getOverlay() != null);
+        }
         if (start < 0) {
-            if (mc.screen instanceof TitleScreen && mc.getOverlay() == null && ticks > 60) start = ticks;
+            // Ecran titre, ou tout autre ecran d'accueil (premier lancement : accessibilite, avertissements...)
+            if (mc.getOverlay() == null && ((mc.screen instanceof TitleScreen && ticks > 60) || (mc.screen != null && ticks > 400))) {
+                start = ticks;
+                Battletower.LOG.info("[Battletower][clienttest] debut sur {}", mc.screen.getClass().getSimpleName());
+            } else if (ticks > 6000) {
+                Battletower.LOG.error("[Battletower][clienttest] ecran titre jamais atteint");
+                mc.stop();
+            }
             return;
         }
         int t = ticks - start;

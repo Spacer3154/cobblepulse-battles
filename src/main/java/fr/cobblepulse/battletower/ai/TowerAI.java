@@ -99,7 +99,7 @@ public final class TowerAI implements BattleAI {
             }
             if (turn != enforcedTurn) {
                 enforcedTurn = turn;
-                FieldModifiers.enforce(battle, spec);
+                if (turn > 0) FieldModifiers.enforceLater(battle, spec);
             }
             trackReveals(battle, aiSide);
             AState state = buildState(battle, aiSide, moveset, active);
