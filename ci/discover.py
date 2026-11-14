@@ -156,6 +156,42 @@ if cob:
         bodies.append(f"##### {c}\n" + r.stdout[:250000])
     with open(os.path.join(OUT, "bodies.txt"), "w") as fh:
         fh.write("\n".join(bodies))
+    # Iteration 2 : contextes de combat, gimmicks, regles, PNJ, PC
+    dump_packages(jar, names, [C + "battles/interpreter/ContextManager", C + "api/battles/interpreter/BattleContext",
+                               C + "battles/interpreter/BasicContext", C + "api/battles/interpreter/BattleMessage"], "api_context.txt")
+    r = subprocess.run(["javap", "-constants", "-p", "-cp", jar, "com.cobblemon.mod.common.battles.BattleRules"], capture_output=True, text=True)
+    extra_out = [r.stdout]
+    for c in ["com.cobblemon.mod.common.battles.MoveActionResponse", "com.cobblemon.mod.common.battles.ShowdownMoveset$Gimmick",
+              "com.cobblemon.mod.common.battles.ShowdownActionRequest", "com.cobblemon.mod.common.battles.BagItemActionResponse"]:
+        r = subprocess.run(["javap", "-c", "-p", "-cp", jar, c], capture_output=True, text=True)
+        extra_out.append(f"##### {c}\n" + r.stdout[:60000])
+    with open(os.path.join(OUT, "bodies2.txt"), "w") as fh:
+        fh.write("\n".join(extra_out))
+    with open(os.path.join(OUT, "npc_data_files.txt"), "w") as fh:
+        fh.write("\n".join(n for n in names if ("/npcs/" in n or "npc_presets" in n or "/dialogues/" in n) and not n.endswith(".class")))
+    hits = []
+    for n in names:
+        if n.endswith(".class") and n.startswith("com/cobblemon/"):
+            data = z.read(n)
+            if b"getShowdownMessages" in data:
+                hits.append(n)
+    with open(os.path.join(OUT, "showdown_messages_users.txt"), "w") as fh:
+        fh.write("\n".join(hits))
+    for n in hits[:3]:
+        r = subprocess.run(["javap", "-c", "-p", "-cp", jar, n[:-6].replace("/", ".")], capture_output=True, text=True)
+        body = r.stdout
+        out = []
+        for m in re.finditer(r"getShowdownMessages", body):
+            out.append(body[max(0, m.start() - 1500):m.start() + 600])
+        with open(os.path.join(OUT, "sdm_" + n.split("/")[-1] + ".txt"), "w") as fh:
+            fh.write("\n-----\n".join(out[:6]))
+    pc = [n[:-6].replace("/", ".") for n in names if n.endswith(".class") and "$$" not in n and
+          any(k in n for k in ("pc/link/PCLink", "OpenPCPacket", "storage/pc/PCStore.class", "PCStore$", "command/OpenPC", "PcCommand", "PCCommand"))]
+    with open(os.path.join(OUT, "api_pc.txt"), "w") as fh:
+        fh.write(javap(jar, sorted(set(pc))))
+    cmds = [n for n in names if n.endswith(".class") and "/command/" in n and "$$" not in n]
+    with open(os.path.join(OUT, "commands.txt"), "w") as fh:
+        fh.write("\n".join(cmds))
     # Showdown embarque : regles disponibles, commandes du flux de combat
     sd = []
     for n in names:

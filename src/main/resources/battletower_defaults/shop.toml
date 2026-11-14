@@ -1,0 +1,84 @@
+# =====================================================================
+#  CobblePulse Battletower - Boutique BP
+#  PNJ marchand : /battletower shop spawn (a l'emplacement de l'administrateur)
+# =====================================================================
+
+[menu]
+title = "&8&lBoutique &6&lBattle Points"
+# Nombre de lignes du menu (1 a 6)
+rows = 6
+# Demander une confirmation avant chaque achat
+confirm = true
+# Nom affiche au-dessus du PNJ marchand
+npc_name = "&6Marchand de la Tour"
+# Skin du PNJ marchand (meme syntaxe que l'editeur : builtin:<nom>, server:<fichier.png> ou player:<pseudo>)
+npc_skin = "builtin:shopkeeper"
+
+# Chaque [[items]] est un article. Champs :
+#   slot      : emplacement dans le menu (0 = premier)
+#   icon      : item affiche "modid:item"
+#   name/lore : texte affiche (codes couleur &)
+#   price     : prix en BP
+#   give      : items donnes "modid:item quantite"
+#   commands  : commandes console executees a l'achat (%player%)
+#   limit     : nombre d'achats maximum par joueur (0 = illimite)
+#   permission: noeud LuckPerms requis (vide = aucun)
+
+[[items]]
+slot = 10
+icon = "cobblemon:ability_capsule"
+name = "&bCapsule Talent"
+lore = ["&7Change le talent d'un Pokemon", "&7par son autre talent normal."]
+price = 48
+give = ["cobblemon:ability_capsule 1"]
+
+[[items]]
+slot = 11
+icon = "cobblemon:ability_patch"
+name = "&dPatch Talent"
+lore = ["&7Donne son talent cache a un Pokemon."]
+price = 200
+give = ["cobblemon:ability_patch 1"]
+
+[[items]]
+slot = 12
+icon = "cobblemon:rare_candy"
+name = "&aSuper Bonbon x3"
+price = 30
+give = ["cobblemon:rare_candy 3"]
+
+[[items]]
+slot = 13
+icon = "cobblemon:life_orb"
+name = "&cOrbe Vie"
+price = 48
+give = ["cobblemon:life_orb 1"]
+
+[[items]]
+slot = 14
+icon = "cobblemon:choice_scarf"
+name = "&eMouchoir Choix"
+price = 48
+give = ["cobblemon:choice_scarf 1"]
+
+[[items]]
+slot = 15
+icon = "cobblemon:focus_sash"
+name = "&fCeinture Force"
+price = 48
+give = ["cobblemon:focus_sash 1"]
+
+[[items]]
+slot = 16
+icon = "cobblemon:leftovers"
+name = "&2Restes"
+price = 48
+give = ["cobblemon:leftovers 1"]
+
+[[items]]
+slot = 22
+icon = "minecraft:nether_star"
+name = "&6IV PV a 31 (1er Pokemon)"
+lore = ["&7Passe l'IV de PV du premier Pokemon", "&7de votre equipe a 31."]
+price = 100
+commands = ["pokeedit %player% 1 hp_iv=31"]

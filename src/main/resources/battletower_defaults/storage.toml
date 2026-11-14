@@ -1,0 +1,30 @@
+# =====================================================================
+#  CobblePulse Battletower - Stockage des donnees
+#  Changer de mode necessite un redemarrage du serveur.
+# =====================================================================
+
+# "json"   : fichiers locaux (par defaut)
+#            - config/cobblepulse_battletower/data/floors.json        (etages, coordonnees, mondes, PNJ, equipes)
+#            - config/cobblepulse_battletower/data/bosses.json        (dresseurs du Boss du Jour)
+#            - config/cobblepulse_battletower/data/players/[uuid].json (records, BP, cooldowns, succes)
+#            Ecritures atomiques (.tmp puis renommage) contre la corruption.
+# "mysql"  : base MySQL/MariaDB (pool HikariCP)
+# "sqlite" : fichier local config/cobblepulse_battletower/data/battletower.db
+# En mysql/sqlite, les tables sont : cp_bt_players, cp_bt_achievements, cp_bt_daily_logs (+ cp_bt_kv).
+# floors.json et bosses.json restent toujours des fichiers (modifiables via FileZilla).
+mode = "json"
+
+[mysql]
+# true : reprend host/port/base/identifiants de config/cobblepulse/storage.toml (meme instance que CobblePulse)
+share_cobblepulse = false
+host = "localhost"
+port = 3306
+database = "cobblepulse"
+username = "root"
+password = ""
+use_ssl = false
+pool_size = 4
+table_prefix = "cp_bt_"
+
+[sqlite]
+file = "data/battletower.db"

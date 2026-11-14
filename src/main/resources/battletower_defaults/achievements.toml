@@ -1,0 +1,78 @@
+# =====================================================================
+#  CobblePulse Battletower - Quetes & Succes
+#  type :
+#    reach_floor          atteindre l'etage <target>
+#    completions          vaincre les 50 etages <target> fois
+#    total_wins           gagner <target> combats dans la tour
+#    no_ko_streak         gagner <target> etages d'affilee sans qu'aucun de vos Pokemon ne soit K.O.
+#    daily_boss_distinct  battre <target> Boss du Jour differents
+#    daily_boss_wins      battre le Boss du Jour <target> fois
+#    monotype_floors      gagner <target> etages avec une equipe Monotype
+#    best_time_under      terminer la tour en moins de <target> minutes
+#    bp_earned            gagner <target> BP au total
+#  Recompenses : bp, items ("modid:item quantite"), commands (%player%, ex. titres via LuckPerms)
+# =====================================================================
+
+[[achievements]]
+id = "floor_10"
+name = "&aApprenti de la Tour"
+description = "Atteindre l'etage 10"
+icon = "minecraft:iron_ingot"
+type = "reach_floor"
+target = 10
+bp = 10
+
+[[achievements]]
+id = "floor_25"
+name = "&bGrimpeur Aguerri"
+description = "Atteindre l'etage 25"
+icon = "minecraft:gold_ingot"
+type = "reach_floor"
+target = 25
+bp = 30
+
+[[achievements]]
+id = "floor_50"
+name = "&6&lMaitre de la Tour"
+description = "Vaincre les 50 etages"
+icon = "minecraft:nether_star"
+type = "reach_floor"
+target = 50
+bp = 100
+commands = []
+
+[[achievements]]
+id = "no_ko_10"
+name = "&dIntouchable"
+description = "Gagner 10 etages d'affilee sans aucun Pokemon K.O."
+icon = "minecraft:totem_of_undying"
+type = "no_ko_streak"
+target = 10
+bp = 40
+
+[[achievements]]
+id = "daily_5"
+name = "&cChasseur de Boss"
+description = "Battre 5 Boss du Jour differents"
+icon = "minecraft:wither_skeleton_skull"
+type = "daily_boss_distinct"
+target = 5
+bp = 50
+
+[[achievements]]
+id = "monotype_10"
+name = "&3Specialiste"
+description = "Gagner 10 etages avec une equipe Monotype"
+icon = "minecraft:prismarine_crystals"
+type = "monotype_floors"
+target = 10
+bp = 25
+
+[[achievements]]
+id = "wins_100"
+name = "&eCentenaire"
+description = "Gagner 100 combats dans la tour"
+icon = "minecraft:diamond"
+type = "total_wins"
+target = 100
+bp = 50

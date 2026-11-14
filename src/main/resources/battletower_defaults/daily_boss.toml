@@ -1,0 +1,36 @@
+# =====================================================================
+#  CobblePulse Battletower - Boss du Jour
+#  Les dresseurs (apparence, equipe, IA, modificateurs) se creent avec /battletower boss create <id>
+#  puis /battletower boss edit <id> (editeur graphique). Ils sont stockes dans data/bosses.json.
+# =====================================================================
+
+enabled = true
+# Fuseau horaire de la rotation et du reset quotidien (vide = heure du serveur), ex. "Europe/Paris"
+timezone = ""
+# "cycle"   : les boss de [rotation].cycle se succedent un jour apres l'autre
+# "weekday" : un boss par jour de la semaine ([rotation].monday ... sunday)
+mode = "cycle"
+
+[rotation]
+cycle = ["boss_exemple"]
+monday = "boss_exemple"
+tuesday = "boss_exemple"
+wednesday = "boss_exemple"
+thursday = "boss_exemple"
+friday = "boss_exemple"
+saturday = "boss_exemple"
+sunday = "boss_exemple"
+
+# Recompenses par boss (victoire). Sans section dediee, [rewards.default] est utilisee.
+[rewards.default]
+bp = 25
+items = []
+commands = []
+# Description affichee dans le menu
+display = ["&e25 BP"]
+
+[rewards.boss_exemple]
+bp = 30
+items = ["cobblemon:rare_candy 3"]
+commands = []
+display = ["&e30 BP", "&f3x Super Bonbon"]

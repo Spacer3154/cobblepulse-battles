@@ -1,0 +1,55 @@
+# =====================================================================
+#  CobblePulse Battletower - Regles de la Tour de Combat
+# =====================================================================
+
+# Nombre d'etages physiques
+floors = 50
+# Cooldown applique apres une defaite, une disqualification ou un abandon (heures)
+defeat_cooldown_hours = 24
+# Compte a rebours avant chaque combat (secondes)
+countdown_seconds = 3
+# Delai avant le retour au hall apres la victoire finale ou une defaite (secondes)
+return_delay_seconds = 4
+# Delai avant la teleportation vers l'etage suivant apres une victoire (secondes)
+next_floor_delay_seconds = 4
+# Lancer automatiquement le combat a l'arrivee sur l'etage (false : le joueur clique sur [Engager] ou sur le PNJ,
+# ce qui lui laisse le temps d'utiliser le PC de l'etage)
+auto_engage = false
+# Le joueur peut ouvrir son PC (bouton du menu ou /bt pc) lorsqu'il est sur un etage, hors combat
+allow_pc_on_floor = true
+# Rayon (blocs) autour du point d'arrivee de l'etage : en sortir (teleportation, /spawn...) = abandon
+leave_radius = 64
+# Temps maximum d'inactivite sur un etage avant abandon automatique (minutes, 0 = illimite)
+floor_idle_timeout_minutes = 0
+
+[disconnect]
+# Deconnexion pendant un combat = defaite immediate (+ cooldown)
+# Deconnexion hors combat (etage, file d'attente) : delai pour revenir avant la defaite (secondes)
+grace_seconds = 60
+# Apres un redemarrage ou un crash du serveur, la serie reprend a l'etage en cours
+resume_after_restart = true
+
+[battle]
+# Le joueur combat avec des copies de ses Pokemon : PV, PP, statut et objets tenus sont restitues,
+# aucun gain d'EXP ni d'EV dans la tour.
+clone_parties = true
+# Soigner l'equipe du joueur apres chaque victoire
+heal_between_floors = true
+# Interdire l'utilisation d'objets du sac pendant les combats de la tour
+block_bag_items = true
+
+[announce]
+# Annonce globale a la victoire finale (%player%, %time%)
+final_message = "&6&l[Tour de Combat] &eFelicitations a &6%player% &equi vient de triompher des 50 etages de la Tour de Combat ! &7(%time%)"
+final_sound = "minecraft:ui.toast.challenge_complete"
+final_sound_volume = 1.0
+final_sound_pitch = 1.0
+# Annoncer aussi les paliers (0 = desactive), ex. 25 -> "X a atteint l'etage 25"
+milestone_floors = [25]
+milestone_message = "&6[Tour de Combat] &e%player% &7vient d'atteindre l'etage &6%floor% &7!"
+
+[ai]
+# Budget de calcul de l'IA Extreme par decision (millisecondes)
+extreme_budget_ms = 40
+# Profondeur de recherche de l'IA Extreme (tours anticipes)
+extreme_depth = 2
