@@ -49,7 +49,7 @@ public final class Menus {
                 Msg.format("menu.profile_rank", "rank", rank > 0 ? "#" + rank : "-")).build());
         // Slot 10 : assaut
         if (run != null && !run.daily) {
-            gui.button(10, ItemBuilder.of(Items.IRON_SWORD).name(Msg.format("menu.run_title", "floor", run.floor)).lore(
+            gui.set(10, ItemBuilder.of(Items.IRON_SWORD).name(Msg.format("menu.run_title", "floor", run.floor)).lore(
                     Msg.format("menu.run_time", "time", TimeFmt.clock(run.elapsed(TimeFmt.now()))),
                     Msg.raw("menu.run_click"), Msg.raw("menu.run_right")).glow(true).hideExtra().build(), (pl, c) -> {
                 pl.closeContainer();
