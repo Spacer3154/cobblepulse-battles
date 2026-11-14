@@ -181,7 +181,8 @@ public final class TowerBattle {
             NPCPartyStore npcParty = new NPCPartyStore(npc);
             for (Pokemon pk : npcTeam) npcParty.add(pk);
             npc.setParty(npcParty);
-            List<BattlePokemon> npcBattleTeam = npcParty.toBattleTeam(true, true, null);
+            // Equipe fraichement generee a chaque combat : pas besoin de copie (comme les PNJ de Cobblemon)
+            List<BattlePokemon> npcBattleTeam = npcParty.toBattleTeam(false, true, null);
             if (level > 0) {
                 for (BattlePokemon bp : npcBattleTeam) {
                     bp.getEffectedPokemon().setLevel(level);

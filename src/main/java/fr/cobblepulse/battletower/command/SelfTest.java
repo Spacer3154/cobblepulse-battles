@@ -135,9 +135,33 @@ public final class SelfTest {
     private static FakePlayer fake(ServerLevel level, String name) {
         FakePlayer fp = FakePlayer.get(level, new GameProfile(UUID.nameUUIDFromBytes(("bt-" + name).getBytes(StandardCharsets.UTF_8)), name));
         Players.registerTest(fp);
+        registerInPlayerList(level.getServer(), fp);
         TAGS.put(fp.getUUID(), name);
         PlayerStore.get(fp);
         return fp;
+    }
+
+    /**
+     * Cobblemon resout les joueurs par UUID (Pokedex, evenements) : le joueur factice est ajoute a l'index par UUID de la
+     * liste des joueurs (champ Map&lt;UUID, ServerPlayer&gt; trouve par son type generique), sans etre ajoute a la liste diffusee.
+     */
+    @SuppressWarnings("unchecked")
+    private static void registerInPlayerList(net.minecraft.server.MinecraftServer server, ServerPlayer p) {
+        try {
+            for (java.lang.reflect.Field f : net.minecraft.server.players.PlayerList.class.getDeclaredFields()) {
+                if (!Map.class.isAssignableFrom(f.getType())) continue;
+                if (!(f.getGenericType() instanceof java.lang.reflect.ParameterizedType pt)) continue;
+                java.lang.reflect.Type[] args = pt.getActualTypeArguments();
+                if (args.length == 2 && args[0] == UUID.class && args[1] == ServerPlayer.class) {
+                    f.setAccessible(true);
+                    ((Map<UUID, ServerPlayer>) f.get(server.getPlayerList())).put(p.getUUID(), p);
+                    return;
+                }
+            }
+            Battletower.LOG.warn("[Battletower][selftest] index des joueurs introuvable");
+        } catch (Throwable t) {
+            Battletower.LOG.warn("[Battletower][selftest] enregistrement du joueur factice impossible : {}", t.toString());
+        }
     }
 
     private static void party(ServerPlayer p, MonSpec... mons) {
