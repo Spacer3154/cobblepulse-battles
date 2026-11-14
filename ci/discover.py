@@ -192,6 +192,13 @@ if cob:
     cmds = [n for n in names if n.endswith(".class") and "/command/" in n and "$$" not in n]
     with open(os.path.join(OUT, "commands.txt"), "w") as fh:
         fh.write("\n".join(cmds))
+    # Iteration 3 : classes PNJ (json), evenements EXP/EV, statuts
+    with open(os.path.join(OUT, "npc_jsons.txt"), "w") as fh:
+        for n in names:
+            if (n.startswith("data/cobblemon/npcs/") or n.startswith("assets/cobblemon/bedrock/npcs/variations/")) and n.endswith(".json"):
+                fh.write("### " + n + "\n" + z.read(n).decode("utf-8", "replace")[:4000] + "\n")
+    dump_packages(jar, names, [C + "api/events/pokemon/ExperienceGainedEvent", C + "api/events/pokemon/EvGainedEvent",
+                               C + "pokemon/status/", C + "api/pokemon/status/", C + "api/PrioritizedList", C + "api/events/Cancelable"], "api_events2.txt")
     # Showdown embarque : regles disponibles, commandes du flux de combat
     sd = []
     for n in names:

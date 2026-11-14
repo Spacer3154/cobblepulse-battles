@@ -37,6 +37,15 @@ public final class TimeFmt {
         return b.toString().trim();
     }
 
+    /** Chronometre h:mm:ss / m:ss. */
+    public static String clock(long ms) {
+        long s = Math.max(0, ms / 1000);
+        long h = s / 3600;
+        long m = (s % 3600) / 60;
+        long sec = s % 60;
+        return h > 0 ? String.format("%d:%02d:%02d", h, m, sec) : String.format("%d:%02d", m, sec);
+    }
+
     public static long now() {
         return System.currentTimeMillis();
     }

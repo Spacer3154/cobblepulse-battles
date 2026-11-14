@@ -1,6 +1,6 @@
 package fr.cobblepulse.battletower.core;
 
-import fr.cobblepulse.battletower.battletower.Battletower;
+import fr.cobblepulse.battletower.Battletower;
 import fr.cobblepulse.battletower.config.Cfg;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;

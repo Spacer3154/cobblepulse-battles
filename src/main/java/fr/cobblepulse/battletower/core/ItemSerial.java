@@ -1,6 +1,6 @@
 package fr.cobblepulse.battletower.core;
 
-import fr.cobblepulse.battletower.battletower.Battletower;
+import fr.cobblepulse.battletower.Battletower;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;

@@ -1,6 +1,6 @@
 package fr.cobblepulse.battletower.core;
 
-import fr.cobblepulse.battletower.battletower.Battletower;
+import fr.cobblepulse.battletower.Battletower;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 

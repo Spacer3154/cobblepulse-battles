@@ -2,7 +2,7 @@ package fr.cobblepulse.battletower.config;
 
 import com.electronwill.nightconfig.core.Config;
 import com.electronwill.nightconfig.toml.TomlParser;
-import fr.cobblepulse.battletower.battletower.Battletower;
+import fr.cobblepulse.battletower.Battletower;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;

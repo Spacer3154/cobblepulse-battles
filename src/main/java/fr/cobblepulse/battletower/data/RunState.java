@@ -21,10 +21,13 @@ public final class RunState {
     public String dailyBossId;
     /** Deconnexion hors combat : fin du delai de grace. */
     public long graceUntil;
+    /** Ascension interrompue par un arret/crash du serveur : reprise a la reconnexion, sans penalite. */
+    public boolean serverInterrupted;
     public transient java.util.UUID battleId;
     public transient long battleStartedAt;
     public transient boolean anyFainted;
-    public transient boolean teleporting;
+    public transient long protectUntil;
+    public transient long countdownToken;
 
     public void resumeClock(long now) {
         if (activeSince == 0) activeSince = now;
