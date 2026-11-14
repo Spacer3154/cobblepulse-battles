@@ -211,6 +211,25 @@ if cob:
         out4.append(f"##### {c}\n" + r.stdout[:120000])
     with open(os.path.join(OUT, "bodies4.txt"), "w") as fh:
         fh.write("\n".join(out4))
+    # Iteration 5 : service Showdown (contexte Graal, thread), fichiers JS du flux de combat
+    out5 = []
+    for c in ["com.cobblemon.mod.common.battles.runner.ShowdownService",
+              "com.cobblemon.mod.common.battles.runner.ShowdownService$Companion",
+              "com.cobblemon.mod.common.battles.runner.graal.GraalShowdownService",
+              "com.cobblemon.mod.common.battles.ShowdownThread"]:
+        r = subprocess.run(["javap", "-c", "-p", "-cp", jar, c], capture_output=True, text=True)
+        out5.append(f"##### {c}\n" + r.stdout[:60000])
+    with open(os.path.join(OUT, "bodies5.txt"), "w") as fh:
+        fh.write("\n".join(out5))
+    for n in names:
+        if n.endswith("showdown.zip"):
+            iz = zipfile.ZipFile(io.BytesIO(z.read(n)))
+            for m in ["sim/battle-stream.js", "sim/cobblemon/registries.js", "sim/cobblemon/cobblemon.js", "index.js"]:
+                try:
+                    with open(os.path.join(OUT, "sd_" + m.replace("/", "_")), "wb") as fh:
+                        fh.write(iz.read(m))
+                except KeyError:
+                    pass
     # Showdown embarque : regles disponibles, commandes du flux de combat
     sd = []
     for n in names:
