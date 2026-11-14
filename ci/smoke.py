@@ -115,6 +115,10 @@ FULL = ["sleep 5", "battletower selftest", "sleep 5", "battletower selftest asce
         "battletower selftest extreme", "sleep 115", "battletower selftest resume", "sleep 3", "battletower selftest report"]
 CHECK = ["sleep 5", "battletower selftest persisted", "sleep 3", "battletower selftest report"]
 
+QUICK = os.path.exists("ci/QUICKSMOKE")
+if QUICK:
+    run_server("json-1", ["sleep 5", "battletower selftest", "sleep 5", "battletower selftest ascension", "sleep 85", "battletower selftest report"])
+    sys.exit(0)
 run_server("json-1", FULL)
 run_server("json-2", CHECK)
 shutil.copytree(os.path.join(SRV, "config", "cobblepulse_battletower"), os.path.join(OUT, "server-config-json"), dirs_exist_ok=True)

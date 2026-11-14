@@ -91,6 +91,32 @@ public final class SelfTest {
             Battletower.LOG.info("[Battletower][selftest] combat {} termine ({} lignes Showdown, IA : {})", tag, lines.size(), live.ai.lastDecision());
         };
         Scheduler.repeat(10, 10, SelfTest::drive);
+        Scheduler.repeat(100, 100, SelfTest::diagnose);
+    }
+
+    /** Journal de diagnostic des combats de test (etat des acteurs, derniers messages Showdown). */
+    private static void diagnose() {
+        for (UUID id : new ArrayList<>(TAGS.keySet())) {
+            ServerPlayer p = Players.get(id);
+            if (p == null) continue;
+            PokemonBattle b = BattleRegistry.getBattleByParticipatingPlayer(p);
+            if (b == null) continue;
+            StringBuilder sb = new StringBuilder();
+            sb.append(TAGS.get(id)).append(" tour=").append(b.getTurn()).append(" started=").append(b.getStarted())
+                    .append(" ended=").append(b.getEnded()).append(" dispatches=").append(b.getDispatches().size());
+            for (BattleActor a : b.getActors()) {
+                sb.append(" | ").append(a.getType()).append(" mustChoose=").append(a.getMustChoose())
+                        .append(" request=").append(a.getRequest() != null).append(" sendingOut=").append(a.getStillSendingOutCount())
+                        .append(" active=").append(a.getActivePokemon().size());
+            }
+            List<String> msgs = b.getShowdownMessages();
+            sb.append(" | sd=").append(msgs.size());
+            for (int i = Math.max(0, msgs.size() - 4); i < msgs.size(); i++) {
+                String m = msgs.get(i).replace("\n", " / ");
+                sb.append("\n    ").append(m.length() > 300 ? m.substring(0, 300) : m);
+            }
+            Battletower.LOG.info("[Battletower][selftest][diag] {}", sb);
+        }
     }
 
     private static void drive() {

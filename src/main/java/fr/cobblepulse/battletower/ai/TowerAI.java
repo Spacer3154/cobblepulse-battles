@@ -55,6 +55,7 @@ import java.util.UUID;
 public final class TowerAI implements BattleAI {
     /** Pokemon adverses ayant terastallise (alimente par l'evenement Cobblemon). */
     public static final Map<UUID, String> TERASTALLIZED = new java.util.concurrent.ConcurrentHashMap<>();
+    private static final boolean DEBUG = "true".equals(System.getProperty("battletower.selftest")) || "true".equals(System.getProperty("battletower.aidebug"));
 
     private final Planner planner;
     private final TrainerSpec spec;
@@ -115,9 +116,10 @@ public final class TowerAI implements BattleAI {
                     }
                 }
                 lastDecision = d.toString();
+                if (DEBUG) Battletower.LOG.info("[Battletower][IA {}] tour {} : {}", spec.ai, turn, lastDecision);
                 return r;
             }
-            Battletower.LOG.debug("[Battletower] Decision IA invalide ({}), repli", d);
+            if (DEBUG) Battletower.LOG.info("[Battletower] Decision IA invalide ({}), repli", d);
         } catch (Throwable t) {
             Battletower.LOG.warn("[Battletower] Erreur de l'IA ({}) : {}", spec.ai, t.toString());
         }

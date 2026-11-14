@@ -214,7 +214,7 @@ public final class TowerManager {
         Fx.sound(p, SoundEvents.BEACON_ACTIVATE, 0.6f, 1.4f);
         sendFloorInfo(p, r, fe);
         save();
-        if (Cfg.tower.b("auto_engage", false)) Scheduler.later(40, () -> {
+        if (Cfg.tower.b("auto_engage", false) || Players.isTest(p.getUUID())) Scheduler.later(40, () -> {
             RunState cur = run(p.getUUID());
             if (cur == r && cur.phase == Phase.FLOOR && !p.hasDisconnected()) engage(p);
         });
@@ -285,7 +285,7 @@ public final class TowerManager {
     /** Le dresseur de cet etage est-il deja en combat (ou reserve par un autre joueur en compte a rebours) ? */
     private static boolean isBusy(int key, UUID except) {
         for (RunState o : state.runs.values()) {
-            if (o.uuid.equals(except.toString())) continue;
+            if (except != null && o.uuid.equals(except.toString())) continue;
             int ok = o.daily ? BOSS_QUEUE : o.floor;
             if (ok == key && (o.phase == Phase.BATTLE || o.phase == Phase.COUNTDOWN)) return true;
         }
@@ -371,6 +371,7 @@ public final class TowerManager {
 
     /** Libere l'etage : le premier joueur en file engage automatiquement. */
     private static void releaseQueue(int key) {
+        if (isBusy(key, null)) return;
         Deque<UUID> q = QUEUES.get(key);
         while (q != null && !q.isEmpty()) {
             UUID next = q.pollFirst();
