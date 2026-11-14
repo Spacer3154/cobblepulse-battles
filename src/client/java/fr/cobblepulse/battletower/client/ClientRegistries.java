@@ -21,8 +21,13 @@ final class ClientRegistries {
         List<String> out = new ArrayList<>();
         if (p.isEmpty()) return out;
         for (Species s : PokemonSpecies.getSpecies()) {
+            // Fakemons d'un autre espace de noms : on propose l'identifiant complet (monpack:volt_mon)
+            var rid = s.getResourceIdentifier();
+            boolean cobblemon = "cobblemon".equals(rid.getNamespace());
             String n = id(s.getName());
-            if (n.startsWith(p)) out.add(n);
+            if (n.startsWith(p) || id(rid.getPath()).startsWith(p) || id(rid.toString()).startsWith(p)) {
+                out.add(cobblemon ? (rid.getPath().equals(n) ? n : rid.getPath()) : rid.toString());
+            }
             if (out.size() >= max) break;
         }
         return out;

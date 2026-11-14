@@ -101,7 +101,9 @@ public final class ShowdownFormat {
             form = FORM_SUFFIX.getOrDefault(suffix, suffix);
             species = species.substring(0, dash);
         }
-        m.species = id(species);
+        // Identifiant de datapack (monpack:volt_mon) conserve tel quel ; sinon nom Showdown normalise
+        String trimmed = species.trim();
+        m.species = trimmed.contains(":") && !trimmed.contains(" ") ? trimmed.toLowerCase(Locale.ROOT) : id(species);
         m.form = form;
         m.gender = gender;
         if (!item.isEmpty()) m.heldItem = itemId(item);

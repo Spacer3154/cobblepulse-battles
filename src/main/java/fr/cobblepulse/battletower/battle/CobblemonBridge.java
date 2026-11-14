@@ -29,8 +29,13 @@ import java.util.UUID;
 /** Acces a l'API Cobblemon : equipes, PC, combats en cours. */
 public final class CobblemonBridge {
     /** Resume d'un Pokemon (validation des tiers). */
+    /**
+     * @param aliases autres identifiants de l'espece (chemin et identifiant complet normalises) : un tier peut bannir un
+     *                fakemon par son nom ({@code voltmon}) comme par son identifiant ({@code monpack:volt_mon}).
+     */
     public record MonInfo(String species, String speciesId, String formId, int level, String heldItem, String ability,
-                          List<String> moves, Set<String> types, boolean hasPreEvolution, boolean canEvolve, boolean shiny) {}
+                          List<String> moves, Set<String> types, boolean hasPreEvolution, boolean canEvolve, boolean shiny,
+                          Set<String> aliases) {}
 
     private CobblemonBridge() {}
 
@@ -129,7 +134,13 @@ public final class CobblemonBridge {
             evo = form != null && !form.getEvolutions().isEmpty();
         } catch (Throwable ignored) {
         }
-        return new MonInfo(sp.getName(), speciesId, formId, pk.getLevel(), heldId, ability, moves, types, pre, evo, pk.getShiny());
+        Set<String> aliases = new LinkedHashSet<>();
+        try {
+            aliases.add(norm(sp.getResourceIdentifier().getPath()));
+            aliases.add(norm(sp.getResourceIdentifier().toString()));
+        } catch (Throwable ignored) {
+        }
+        return new MonInfo(sp.getName(), speciesId, formId, pk.getLevel(), heldId, ability, moves, types, pre, evo, pk.getShiny(), aliases);
     }
 
     /** L'equipe est-elle Monotype (au moins un type commun) ? */
@@ -156,7 +167,7 @@ public final class CobblemonBridge {
 
     public static ItemStack speciesIcon(String speciesName) {
         try {
-            Species sp = PokemonSpecies.getByName(norm(speciesName));
+            Species sp = SpeciesLookup.resolve(speciesName);
             if (sp != null) return PokemonItem.from(sp);
         } catch (Throwable ignored) {
         }

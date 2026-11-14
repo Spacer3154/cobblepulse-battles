@@ -36,7 +36,9 @@ public final class TeamValidator {
         Set<String> items = new HashSet<>();
         Set<String> shared = null;
         for (MonInfo m : team) {
-            if (r.bannedPokemon.contains(m.speciesId()) || r.bannedPokemon.contains(m.formId())) {
+            boolean bannedAlias = false;
+            for (String a : m.aliases()) if (r.bannedPokemon.contains(a)) bannedAlias = true;
+            if (r.bannedPokemon.contains(m.speciesId()) || r.bannedPokemon.contains(m.formId()) || bannedAlias) {
                 if (!r.allowedPokemon.contains(m.formId())) errors.add(Msg.format("tier.banned_pokemon", "pokemon", m.species()));
             }
             String item = TierRules.norm(m.heldItem());

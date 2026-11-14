@@ -45,6 +45,27 @@ for j in [j for j in glob.glob("build/libs/*.jar") if not j.endswith("-sources.j
     shutil.copy(j, os.path.join(SRV, "mods"))
     log("mod battletower " + j)
 
+# Datapack de test : un fakemon dans un autre espace de noms (btfake:testmon_ex), derive de l'espece Pikachu de Cobblemon
+try:
+    import zipfile
+    cj = [j for j in glob.glob(os.path.join(SRV, "mods", "*.jar")) if "cobblemon-fabric" in os.path.basename(j).lower()
+          or os.path.basename(j).lower().startswith("cobblemon-")]
+    cj = [j for j in cj if "mega" not in j.lower()]
+    z = zipfile.ZipFile(cj[0])
+    src = [n for n in z.namelist() if n.startswith("data/cobblemon/species/") and n.endswith("/pikachu.json")][0]
+    sp = json.loads(z.read(src).decode("utf-8"))
+    for k in ("forms", "evolutions", "preEvolution", "features", "aspects", "standingEyeHeight", "lightingData"):
+        sp.pop(k, None)
+    sp.update({"name": "Testmon Ex", "nationalPokedexNumber": 9901, "primaryType": "electric", "secondaryType": "fairy",
+               "labels": ["custom"]})
+    dp = os.path.join(SRV, "world", "datapacks", "btfake")
+    os.makedirs(os.path.join(dp, "data", "btfake", "species", "custom"), exist_ok=True)
+    open(os.path.join(dp, "pack.mcmeta"), "w").write(json.dumps({"pack": {"pack_format": 48, "description": "Battletower CI fakemon"}}))
+    open(os.path.join(dp, "data", "btfake", "species", "custom", "testmon_ex.json"), "w").write(json.dumps(sp, indent=2))
+    log(f"datapack fakemon btfake:testmon_ex (depuis {src} de {os.path.basename(cj[0])})")
+except Exception as e:
+    log(f"!! datapack fakemon : {e}")
+
 installer = json.loads(get("https://meta.fabricmc.net/v2/versions/installer"))[0]["version"]
 loader = props.get("loader_version")
 open(os.path.join(SRV, "server.jar"), "wb").write(get(f"https://meta.fabricmc.net/v2/versions/loader/1.21.1/{loader}/{installer}/server/jar"))
@@ -111,7 +132,7 @@ def run_server(label, commands):
 
 
 FULL = ["sleep 5", "battletower selftest", "sleep 5", "battletower selftest ascension", "sleep 85",
-        "battletower selftest defeat", "sleep 45", "battletower selftest daily", "sleep 45",
+        "battletower selftest defeat", "sleep 45", "battletower selftest daily", "sleep 100",
         "battletower selftest extreme", "sleep 290", "battletower selftest resume", "sleep 3", "battletower selftest report"]
 CHECK = ["sleep 5", "battletower selftest persisted", "sleep 3", "battletower selftest report"]
 

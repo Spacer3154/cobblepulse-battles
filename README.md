@@ -55,6 +55,17 @@ Le panneau `/bt admin` regroupe tout cela en menus (état des 50 étages, télé
 - File d'attente : si le dresseur d'un étage est déjà en combat, le joueur suivant attend (le chrono est en pause) et le combat démarre automatiquement.
 - Déconnexion : pendant un combat, c'est une défaite. Hors combat, le joueur a 60 s pour revenir. Si le serveur redémarre ou plante, la série est conservée et reprend à l'étage en cours.
 
+## Fakemons (datapacks)
+
+Les espèces ajoutées par datapack sont prises en charge partout (éditeur, import Showdown, combats, tiers, IA) :
+
+- dans l'éditeur, le champ Espèce accepte l'identifiant complet (`monpack:volt_mon`), le nom de fichier (`volt_mon`) ou le nom affiché (`Volt Mon`) ; la touche Tab propose aussi les fakemons ;
+- à l'import Showdown, un nom composé (`Volt-Mon`) est reconnu comme une espèce et non comme une forme ;
+- un tier peut bannir un fakemon par son nom (`voltmon`) ou son identifiant (`monpack:volt_mon`) ; sinon il est autorisé ;
+- l'IA lit ses statistiques et ses types dans Cobblemon, comme pour n'importe quel Pokémon.
+
+Les capacités et talents inédits d'un fakemon doivent exister côté Showdown (c'est le rôle du datapack ou du mod qui les ajoute). Le datapack doit aussi être installé sur le serveur, et le pack de ressources (modèles) sur les clients, comme pour Cobblemon.
+
 ## IA (loyale : elle ne voit que ce qu'un joueur verrait)
 
 | Niveau | Comportement |
@@ -92,4 +103,4 @@ Météo et terrain permanents : ils sont posés au début du combat, avec une du
 
 ## Développement
 
-Le code compile et se teste sur GitHub Actions (`.github/workflows/build.yml`). Un vrai serveur Fabric démarre avec Cobblemon 1.8.4 et Mega Showdown, en JSON, MySQL et SQLite. Des joueurs factices pilotés par un bot jouent alors contre l'IA de la tour : ascension complète, file d'attente, défaite et cooldown, Boss du Jour, Téra défensive, Méga en Extrême, reprise après redémarrage. Le client est lancé sous xvfb pour capturer l'éditeur. Les résultats sont publiés sur la branche `ci-output`. Les skins embarqués sont générés par `tools/gen_skins.py`.
+Le code compile et se teste sur GitHub Actions (`.github/workflows/build.yml`). Un vrai serveur Fabric démarre avec Cobblemon 1.8.4 et Mega Showdown, en JSON, MySQL et SQLite. Des joueurs factices pilotés par un bot jouent alors contre l'IA de la tour : ascension complète, file d'attente, défaite et cooldown, Boss du Jour, Téra défensive, Méga en Extrême, fakemon chargé depuis un datapack, reprise après redémarrage. Le client est lancé sous xvfb pour capturer l'éditeur. Les résultats sont publiés sur la branche `ci-output`. Les skins embarqués sont générés par `tools/gen_skins.py`.

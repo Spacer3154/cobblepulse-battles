@@ -49,25 +49,41 @@ public final class TrainerFactory {
     /** Cree le Pokemon decrit par la fiche (erreurs ajoutees a la liste, Pokemon null si espece inconnue). */
     public static Pokemon create(MonSpec spec, List<String> errors) {
         spec.normalize();
-        Species species = PokemonSpecies.getByName(id(spec.species));
+        Species species = SpeciesLookup.resolve(spec.species);
+        String form = spec.form;
+        if (!form.isBlank()) {
+            // Import Showdown d'un fakemon au nom compose ("Volt-Mon") : ce n'est pas une forme de "Volt"
+            Species joined = SpeciesLookup.resolve(spec.species + "-" + form);
+            if (joined != null && (species == null || !hasForm(species, form))) {
+                species = joined;
+                form = "";
+            }
+        }
         if (species == null) {
             errors.add("Espece inconnue : " + spec.species);
             return null;
         }
-        StringBuilder props = new StringBuilder(species.getName().toLowerCase(Locale.ROOT).replace(" ", ""));
-        props.append(" level=").append(spec.level);
+        StringBuilder props = new StringBuilder("level=").append(spec.level);
         if (!spec.nature.isBlank()) props.append(" nature=").append(id(spec.nature));
         if (!spec.ability.isBlank()) props.append(" ability=").append(id(spec.ability));
         if (!spec.gender.isBlank()) props.append(" gender=").append(spec.gender.toLowerCase(Locale.ROOT));
         props.append(" shiny=").append(spec.shiny ? "yes" : "no");
         Pokemon pk;
         try {
-            pk = PokemonProperties.Companion.parse(props.toString()).create();
+            // Espece passee par son identifiant complet : fonctionne aussi pour les fakemons d'autres espaces de noms
+            PokemonProperties pp = PokemonProperties.Companion.parse(props.toString());
+            pp.setSpecies(species.getResourceIdentifier().toString());
+            pk = pp.create();
+            if (pk.getSpecies() != species) {
+                pk.setSpecies(species);
+                pp.setSpecies(null);
+                pp.apply(pk);
+            }
         } catch (Throwable t) {
             errors.add("Creation impossible (" + spec.species + ") : " + t.getMessage());
             return null;
         }
-        if (!spec.form.isBlank()) applyForm(pk, species, spec.form, errors);
+        if (!form.isBlank()) applyForm(pk, species, form, errors);
         for (String st : MonSpec.STATS) {
             try {
                 pk.setIV(stat(st), spec.iv(st));
@@ -154,6 +170,12 @@ public final class TrainerFactory {
         if (f == null) return false;
         if (formKey(f.formOnlyShowdownId()).equals(key) || formKey(f.getName()).equals(key)) return true;
         for (String a : f.getAspects()) if (formKey(a).equals(key)) return true;
+        return false;
+    }
+
+    private static boolean hasForm(Species species, String form) {
+        String key = formKey(form);
+        for (FormData f : species.getForms()) if (formMatches(f, key)) return true;
         return false;
     }
 

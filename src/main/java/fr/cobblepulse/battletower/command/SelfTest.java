@@ -327,6 +327,18 @@ public final class SelfTest {
             formsOk &= fp != null && fn.toLowerCase(java.util.Locale.ROOT).contains(i == 0 ? "wash" : "alola");
         }
         check(src, "factory.forms", formsOk && ferrs.isEmpty(), fdesc + ferrs.toString());
+        // Fakemon de datapack (btfake:testmon_ex, ajoute par la CI) : recherche par identifiant, chemin, nom, import Showdown
+        com.cobblemon.mod.common.pokemon.Species fake = fr.cobblepulse.battletower.battle.SpeciesLookup.resolve("btfake:testmon_ex");
+        boolean lookups = fake != null
+                && fake == fr.cobblepulse.battletower.battle.SpeciesLookup.resolve("testmon_ex")
+                && fake == fr.cobblepulse.battletower.battle.SpeciesLookup.resolve("Testmon Ex")
+                && fake == fr.cobblepulse.battletower.battle.SpeciesLookup.resolve("testmonex");
+        check(src, "fakemon.lookup", lookups, fake == null ? "datapack absent" : fake.getResourceIdentifier().toString());
+        List<String> fkErr = new ArrayList<>();
+        List<MonSpec> fkParsed = ShowdownFormat.parse("Testmon-Ex @ Leftovers\nLevel: 40\n- Thunderbolt\n- Moonblast\n");
+        Pokemon fkp = fkParsed.isEmpty() ? null : TrainerFactory.create(fkParsed.get(0), fkErr);
+        check(src, "fakemon.create", fkp != null && fake != null && fkp.getSpecies() == fake && fkp.getLevel() == 40,
+                (fkp == null ? "null" : fkp.getSpecies().getResourceIdentifier() + " L" + fkp.getLevel()) + " " + fkErr);
         // IA hors combat : chaque palier choisit une action valide
         for (Planner.Level lvl : Planner.Level.values()) {
             Model.AState st = new Model.AState();
@@ -467,7 +479,7 @@ public final class SelfTest {
     public static int daily(CommandSourceStack src) {
         startBot();
         ServerLevel level = src.getServer().overworld();
-        TrainerSpec boss = trainer("Boss Test", "EXTREME", mon("caterpie", 5, "tackle"));
+        TrainerSpec boss = trainer("Boss Test", "EXTREME", mon("caterpie", 5, "tackle"), mon("btfake:testmon_ex", 5, "thundershock"));
         boss.weather = "fog";
         TowerConfig.bosses().bosses.put("selftest_boss", boss);
         TowerConfig.saveBosses();
@@ -483,7 +495,7 @@ public final class SelfTest {
         long bp0 = PlayerStore.get(dp).bp;
         DailyBoss.start(dp);
         TowerManager.engage(dp);
-        Scheduler.later(20 * 40, () -> {
+        waitFor(() -> LOGS.keySet().stream().anyMatch(k -> k.startsWith("BTDaily")), 90, () -> {
             PlayerData d = PlayerStore.get(dp);
             check(src, "daily.won", d.dailyBossWins >= 1 && d.dailyBossBeaten.contains("selftest_boss"), "victoires=" + d.dailyBossWins);
             check(src, "daily.reward", d.bp > bp0, "bp=" + d.bp);
@@ -493,6 +505,12 @@ public final class SelfTest {
             boolean fog = false;
             for (List<String> lines : LOGS.values()) for (String l : lines) if (l.contains("-weather|Fog")) fog = true;
             check(src, "modifiers.fog", fog, null);
+            boolean fakeInBattle = false;
+            for (Map.Entry<String, List<String>> e : LOGS.entrySet()) {
+                if (!e.getKey().startsWith("BTDaily")) continue;
+                for (String l : e.getValue()) if (l.contains("Testmon Ex")) fakeInBattle = true;
+            }
+            check(src, "fakemon.battle", fakeInBattle, null);
         });
         return 1;
     }
