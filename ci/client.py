@@ -32,7 +32,7 @@ def run(cmd, timeout, env=None):
 
 
 subprocess.run("sudo apt-get install -y -qq xvfb mesa-utils libgl1-mesa-dri > /dev/null 2>&1 || true", shell=True)
-run([sys.executable, "-m", "pip", "install", "-q", "portablemc"], 300)
+run([sys.executable, "-m", "pip", "install", "-q", "portablemc==4.4.1"], 300)
 modrinth = json.load(open(os.path.join(OUT, "discover", "modrinth.json")))
 for slug, ver in {"fabric-api": None, "fabric-language-kotlin": None, "cobblemon": "1.8.4"}.items():
     for v in modrinth.get(slug) or []:
@@ -45,9 +45,10 @@ for j in [j for j in glob.glob("build/libs/*.jar") if not j.endswith("-sources.j
     shutil.copy(j, os.path.join(MC, "mods"))
 version = "fabric:1.21.1:" + props.get("loader_version", "0.19.5")
 base = [sys.executable, "-m", "portablemc", "--main-dir", MC, "--work-dir", MC]
-run(base + ["start", "--dry", version], 900)
+java = shutil.which("java") or "java"
+run(base + ["start", "--dry", "--jvm", java, version], 900)
 env = dict(os.environ, LIBGL_ALWAYS_SOFTWARE="1", MESA_GL_VERSION_OVERRIDE="4.5")
-run(["xvfb-run", "-a", "-s", "-screen 0 1280x720x24"] + base + ["start", "-u", "BTClientTest", "--resolution", "1280x720",
+run(["xvfb-run", "-a", "-s", "-screen 0 1280x720x24"] + base + ["start", "-u", "BTClientTest", "--resolution", "1280x720", "--jvm", java,
      "--jvm-args=-Xmx3G -Dcobblepulse_battletower.clienttest=true", version], 1200, env)
 for f in glob.glob(os.path.join(MC, "screenshots", "*.png")):
     shutil.copy(f, DST)

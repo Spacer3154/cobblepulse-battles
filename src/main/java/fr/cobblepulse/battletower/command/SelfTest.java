@@ -108,6 +108,13 @@ public final class SelfTest {
                 sb.append(" | ").append(a.getType()).append(" mustChoose=").append(a.getMustChoose())
                         .append(" request=").append(a.getRequest() != null).append(" sendingOut=").append(a.getStillSendingOutCount())
                         .append(" active=").append(a.getActivePokemon().size());
+                for (ActiveBattlePokemon ab : a.getActivePokemon()) {
+                    var bp = ab.getBattlePokemon();
+                    var e = bp == null ? null : bp.getEntity();
+                    if (e != null) sb.append(" [").append(e.getName().getString()).append(" ticks=").append(e.tickCount)
+                            .append(" alive=").append(e.isAlive()).append(" ticking=")
+                            .append(((ServerLevel) e.level()).isPositionEntityTicking(e.blockPosition())).append("]");
+                }
             }
             List<String> msgs = b.getShowdownMessages();
             sb.append(" | sd=").append(msgs.size());
@@ -220,8 +227,21 @@ public final class SelfTest {
         return t;
     }
 
+    private static boolean forced;
+
     private static BlockPos base(ServerLevel level) {
-        return level.getSharedSpawnPos();
+        BlockPos b = level.getSharedSpawnPos();
+        if (!forced) {
+            forced = true;
+            // Les joueurs factices ne chargent pas de chunks : on force la zone de test pour que les
+            // entites (PNJ, Pokemon envoyes) soient tickees, comme autour d'un vrai joueur.
+            int cx = b.getX() >> 4, cz = b.getZ() >> 4;
+            for (int x = cx - 2; x <= cx + 2; x++)
+                for (int z = cz - 2; z <= cz + 5; z++)
+                    level.setChunkForced(x, z, true);
+            Battletower.LOG.info("[Battletower][selftest] zone de test forcee autour de {}", b);
+        }
+        return b;
     }
 
     private static Loc loc(ServerLevel level, int dx, int dz) {
