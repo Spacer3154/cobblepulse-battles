@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "cobblepulse_battletower",
+  "version": "${version}",
+  "name": "CobblePulse Battletower",
+  "description": "Tour de Combat 50 etages, Boss du Jour, Battle Points, boutique et succes pour CobblePulse / Cobblemon.",
+  "authors": ["CobblePulse"],
+  "contact": {},
+  "license": "All-Rights-Reserved",
+  "icon": "assets/cobblepulse_battletower/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": ["fr.cobblepulse.battletower.Battletower"],
+    "client": ["fr.cobblepulse.battletower.client.BattletowerClient"]
+  },
+  "depends": {
+    "fabricloader": ">=0.16.0",
+    "minecraft": "~1.21.1",
+    "java": ">=21",
+    "fabric-api": "*",
+    "fabric-language-kotlin": "*",
+    "cobblemon": ">=1.8.0"
+  },
+  "recommends": {
+    "cobblepulse": "*",
+    "mega_showdown": "*",
+    "luckperms": "*",
+    "placeholder-api": "*"
+  }
+}
