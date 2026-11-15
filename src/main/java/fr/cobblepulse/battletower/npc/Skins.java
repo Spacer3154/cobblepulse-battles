@@ -106,8 +106,12 @@ public final class Skins {
                 }
             } else if (ref.startsWith("server:")) {
                 String file = ref.substring(7);
-                Path p = Cfg.skinsDir().resolve(file).normalize();
-                if (p.startsWith(Cfg.skinsDir()) && Files.exists(p)) data = Files.readAllBytes(p);
+                // Chemins absolus normalises des deux cotes : le dossier de config peut etre "./config/..." (relatif),
+                // et normalize() retire le "./" seulement du fichier, ce qui faisait echouer startsWith()
+                Path dir = Cfg.skinsDir().toAbsolutePath().normalize();
+                Path p = dir.resolve(file).toAbsolutePath().normalize();
+                if (p.startsWith(dir) && Files.isRegularFile(p)) data = Files.readAllBytes(p);
+                else Battletower.LOG.warn("[Battletower] Skin serveur introuvable : {}", p);
             }
         } catch (Exception e) {
             Battletower.LOG.warn("[Battletower] Skin illisible {} : {}", ref, e.toString());

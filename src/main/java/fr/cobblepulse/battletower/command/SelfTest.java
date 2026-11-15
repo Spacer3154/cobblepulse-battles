@@ -296,6 +296,17 @@ public final class SelfTest {
         boolean bytesOk = true;
         for (Skins.SkinInfo s : Skins.builtin()) if (Skins.bytes(s.ref()) == null) bytesOk = false;
         check(src, "skins.bytes", bytesOk, null);
+        // Skin depose par l'admin dans config/cobblepulse_battletower/skins (nom avec tiret et majuscule)
+        try {
+            byte[] sample = Skins.bytes(Skins.builtin().get(0).ref());
+            java.nio.file.Files.write(fr.cobblepulse.battletower.config.Cfg.skinsDir().resolve("Test-Skin_slim.png"), sample);
+            boolean listed = Skins.server().stream().anyMatch(i -> i.ref().equals("server:Test-Skin_slim.png") && i.slim());
+            byte[] read = Skins.bytes("server:Test-Skin_slim.png");
+            check(src, "skins.server", listed && read != null && read.length == sample.length && Skins.bytes("server:../storage.toml") == null,
+                    "liste=" + listed + " lu=" + (read == null ? "null" : read.length));
+        } catch (Exception e) {
+            check(src, "skins.server", false, e.toString());
+        }
         check(src, "storage.backend", DataService.storage() != null, DataService.storage() == null ? "-" : DataService.storage().name());
         String stamp = String.valueOf(TimeFmt.now());
         DataService.async(s -> {
