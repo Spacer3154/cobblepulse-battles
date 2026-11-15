@@ -221,6 +221,32 @@ if cob:
         out5.append(f"##### {c}\n" + r.stdout[:60000])
     with open(os.path.join(OUT, "bodies5.txt"), "w") as fh:
         fh.write("\n".join(out5))
+    out6 = []
+    for c in ["com.cobblemon.mod.common.client.render.npc.NPCRenderer",
+              "com.cobblemon.mod.common.client.entity.NPCClientDelegate",
+              "com.cobblemon.mod.common.command.ApplyPlayerTextureCommand",
+              "com.cobblemon.mod.common.entity.npc.NPCPlayerTexture",
+              "com.cobblemon.mod.common.entity.npc.NPCPlayerModelType",
+              "com.cobblemon.mod.common.api.net.serializers.NPCPlayerTextureSerializer",
+              "com.cobblemon.mod.common.net.messages.client.spawn.SpawnNPCPacket",
+              "com.cobblemon.mod.common.entity.npc.NPCEntity"]:
+        r = subprocess.run(["javap", "-c", "-p", "-cp", jar, c], capture_output=True, text=True)
+        txt = r.stdout
+        if c.endswith("NPCEntity"):
+            keep, cur, buf = [], False, []
+            for line in txt.splitlines():
+                if line.startswith("  ") and not line.startswith("    ") and line.rstrip().endswith(";") is False and "(" in line:
+                    if buf and any(k in "\n".join(buf) for k in ("NPC_PLAYER_TEXTURE", "Texture", "onSyncedDataUpdated")):
+                        keep.extend(buf)
+                    buf = [line]
+                else:
+                    buf.append(line)
+            if buf and any(k in "\n".join(buf) for k in ("NPC_PLAYER_TEXTURE", "Texture")):
+                keep.extend(buf)
+            txt = "\n".join(keep)
+        out6.append(f"##### {c}\n" + txt[:80000])
+    with open(os.path.join(OUT, "bodies6.txt"), "w") as fh:
+        fh.write("\n".join(out6))
     for n in names:
         if n.endswith("showdown.zip"):
             iz = zipfile.ZipFile(io.BytesIO(z.read(n)))

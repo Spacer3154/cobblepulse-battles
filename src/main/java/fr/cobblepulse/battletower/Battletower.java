@@ -36,6 +36,7 @@ public final class Battletower implements ModInitializer {
     public static final Logger LOG = LoggerFactory.getLogger("Battletower");
     private static MinecraftServer server;
     private static boolean ready;
+    private static final java.util.Map<java.util.UUID, Long> LAST_INTERACT = new java.util.concurrent.ConcurrentHashMap<>();
 
     public static MinecraftServer server() {
         return server;
@@ -66,6 +67,10 @@ public final class Battletower implements ModInitializer {
         UseEntityCallback.EVENT.register((player, level, hand, entity, hit) -> {
             if (level.isClientSide() || !(player instanceof ServerPlayer sp) || !TrainerNpcs.isOurs(entity)) return InteractionResult.PASS;
             if (hand != InteractionHand.MAIN_HAND) return InteractionResult.SUCCESS;
+            // Un clic droit envoie deux paquets (interact + interactAt) : un seul traitement par clic
+            long now = sp.serverLevel().getGameTime();
+            Long last = LAST_INTERACT.put(sp.getUUID(), now);
+            if (last != null && now - last < 5) return InteractionResult.SUCCESS;
             onNpcInteract(sp, (NPCEntity) entity);
             return InteractionResult.SUCCESS;
         });

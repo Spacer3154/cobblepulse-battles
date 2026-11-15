@@ -16,6 +16,6 @@ public final class FloorEntry {
 
     public FloorEntry(int floor) {
         this.floor = floor;
-        this.trainer.name = "Dresseur de l'etage " + floor;
+        this.trainer.name = "Dresseur de l'étage " + floor;
     }
 }
