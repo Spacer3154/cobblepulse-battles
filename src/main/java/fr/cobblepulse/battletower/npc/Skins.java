@@ -144,6 +144,20 @@ public final class Skins {
         }
     }
 
+    /** Renvoie au joueur la texture du PNJ (apres son apparition chez le client). */
+    public static void resend(NPCEntity npc, net.minecraft.server.level.ServerPlayer player) {
+        try {
+            if (npc == null || player == null || !npc.isAlive() || player.hasDisconnected()) return;
+            var acc = NPCEntity.Companion.getNPC_PLAYER_TEXTURE();
+            NPCPlayerTexture tex = npc.getEntityData().get(acc);
+            if (tex == null || tex.getModel() == NPCPlayerModelType.NONE) return;
+            player.connection.send(new net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket(npc.getId(),
+                    java.util.List.of(net.minecraft.network.syncher.SynchedEntityData.DataValue.create(acc, tex))));
+        } catch (Throwable t) {
+            Battletower.LOG.debug("[Battletower] Renvoi du skin impossible : {}", t.toString());
+        }
+    }
+
     /** Texture actuellement portee par le PNJ (apres chargement d'un skin Mojang par exemple). */
     public static byte[] current(NPCEntity npc) {
         try {

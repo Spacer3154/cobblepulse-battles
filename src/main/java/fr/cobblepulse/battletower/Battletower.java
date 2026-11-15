@@ -74,6 +74,11 @@ public final class Battletower implements ModInitializer {
             onNpcInteract(sp, (NPCEntity) entity);
             return InteractionResult.SUCCESS;
         });
+        // Le skin d'un PNJ arrive avec le paquet d'apparition, avant que le client de Cobblemon ne soit pret a
+        // l'enregistrer (le PNJ s'affiche alors en Steve). On le renvoie a chaque joueur peu apres l'apparition.
+        net.fabricmc.fabric.api.networking.v1.EntityTrackingEvents.START_TRACKING.register((entity, player) -> {
+            if (TrainerNpcs.isOurs(entity)) Scheduler.later(10, () -> Skins.resend((NPCEntity) entity, player));
+        });
         ServerEntityEvents.ENTITY_LOAD.register((entity, level) -> {
             if (ready && TrainerNpcs.isOurs(entity)) Scheduler.later(2, () -> TrainerNpcs.refresh((NPCEntity) entity));
         });
