@@ -24,8 +24,23 @@ final class ClientSelfTest {
 
     private ClientSelfTest() {}
 
+    private static int connectedAt = -1;
+
     static void install() {
         ClientTickEvents.END_CLIENT_TICK.register(ClientSelfTest::tick);
+        // Test de bout en bout : le serveur ouvre ses ecrans puis demande une capture
+        BattletowerClient.on("selftest", o -> {
+            Minecraft mc = Minecraft.getInstance();
+            if (o.has("shot")) {
+                String name = o.get("shot").getAsString();
+                Battletower.LOG.info("[Battletower][clienttest] capture {} (ecran {})", name, mc.screen == null ? "aucun" : mc.screen.getClass().getSimpleName());
+                shot(mc, name);
+            }
+            if (o.has("done")) {
+                Battletower.LOG.info("[Battletower][clienttest] CLIENT SERVER TEST DONE");
+                mc.stop();
+            }
+        });
     }
 
     private static void shot(Minecraft mc, String name) {
@@ -110,8 +125,35 @@ final class ClientSelfTest {
                 screen.setTab(2);
             } else if (t == 150) {
                 shot(mc, "bt_editor_skins_slim");
-            } else if (t == 170) {
-                Battletower.LOG.info("[Battletower][clienttest] CLIENT TEST DONE");
+                // Dresseur du monde : onglet Recompenses en plus
+                TrainerSpec w = screen.spec;
+                w.world = new TrainerSpec.WorldOptions();
+                w.world.bp = 25;
+                w.world.rematchHours = 24;
+                w.world.lossCooldownMinutes = 15;
+                w.world.items.add("cobblemon:rare_candy 3");
+                w.world.commands.add("cobbledollars give %player% 500");
+                w.world.winMessage = "Reviens quand tu seras pret !";
+                screen = new TrainerEditorScreen("world", "pecheur_lac", w, meta());
+                mc.setScreen(screen);
+            } else if (t == 175) {
+                screen.setTab(3);
+            } else if (t == 200) {
+                shot(mc, "bt_editor_world_rewards");
+            } else if (t == 220) {
+                String server = System.getProperty("cobblepulse_battles.clientserver", "");
+                if (server.isBlank()) {
+                    Battletower.LOG.info("[Battletower][clienttest] CLIENT TEST DONE");
+                    mc.stop();
+                    return;
+                }
+                Battletower.LOG.info("[Battletower][clienttest] connexion a {}", server);
+                connectedAt = ticks;
+                net.minecraft.client.gui.screens.ConnectScreen.startConnecting(new TitleScreen(), mc,
+                        net.minecraft.client.multiplayer.resolver.ServerAddress.parseString(server),
+                        new net.minecraft.client.multiplayer.ServerData("CI", server, net.minecraft.client.multiplayer.ServerData.Type.OTHER), false, null);
+            } else if (connectedAt > 0 && ticks - connectedAt > 6000) {
+                Battletower.LOG.error("[Battletower][clienttest] test avec le serveur trop long, arret");
                 mc.stop();
             }
         } catch (Throwable e) {

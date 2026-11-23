@@ -51,15 +51,71 @@ run(base + ["start", "--dry", "--jvm", java, version], 900)
 with open(os.path.join(MC, "options.txt"), "w") as fh:
     fh.write("onboardAccessibility:false\nnarrator:0\ntutorialStep:none\nskipMultiplayerWarning:true\njoinedFirstServer:true\n"
              "renderDistance:2\nmaxFps:30\nsoundCategory_master:0.0\n")
+# Serveur de test (memes mods que le client) : le client s'y connecte apres les captures de l'editeur, puis le serveur
+# ouvre chacun de ses ecrans (hub, Ranked, dresseurs...) et demande une capture.
+import queue, threading
+SRV = os.path.abspath("run-client-server")
+shutil.copytree(os.path.join(MC, "mods"), os.path.join(SRV, "mods"), dirs_exist_ok=True)
+installer = json.loads(get("https://meta.fabricmc.net/v2/versions/installer"))[0]["version"]
+open(os.path.join(SRV, "server.jar"), "wb").write(get(
+    f"https://meta.fabricmc.net/v2/versions/loader/1.21.1/{props.get('loader_version')}/{installer}/server/jar"))
+open(os.path.join(SRV, "eula.txt"), "w").write("eula=true\n")
+open(os.path.join(SRV, "server.properties"), "w").write(
+    "online-mode=false\nserver-port=25570\nview-distance=4\nsimulation-distance=4\nspawn-protection=0\nmax-tick-time=-1\n"
+    "level-seed=battles\nsync-chunk-writes=false\nenforce-secure-profile=false\n")
+srv_log = open(os.path.join(DST, "server.log"), "w")
+srv_lines = queue.Queue()
+srv = subprocess.Popen(["java", "-Xmx3G", "-Dbattletower.selftest=true", "-jar", "server.jar", "nogui"], cwd=SRV, stdin=subprocess.PIPE,
+                       stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1)
+
+
+def srv_reader():
+    for line in srv.stdout:
+        srv_log.write(line)
+        srv_log.flush()
+        srv_lines.put(line)
+
+
+threading.Thread(target=srv_reader, daemon=True).start()
+srv_ready = False
+t_srv = time.time()
+while time.time() - t_srv < 900 and srv.poll() is None:
+    try:
+        if "Done (" in srv_lines.get(timeout=2):
+            srv_ready = True
+            break
+    except queue.Empty:
+        pass
+log.write(f"\nserveur de test pret : {srv_ready}\n")
+log.flush()
+joined = [False]
+
+
+def srv_watch():
+    while True:
+        try:
+            line = srv_lines.get(timeout=5)
+        except queue.Empty:
+            if srv.poll() is not None:
+                return
+            continue
+        if not joined[0] and "BTClientTest joined the game" in line:
+            joined[0] = True
+            time.sleep(8)
+            srv.stdin.write("battletower selftest clientscreens BTClientTest\n")
+            srv.stdin.flush()
+
+
+threading.Thread(target=srv_watch, daemon=True).start()
 env = dict(os.environ, LIBGL_ALWAYS_SOFTWARE="1", MESA_GL_VERSION_OVERRIDE="4.5")
 cmd = ["xvfb-run", "-n", "97", "-s", "-screen 0 1280x720x24"] + base + ["start", "-u", "BTClientTest", "--resolution", "1280x720", "--jvm", java,
-       "--jvm-args=-Xmx3G -Dcobblepulse_battles.clienttest=true", version]
+       "--jvm-args=-Xmx3G -Dcobblepulse_battles.clienttest=true" + (" -Dcobblepulse_battles.clientserver=127.0.0.1:25570" if srv_ready else ""), version]
 log.write("\n$ " + " ".join(cmd) + "\n")
 log.flush()
 proc = subprocess.Popen(cmd, stdout=log, stderr=subprocess.STDOUT, env=env)
 t0 = time.time()
 n = 0
-while proc.poll() is None and time.time() - t0 < 900:
+while proc.poll() is None and time.time() - t0 < 1200:
     time.sleep(20)
     n += 1
     if n % 6 == 0:
@@ -81,5 +137,12 @@ for f in glob.glob(os.path.join(MC, "logs", "latest.log")):
     shutil.copy(f, os.path.join(DST, "latest.log"))
 for f in glob.glob(os.path.join(MC, "crash-reports", "*")):
     shutil.copy(f, DST)
+try:
+    srv.stdin.write("stop\n")
+    srv.stdin.flush()
+    srv.wait(timeout=120)
+except Exception:
+    srv.kill()
+srv_log.close()
 log.close()
 print("client:", os.listdir(DST))

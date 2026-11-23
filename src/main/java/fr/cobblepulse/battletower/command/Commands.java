@@ -189,6 +189,8 @@ public final class Commands {
                         .then(literal("rankedstorage").executes(ctx -> fr.cobblepulse.battles.BattlesSelfTest.storage(ctx.getSource())))
                         .then(literal("rankedpersisted").executes(ctx -> fr.cobblepulse.battles.BattlesSelfTest.storagePersisted(ctx.getSource())))
                         .then(literal("battlespersisted").executes(ctx -> fr.cobblepulse.battles.BattlesSelfTest.persisted(ctx.getSource())))
+                        .then(literal("clientscreens").then(argument("joueur", StringArgumentType.word())
+                                .executes(ctx -> fr.cobblepulse.battles.BattlesSelfTest.clientScreens(ctx.getSource(), StringArgumentType.getString(ctx, "joueur")))))
                         .then(literal("multi")
                                 .then(literal("lobby").executes(ctx -> fr.cobblepulse.battles.BattlesSelfTest.multiLobby(ctx.getSource())))
                                 .then(literal("combat").executes(ctx -> fr.cobblepulse.battles.BattlesSelfTest.multiCombat(ctx.getSource())))

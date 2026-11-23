@@ -29,7 +29,9 @@ import fr.cobblepulse.battletower.core.Scheduler;
 import fr.cobblepulse.battletower.data.MonSpec;
 import fr.cobblepulse.battletower.data.PlayerData;
 import fr.cobblepulse.battletower.data.TrainerSpec;
+import fr.cobblepulse.battletower.gui.Gui;
 import fr.cobblepulse.battletower.gui.Screens;
+import fr.cobblepulse.battletower.net.Net;
 import fr.cobblepulse.battletower.storage.DataService;
 import fr.cobblepulse.battletower.storage.PlayerStore;
 import fr.cobblepulse.battletower.tower.TowerManager;
@@ -240,7 +242,7 @@ public final class BattlesSelfTest {
                         String firstSwitch = "";
                         for (String chunk : b.getShowdownMessages()) {
                             for (String line : chunk.split("\n")) {
-                                if (line.contains("Garchomp, L50")) lvl50 = true;
+                                if (line.contains("|Garchomp, ") && line.contains(", L50")) lvl50 = true;
                                 if (firstSwitch.isEmpty() && line.startsWith("|switch|" + sa.actorId + "a")) firstSwitch = line;
                             }
                         }
@@ -503,14 +505,13 @@ public final class BattlesSelfTest {
             TrainerMenus.list(win);
             check(src, "screens.trainer_list", Screens.names(win.getUUID()).stream().anyMatch(n -> n.contains("Gamin Route")),
                     Screens.names(win.getUUID()).toString());
-            tool(src, admin, w1);
-            done("trainers");
+            tool(src, admin, w1, () -> done("trainers"));
         });
         return 1;
     }
 
     /** Objet « Editeur de PNJ » : enregistrement, reserve au staff, edition d'un PNJ, liste, pose d'un dresseur. */
-    static void tool(CommandSourceStack src, FakePlayer admin, WorldTrainers.WorldTrainer w1) {
+    static void tool(CommandSourceStack src, FakePlayer admin, WorldTrainers.WorldTrainer w1, Runnable after) {
         var tool = fr.cobblepulse.battles.tool.NpcEditorTool.class;
         check(src, "tool.registered", fr.cobblepulse.battles.tool.NpcEditorTool.ITEM != null
                 && "cobblepulse_battles:editeur_pnj".equals(net.minecraft.core.registries.BuiltInRegistries.ITEM
@@ -549,11 +550,93 @@ public final class BattlesSelfTest {
                 loc(src.getServer().overworld(), 18, 4).z);
         fr.cobblepulse.battles.tool.NpcEditorTool.onBlock(admin, ground, net.minecraft.core.Direction.UP);
         fr.cobblepulse.battletower.gui.ChatInput.answer(admin, "outil_test", false);
-        WorldTrainers.WorldTrainer placed = WorldTrainers.get("outil_test");
-        check(src, "tool.place_trainer", placed != null && placed.location != null && (int) Math.floor(placed.location.y) == ground.getY() + 1
-                        && placed.npcUuid != null && ("world:outil_test").equals(fr.cobblepulse.battletower.net.EditorService.OPENED.get(admin.getUUID())),
-                placed == null ? "absent" : placed.location.pretty());
-        if (placed != null) WorldTrainers.remove(src.getServer(), placed);
+        // la reponse saisie est traitee au tick suivant
+        Scheduler.later(3, () -> {
+            WorldTrainers.WorldTrainer placed = WorldTrainers.get("outil_test");
+            check(src, "tool.place_trainer", placed != null && placed.location != null && (int) Math.floor(placed.location.y) == ground.getY() + 1
+                            && placed.npcUuid != null && ("world:outil_test").equals(fr.cobblepulse.battletower.net.EditorService.OPENED.get(admin.getUUID())),
+                    placed == null ? "absent" : placed.location.pretty());
+            if (placed != null) WorldTrainers.remove(src.getServer(), placed);
+            after.run();
+        });
+    }
+
+    // ------------------------------------------------------------------ Ecrans sur un vrai client (CI : client de production connecte)
+
+    /** Ouvre chaque ecran pour un vrai joueur connecte et demande une capture au client de test. */
+    public static int clientScreens(CommandSourceStack src, String name) {
+        ServerPlayer p = src.getServer().getPlayerList().getPlayerByName(name);
+        if (p == null) {
+            check(src, "client.player", false, name + " absent");
+            return 0;
+        }
+        ServerLevel level = src.getServer().overworld();
+        src.getServer().getPlayerList().op(p.getGameProfile());
+        party(p, mon("garchomp", 60, "dragonclaw", "earthquake", "swordsdance", "stoneedge"), mon("lucario", 55, "aurasphere", "flashcannon"),
+                mon("gyarados", 58, "waterfall", "dragondance"), mon("rotom", 50, "thunderbolt"), mon("snorlax", 52, "bodyslam"),
+                mon("gengar", 54, "shadowball"));
+        Loc here = Loc.of(p);
+        WorldTrainers.WorldTrainer w = WorldTrainers.get("route_ci");
+        if (w == null) {
+            w = WorldTrainers.create(p, "route_ci", new Loc(here.world, here.x + 3, here.y, here.z + 3, 135f, 0f));
+            TrainerSpec t = fr.cobblepulse.battletower.command.SelfTest.trainer("Gamin du Lac", "MEDIUM", mon("magikarp", 12, "splash"),
+                    mon("goldeen", 14, "peck"), mon("psyduck", 15, "watergun"));
+            t.world = new TrainerSpec.WorldOptions();
+            t.world.bp = 15;
+            t.world.items.add("cobblemon:rare_candy 2");
+            WorldTrainers.update(w, t);
+            WorldTrainers.refresh(src.getServer(), w);
+        }
+        WorldTrainers.WorldTrainer tw = w;
+        FakePlayer shadow = fake(level, "Rival");
+        party(shadow, mon("charizard", 50, "flamethrower"), mon("blastoise", 50, "surf"), mon("venusaur", 50, "gigadrain"),
+                mon("pikachu", 50, "thunderbolt"));
+        Loc.of(p).teleport(shadow);
+        RankedProfile rp = RankedStore.get(p);
+        rp.stats("simple").elo = 1452;
+        rp.stats("simple").wins = 12;
+        rp.stats("simple").losses = 5;
+        rp.stats("double").elo = 1218;
+        RankedStore.get(shadow).stats("simple").elo = 1460;
+        Runnable[] steps = {
+                () -> Hub.open(p), () -> shot(p, "bt_hub"),
+                () -> RankedMenus.main(p), () -> shot(p, "bt_ranked_main"),
+                () -> RankedMenus.leaderboard(p, "simple"), () -> shot(p, "bt_ranked_top"),
+                () -> RankedMenus.missions(p), () -> shot(p, "bt_ranked_missions"),
+                () -> RankedMenus.ranks(p), () -> shot(p, "bt_ranked_ranks"),
+                () -> TrainerMenus.challenge(p, tw), () -> shot(p, "bt_trainer_challenge"),
+                () -> TrainerMenus.list(p), () -> shot(p, "bt_trainer_list"),
+                () -> {
+                    Gui.close(p);
+                    RankedQueue.join(p, "simple", true);
+                    RankedQueue.join(shadow, "simple", true);
+                }, () -> shot(p, "bt_ranked_ready"),
+                () -> {
+                    MatchManager.accept(p);
+                    MatchManager.accept(shadow);
+                }, () -> shot(p, "bt_ranked_select"),
+                () -> {
+                    MatchManager.toggle(p, 0);
+                    MatchManager.toggle(p, 2);
+                }, () -> shot(p, "bt_ranked_select_picked"),
+                () -> {
+                    MatchManager.decline(p);
+                    Gui.close(p);
+                    p.getInventory().selected = 0;
+                    p.getInventory().setItem(0, fr.cobblepulse.battles.tool.NpcEditorTool.stack());
+                }, () -> shot(p, "bt_tool_hand"),
+                () -> {
+                    check(src, "client.screens_sent", true, null);
+                    Net.send(p, "selftest", "{\"done\":true}");
+                    done("clientscreens");
+                }
+        };
+        for (int i = 0; i < steps.length; i++) Scheduler.later(30L * (i + 1), steps[i]);
+        return 1;
+    }
+
+    private static void shot(ServerPlayer p, String name) {
+        Net.send(p, "selftest", "{\"shot\":\"" + name + "\"}");
     }
 
     // ------------------------------------------------------------------ Multi-serveur (CI : serveurs lobby + combat, Redis, MySQL)
