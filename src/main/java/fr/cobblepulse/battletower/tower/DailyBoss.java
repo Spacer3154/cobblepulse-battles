@@ -141,6 +141,10 @@ public final class DailyBoss {
     /** Le joueur rejoint l'arene du Boss du Jour. */
     public static void start(ServerPlayer p) {
         PlayerData d = PlayerStore.get(p);
+        if (fr.cobblepulse.battles.ranked.Ranked.busy(p.getUUID())) {
+            Msg.send(p, "tower.ranked_busy");
+            return;
+        }
         if (!enabled()) {
             Msg.send(p, "daily.disabled");
             return;

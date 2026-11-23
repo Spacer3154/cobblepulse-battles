@@ -16,8 +16,9 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 /**
- * Menu coffre pilote par le serveur. Aucun item ne peut etre deplace, retire ou jete :
- * chaque clic est intercepte et transforme en action.
+ * Menu pilote par le serveur. Avec le mod cote client, il s'affiche comme un ecran CobblePulse (cartes, barre d'actions,
+ * recherche, saisie integree, voir {@link Screens}) ; sinon comme un coffre verrouille. Dans les deux cas, chaque clic
+ * est transforme en action cote serveur et aucun objet ne peut etre deplace.
  */
 public class Gui {
     public record Click(ClickType type, int button) {
@@ -41,9 +42,18 @@ public class Gui {
 
     final int rows;
     final Component title;
-    final SimpleContainer container;
+    SimpleContainer container;
     final Map<Integer, Handler> handlers = new HashMap<>();
     Consumer<ServerPlayer> onClose;
+    /** Liste (menus pagines) : l'ecran client affiche une grille unique avec recherche. */
+    boolean list;
+    boolean afterBattle;
+    /** Joueur dont l'ecran client affiche ce menu (rafraichi a chaque modification). */
+    ServerPlayer shownTo;
+    boolean resendQueued;
+    private int tickEvery;
+    private Consumer<Gui> ticker;
+    private Scheduler.Task tickTask;
 
     public Gui(int rows, String legacyTitle) {
         this(rows, TextUtil.legacy(legacyTitle));
@@ -56,7 +66,31 @@ public class Gui {
     }
 
     public int size() {
-        return rows * 9;
+        return container.getContainerSize();
+    }
+
+    /** Agrandit le menu au-dela de 54 cases (ecran client uniquement : listes completes sans pagination). */
+    public Gui grow(int slots) {
+        if (slots <= size()) return this;
+        SimpleContainer c = new SimpleContainer(slots);
+        for (int i = 0; i < container.getContainerSize(); i++) c.setItem(i, container.getItem(i));
+        container = c;
+        return this;
+    }
+
+    public int rows() {
+        return rows;
+    }
+
+    /** Ecran client : attendre la fin de l'animation du combat Cobblemon avant d'afficher (fenetre de butin). */
+    public Gui afterBattle(boolean wait) {
+        this.afterBattle = wait;
+        return this;
+    }
+
+    public Gui list(boolean list) {
+        this.list = list;
+        return this;
     }
 
     public Gui set(int slot, ItemStack item) {
@@ -68,12 +102,26 @@ public class Gui {
         container.setItem(slot, item == null ? ItemStack.EMPTY : item);
         if (handler != null) handlers.put(slot, handler);
         else handlers.remove(slot);
+        if (shownTo != null) Screens.queueRefresh(this);
         return this;
     }
 
     /** Action simple (tout type de clic). */
     public Gui button(int slot, ItemStack item, Consumer<ServerPlayer> action) {
         return set(slot, item, (p, c) -> action.accept(p));
+    }
+
+    /** Action avec type de clic. */
+    public Gui button(int slot, ItemStack item, Handler handler) {
+        return set(slot, item, handler);
+    }
+
+    public Handler handler(int slot) {
+        return handlers.get(slot);
+    }
+
+    public ItemStack get(int slot) {
+        return container.getItem(slot);
     }
 
     public Gui fill(ItemStack filler) {
@@ -93,9 +141,38 @@ public class Gui {
         return this;
     }
 
+    /** Mise a jour periodique tant que le menu est affiche (compte a rebours, progression...). */
+    public Gui every(int ticks, Consumer<Gui> update) {
+        this.tickEvery = Math.max(1, ticks);
+        this.ticker = update;
+        return this;
+    }
+
+    private void startTicker(ServerPlayer p) {
+        if (ticker == null || tickTask != null) return;
+        tickTask = Scheduler.repeat(tickEvery, tickEvery, () -> {
+            boolean visible = shownTo == p || p.containerMenu instanceof LockedMenu lm && lm.gui() == this;
+            if (!visible || p.hasDisconnected()) {
+                if (tickTask != null) tickTask.cancel();
+                tickTask = null;
+                return;
+            }
+            ticker.accept(this);
+        });
+    }
+
     public Gui onClose(Consumer<ServerPlayer> c) {
         this.onClose = c;
         return this;
+    }
+
+    /** Cases interieures (hors bordure) d'un menu de {@code rows} lignes. */
+    public static int[] innerSlots(int rows) {
+        java.util.List<Integer> s = new java.util.ArrayList<>();
+        for (int r = 1; r < rows - 1; r++) for (int c = 1; c < 8; c++) s.add(r * 9 + c);
+        int[] out = new int[s.size()];
+        for (int i = 0; i < out.length; i++) out[i] = s.get(i);
+        return out;
     }
 
     public static ItemStack pane() {
@@ -103,7 +180,25 @@ public class Gui {
     }
 
     public void open(ServerPlayer player) {
+        if (Screens.enabled(player)) {
+            Screens.show(player, this);
+            startTicker(player);
+            return;
+        }
+        Screens.forget(player);
+        if (size() > rows * 9) {
+            SimpleContainer c = new SimpleContainer(rows * 9);
+            for (int i = 0; i < rows * 9; i++) c.setItem(i, container.getItem(i));
+            container = c;
+        }
         player.openMenu(new SimpleMenuProvider((id, inv, p) -> new LockedMenu(id, inv, this), title));
+        startTicker(player);
+    }
+
+    /** Ferme le menu du joueur (coffre ou ecran client). */
+    public static void close(ServerPlayer player) {
+        player.closeContainer();
+        Screens.close(player);
     }
 
     /** Ouvre au tick suivant (a utiliser depuis un clic pour eviter la reentrance). */

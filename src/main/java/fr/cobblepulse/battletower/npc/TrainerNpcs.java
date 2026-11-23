@@ -170,6 +170,8 @@ public final class TrainerNpcs {
             if (t != null) configure(npc, "&c&l" + t.display(), t.skin);
         } else if (npc.getTags().contains(TAG_SHOP)) {
             configure(npc, Cfg.shop.str("menu.npc_name", "&6Marchand de la Tour"), Cfg.shop.str("menu.npc_skin", "builtin:shopkeeper"));
+        } else if (fr.cobblepulse.battles.trainers.WorldTrainers.isWorld(npc)) {
+            fr.cobblepulse.battles.trainers.WorldTrainers.refresh(npc);
         }
     }
 

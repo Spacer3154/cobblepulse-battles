@@ -25,6 +25,17 @@ public final class PlayerData {
     public Set<String> dailyBossBeaten = new LinkedHashSet<>();
     /** Succes debloques : id -> date. */
     public Map<String, Long> achievements = new LinkedHashMap<>();
+    /** Dresseurs hors Tour affrontes (identifiant -> bilan). */
+    public Map<String, TrainerRecord> trainers = new LinkedHashMap<>();
+
+    public static final class TrainerRecord {
+        public int wins;
+        public int losses;
+        public long firstWinAt;
+        public long lastWinAt;
+        public long lastLossAt;
+        public long lastBattleAt;
+    }
     public int bestNoKoStreak;
     public int monotypeFloors;
     /** Achats limites de la boutique : id -> nombre. */
@@ -45,6 +56,7 @@ public final class PlayerData {
         if (dailyBossDay == null) dailyBossDay = "";
         if (dailyBossBeaten == null) dailyBossBeaten = new LinkedHashSet<>();
         if (achievements == null) achievements = new LinkedHashMap<>();
+        if (trainers == null) trainers = new LinkedHashMap<>();
         if (purchases == null) purchases = new HashMap<>();
         if (pendingMessage == null) pendingMessage = "";
     }

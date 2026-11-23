@@ -29,7 +29,7 @@ public final class SkinCache {
         if (ref == null || ref.isBlank()) return null;
         if (ref.startsWith("builtin:")) {
             String name = ref.substring(8).replaceAll("[^a-z0-9_\\-]", "");
-            return new Skin(ResourceLocation.fromNamespaceAndPath(Battletower.MOD_ID, "textures/entity/npc/" + name + ".png"), slimHint);
+            return new Skin(ResourceLocation.fromNamespaceAndPath(Battletower.ASSET_NS, "textures/entity/npc/" + name + ".png"), slimHint);
         }
         Skin s = LOADED.get(ref);
         if (s != null || MISSING.contains(ref)) return s;
@@ -57,7 +57,7 @@ public final class SkinCache {
         }
         try {
             NativeImage img = NativeImage.read(new ByteArrayInputStream(data.png()));
-            ResourceLocation rl = ResourceLocation.fromNamespaceAndPath(Battletower.MOD_ID,
+            ResourceLocation rl = ResourceLocation.fromNamespaceAndPath(Battletower.ASSET_NS,
                     "dynamic_skins/" + Integer.toHexString(data.ref().hashCode()) + "_" + System.nanoTime());
             Minecraft.getInstance().getTextureManager().register(rl, new DynamicTexture(img));
             LOADED.put(data.ref(), new Skin(rl, data.slim()));

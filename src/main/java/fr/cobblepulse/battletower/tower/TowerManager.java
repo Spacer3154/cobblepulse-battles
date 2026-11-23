@@ -151,6 +151,10 @@ public final class TowerManager {
             Msg.send(p, "tower.already_running");
             return;
         }
+        if (fr.cobblepulse.battles.ranked.Ranked.busy(p.getUUID())) {
+            Msg.send(p, "tower.ranked_busy");
+            return;
+        }
         if (!state.open) {
             Msg.send(p, "tower.closed");
             return;
@@ -329,7 +333,7 @@ public final class TowerManager {
         r.resumeClock(TimeFmt.now());
         long token = ++r.countdownToken;
         int cd = Math.max(0, Cfg.tower.i("countdown_seconds", 3));
-        p.closeContainer();
+        fr.cobblepulse.battletower.gui.Gui.close(p);
         for (int i = 0; i < cd; i++) {
             int remaining = cd - i;
             Scheduler.later(1 + i * 20L, () -> {

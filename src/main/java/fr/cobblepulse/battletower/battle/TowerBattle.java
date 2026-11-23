@@ -156,6 +156,14 @@ public final class TowerBattle {
      * Lance le combat. @return message d'erreur, ou null si le combat a demarre.
      */
     public static String start(ServerPlayer player, NPCEntity npc, TrainerSpec spec, Consumer<Outcome> onEnd) {
+        return start(player, npc, spec, onEnd, Cfg.tower.b("battle.clone_parties", true), true);
+    }
+
+    /**
+     * @param cloneParty equipe du joueur copiee et soignee (aucun effet sur ses Pokemon) ; sinon combat reel (EXP, PV, objets)
+     * @param protect    aucun gain d'EXP ni d'EV pendant le combat
+     */
+    public static String start(ServerPlayer player, NPCEntity npc, TrainerSpec spec, Consumer<Outcome> onEnd, boolean cloneParty, boolean protect) {
         try {
             if (CobblemonBridge.isInBattle(player)) return "Vous etes deja en combat.";
             if (npcBusy(npc.getUUID())) return "Ce dresseur est deja en combat.";
@@ -166,10 +174,10 @@ public final class TowerBattle {
             if (npcTeam.isEmpty()) return "Le dresseur n'a aucun Pokemon valide (configuration a corriger par un administrateur).";
             BattleFormat fmt = format(spec);
             int level = Math.max(0, spec.levelScale);
-            boolean clone = Cfg.tower.b("battle.clone_parties", true) || level > 0;
+            boolean clone = cloneParty || level > 0;
             // Equipe du joueur (copies : PV, PP, statuts et objets restitues, aucun gain)
             PlayerPartyStore party = CobblemonBridge.party(player);
-            List<BattlePokemon> playerTeam = party.toBattleTeam(clone, true, null);
+            List<BattlePokemon> playerTeam = party.toBattleTeam(clone, clone || Cfg.tower.b("battle.heal", true) && protect, null);
             if (level > 0) {
                 for (BattlePokemon bp : playerTeam) {
                     bp.getEffectedPokemon().setLevel(level);
@@ -197,7 +205,7 @@ public final class TowerBattle {
                 PokemonBattle b = ok.getBattle();
                 Live l = new Live(b.getBattleId(), player.getUUID(), npc.getUUID(), spec, ai, onEnd);
                 LIVE.put(b.getBattleId(), l);
-                PROTECTED_OWNERS.add(player.getUUID());
+                if (protect) PROTECTED_OWNERS.add(player.getUUID());
                 FieldModifiers.enforce(b, spec);
                 return null;
             }

@@ -1,0 +1,8 @@
+# CobblePulse-Battles : reglages generaux
+
+# Menus affiches comme des ecrans CobblePulse pour les joueurs qui ont le mod cote client.
+# false = menus coffre pour tout le monde.
+client_screens = true
+
+# Fuseau horaire (Boss du Jour, saisons et missions de la Ranked), ex. "Europe/Paris".
+timezone = "Europe/Paris"

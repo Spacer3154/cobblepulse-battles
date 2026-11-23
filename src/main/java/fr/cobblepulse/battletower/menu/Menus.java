@@ -52,7 +52,7 @@ public final class Menus {
             gui.set(10, ItemBuilder.of(Items.IRON_SWORD).name(Msg.format("menu.run_title", "floor", run.floor)).lore(
                     Msg.format("menu.run_time", "time", TimeFmt.clock(run.elapsed(TimeFmt.now()))),
                     Msg.raw("menu.run_click"), Msg.raw("menu.run_right")).glow(true).hideExtra().build(), (pl, c) -> {
-                pl.closeContainer();
+                fr.cobblepulse.battletower.gui.Gui.close(pl);
                 if (c.right()) TowerManager.openPc(pl);
                 else if (c.shift()) confirmAbandon(pl);
                 else TowerManager.engage(pl);
@@ -65,7 +65,7 @@ public final class Menus {
             else if (cd > 0) lore.add(Msg.format("menu.cooldown", "time", TimeFmt.duration(cd)));
             else lore.add(Msg.raw("menu.assault_click"));
             gui.button(10, ItemBuilder.of(Items.DIAMOND_SWORD).name(Msg.raw("menu.assault")).lore(lore).hideExtra().build(), pl -> {
-                pl.closeContainer();
+                fr.cobblepulse.battletower.gui.Gui.close(pl);
                 TowerManager.startAssault(pl);
             });
         }
@@ -77,14 +77,14 @@ public final class Menus {
         for (String l : DailyBoss.rewardDisplay(DailyBoss.currentId())) blore.add("&7 - " + l);
         blore.add(DailyBoss.status(d));
         gui.button(12, ItemBuilder.of(Items.WITHER_SKELETON_SKULL).name(Msg.raw("menu.boss")).lore(blore).build(), pl -> {
-            pl.closeContainer();
+            fr.cobblepulse.battletower.gui.Gui.close(pl);
             DailyBoss.start(pl);
         });
         gui.button(14, ItemBuilder.of(Items.GOLDEN_HELMET).name(Msg.raw("menu.leaderboard")).lore(Msg.raw("menu.leaderboard_lore")).hideExtra().build(),
                 Menus::leaderboard);
         gui.button(16, ItemBuilder.of(Items.WRITABLE_BOOK).name(Msg.raw("menu.achievements")).lore(Msg.raw("menu.achievements_lore")).build(),
                 Menus::achievements);
-        gui.button(22, ItemBuilder.of(Items.BARRIER).name(Msg.raw("menu.close")).build(), ServerPlayer::closeContainer);
+        gui.button(22, ItemBuilder.of(Items.BARRIER).name(Msg.raw("menu.close")).build(), fr.cobblepulse.battletower.gui.Gui::close);
         if (Perms.isAdmin(p)) {
             gui.button(26, ItemBuilder.of(Items.COMMAND_BLOCK).name(Msg.raw("menu.admin")).build(), AdminMenus::panel);
         }
@@ -121,7 +121,7 @@ public final class Menus {
         lore.add(0, Msg.format("top.you_rank", "rank", rank > 0 ? "#" + rank : "-", "total", PlayerStore.rankedCount()));
         gui.set(49, ItemBuilder.of(Items.PLAYER_HEAD).head(p.getGameProfile()).name(Msg.raw("top.you")).lore(lore).glow(true).build());
         gui.button(45, ItemBuilder.of(Items.OAK_DOOR).name(Msg.raw("general.back")).build(), Menus::main);
-        gui.button(53, ItemBuilder.of(Items.BARRIER).name(Msg.raw("menu.close")).build(), ServerPlayer::closeContainer);
+        gui.button(53, ItemBuilder.of(Items.BARRIER).name(Msg.raw("menu.close")).build(), fr.cobblepulse.battletower.gui.Gui::close);
         gui.open(p);
     }
 

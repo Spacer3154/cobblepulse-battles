@@ -15,6 +15,7 @@ import java.util.stream.Stream;
 public final class Cfg {
     public static final List<String> DEFAULT_TIERS = List.of("ag", "uber", "ou", "uu", "ru", "pu", "zu", "monotype", "nfe", "lc");
 
+    public static TomlFile general;
     public static TomlFile storage;
     public static TomlFile tower;
     public static TomlFile rewards;
@@ -29,7 +30,39 @@ public final class Cfg {
     private Cfg() {}
 
     public static Path root() {
+        return FabricLoader.getInstance().getConfigDir().resolve("cobblepulse_battles");
+    }
+
+    /** Ancien dossier de Battletower 1.x, deplace une fois vers {@link #root()}. */
+    public static Path legacyRoot() {
         return FabricLoader.getInstance().getConfigDir().resolve("cobblepulse_battletower");
+    }
+
+    /**
+     * Migration Battletower -> CobblePulse-Battles : le dossier config/cobblepulse_battletower (reglages, donnees
+     * JSON/SQLite, skins) devient config/cobblepulse_battles. Rien n'est ecrase si le nouveau dossier existe deja.
+     */
+    private static void migrateLegacy() {
+        Path old = legacyRoot();
+        Path now = root();
+        if (!Files.isDirectory(old) || Files.exists(now)) return;
+        try {
+            Files.move(old, now);
+            Battletower.LOG.info("[Battles] Configuration de Battletower deplacee : {} -> {}", old, now);
+        } catch (Exception moveFailed) {
+            try (var walk = Files.walk(old)) {
+                for (Path src : (Iterable<Path>) walk::iterator) {
+                    Path dst = now.resolve(old.relativize(src).toString());
+                    if (Files.isDirectory(src)) Files.createDirectories(dst);
+                    else Files.copy(src, dst);
+                }
+                Files.writeString(old.resolve("DEPLACE_VERS_cobblepulse_battles.txt"),
+                        "Ces fichiers ont ete copies dans config/cobblepulse_battles (CobblePulse-Battles). Ce dossier n'est plus lu.\n");
+                Battletower.LOG.info("[Battles] Configuration de Battletower copiee vers {}", now);
+            } catch (Exception e) {
+                Battletower.LOG.error("[Battles] Migration de {} impossible : {}", old, e.toString());
+            }
+        }
     }
 
     public static Path dataDir() {
@@ -45,7 +78,9 @@ public final class Cfg {
     }
 
     public static void loadAll() {
+        migrateLegacy();
         Path root = root();
+        general = TomlFile.load(root, "general.toml");
         storage = TomlFile.load(root, "storage.toml");
         tower = TomlFile.load(root, "tower.toml");
         rewards = TomlFile.load(root, "rewards.toml");
@@ -79,7 +114,7 @@ public final class Cfg {
             tiersSource = "config/cobblepulse/tournament_tiers";
             listToml(cp, files);
         } else {
-            tiersSource = "config/cobblepulse_battletower/tiers";
+            tiersSource = "config/cobblepulse_battles/tiers";
             for (String t : DEFAULT_TIERS) files.put(t, TomlFile.load(root, "tiers/" + t + ".toml"));
             listToml(root.resolve("tiers"), files);
         }

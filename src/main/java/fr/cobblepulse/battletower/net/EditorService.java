@@ -89,6 +89,23 @@ public final class EditorService {
                 meta(Msg.format("editor.title_boss", "id", id))));
     }
 
+    /** Dresseur hors Tour (onglet Recompenses en plus). */
+    public static void openWorld(ServerPlayer p, String id) {
+        if (!Perms.admin(p, fr.cobblepulse.battles.trainers.TrainerCommands.PERM_ADMIN)) {
+            Msg.send(p, "general.no_permission");
+            return;
+        }
+        var w = fr.cobblepulse.battles.trainers.WorldTrainers.get(id);
+        if (w == null) {
+            Msg.send(p, "trainer.unknown", "id", id);
+            return;
+        }
+        if (!clientReady(p)) return;
+        if (w.trainer.world == null) w.trainer.world = new TrainerSpec.WorldOptions();
+        ServerPlayNetworking.send(p, new Payloads.OpenEditor("world", w.id, Json.GSON.toJson(w.trainer),
+                meta(Msg.format("editor.title_world", "id", w.id))));
+    }
+
     /** Listes utiles a l'editeur : skins, tiers, natures, types Tera. */
     static String meta(String title) {
         JsonObject o = new JsonObject();
@@ -130,7 +147,9 @@ public final class EditorService {
 
     private static void onSave(ServerPlayer p, Payloads.SaveTrainer payload) {
         boolean boss = "boss".equals(payload.kind());
-        if (!Perms.admin(p, boss ? Perms.ADMIN_BOSS : Perms.ADMIN_NPC)) {
+        boolean world = "world".equals(payload.kind());
+        String node = world ? fr.cobblepulse.battles.trainers.TrainerCommands.PERM_ADMIN : boss ? Perms.ADMIN_BOSS : Perms.ADMIN_NPC;
+        if (!Perms.admin(p, node)) {
             Msg.send(p, "general.no_permission");
             return;
         }
@@ -152,7 +171,15 @@ public final class EditorService {
             return;
         }
         MinecraftServer s = p.server;
-        if (boss) {
+        if (world) {
+            var w = fr.cobblepulse.battles.trainers.WorldTrainers.get(payload.id());
+            if (w == null) {
+                reply(p, false, Msg.raw("trainer.unknown").replace("%id%", payload.id()), List.of());
+                return;
+            }
+            fr.cobblepulse.battles.trainers.WorldTrainers.update(w, spec);
+            fr.cobblepulse.battles.trainers.WorldTrainers.refresh(s, w);
+        } else if (boss) {
             TowerConfig.bosses().bosses.put(payload.id().toLowerCase(Locale.ROOT), spec);
             TowerConfig.saveBosses();
             if (payload.id().equalsIgnoreCase(DailyBoss.currentId())) {

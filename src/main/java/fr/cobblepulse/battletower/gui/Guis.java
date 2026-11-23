@@ -17,11 +17,11 @@ public final class Guis {
         Gui gui = new Gui(3, title);
         gui.fill(Gui.pane());
         gui.button(11, ItemBuilder.of(Items.LIME_CONCRETE).name("&a&lConfirmer").lore("&7" + question).build(), p -> {
-            p.closeContainer();
+            fr.cobblepulse.battletower.gui.Gui.close(p);
             yes.run();
         });
         gui.button(15, ItemBuilder.of(Items.RED_CONCRETE).name("&c&lAnnuler").build(), p -> {
-            p.closeContainer();
+            fr.cobblepulse.battletower.gui.Gui.close(p);
             if (no != null) no.run();
         });
         gui.open(player);
@@ -37,7 +37,7 @@ public final class Guis {
                     (p, c) -> {
                         ServerPlayer fresh = p.server.getPlayerList().getPlayer(target.getUUID());
                         if (fresh != null) onPick.accept(fresh);
-                        else p.closeContainer();
+                        else fr.cobblepulse.battletower.gui.Gui.close(p);
                     }));
         }
         Paged.open(viewer, title, entries, 0, back);

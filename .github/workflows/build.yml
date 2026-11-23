@@ -52,6 +52,8 @@ jobs:
           echo "status=$status" >> "$GITHUB_OUTPUT"
           grep -E "error:|warning: \[removal\]|FAILURE|What went wrong" -A3 out/build.log > out/build-errors.txt || true
           cp build/libs/*.jar out/ 2>/dev/null || true
+          # Nom historique : les CI de CobblePulse Utils et Battlepass telechargent encore cobblepulse-battletower-1.0.0.jar
+          for j in out/cobblepulse-battles-*.jar; do case "$j" in *sources*) ;; *) cp "$j" out/cobblepulse-battletower-1.0.0.jar ;; esac; done
           exit 0
 
       - name: Server smoke test
@@ -72,7 +74,7 @@ jobs:
           cd out
           echo "sha=${GITHUB_SHA} build=${{ steps.build.outputs.status }} run=${GITHUB_RUN_ID}" > STATUS
           git init -q -b ci-output
-          git config user.name "battletower-ci"
+          git config user.name "battles-ci"
           git config user.email "ci@users.noreply.github.com"
           git add -A
           git commit -qm "CI output ${GITHUB_SHA}"

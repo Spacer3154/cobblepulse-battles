@@ -32,6 +32,8 @@ public final class DataService {
     private static final Map<String, PlayerData> DIRTY_PLAYERS = new LinkedHashMap<>();
     private static final Map<String, Supplier<Object>> DIRTY_KV = new LinkedHashMap<>();
     private static Scheduler.Task flushTask;
+    /** Ecritures supplementaires faites au meme rythme (profils Ranked...). */
+    public static final List<Runnable> FLUSH_HOOKS = new java.util.concurrent.CopyOnWriteArrayList<>();
 
     private DataService() {}
 
@@ -118,6 +120,13 @@ public final class DataService {
 
     public static void flushDirty() {
         if (storage == null) return;
+        for (Runnable hook : FLUSH_HOOKS) {
+            try {
+                hook.run();
+            } catch (Throwable t) {
+                Battletower.LOG.error("[Battles] Ecriture differee impossible", t);
+            }
+        }
         if (!DIRTY_PLAYERS.isEmpty()) {
             List<PlayerData> snaps = new ArrayList<>();
             for (PlayerData p : DIRTY_PLAYERS.values()) snaps.add(Json.copy(p, PlayerData.class));

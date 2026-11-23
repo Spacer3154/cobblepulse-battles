@@ -27,10 +27,21 @@ public final class Msg {
     public static String format(String key, Object... kv) {
         String s = raw(key);
         if (s.contains("%prefix%")) s = s.replace("%prefix%", raw("general.prefix"));
+        if (s.contains("%prefix_ranked%")) s = s.replace("%prefix_ranked%", raw("ranked.prefix"));
+        if (s.contains("%prefix_trainer%")) s = s.replace("%prefix_trainer%", raw("trainer.prefix"));
         for (int i = 0; i + 1 < kv.length; i += 2) {
             s = s.replace("%" + kv[i] + "%", String.valueOf(kv[i + 1]));
         }
         return s;
+    }
+
+    /** Texte sans prefixe (titres d'ecran, fenetres de saisie). */
+    public static String formatBare(String key, Object... kv) {
+        String s = raw(key).replaceAll("%prefix(_[a-z0-9_]+)?%", "");
+        for (int i = 0; i + 1 < kv.length; i += 2) {
+            s = s.replace("%" + kv[i] + "%", String.valueOf(kv[i + 1]));
+        }
+        return s.trim();
     }
 
     public static MutableComponent get(String key, Object... kv) {

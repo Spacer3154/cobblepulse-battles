@@ -1,0 +1,100 @@
+# ═══════════════════════════════════════════════════════════════════════
+#  Ranked : presets de format
+#  Chaque saison (saisons.toml) choisit un preset. Un preset contient un format
+#  « simple » et un format « double ». Les identifiants d'espèces, capacités et
+#  talents s'écrivent sans espace ni accent (ex. "koraidon", "sheercold", "moody").
+# ═══════════════════════════════════════════════════════════════════════
+
+# Pokémon « restreints » (légendaires de boîte), limités par max_restreints
+restreints = ["mewtwo", "lugia", "hooh", "kyogre", "groudon", "rayquaza", "dialga", "palkia", "giratina",
+    "reshiram", "zekrom", "kyurem", "xerneas", "yveltal", "zygarde", "cosmog", "cosmoem", "solgaleo", "lunala",
+    "necrozma", "zacian", "zamazenta", "eternatus", "calyrex", "koraidon", "miraidon", "terapagos"]
+
+# Capacités OHKO (clause OHKO) et d'esquive (clause d'esquive)
+capacites_ohko = ["fissure", "guillotine", "horndrill", "sheercold"]
+capacites_esquive = ["doubleteam", "minimize"]
+# Capacités de sommeil (limite_capacites_sommeil)
+capacites_sommeil = ["spore", "sleeppowder", "hypnosis", "sing", "grasswhistle", "lovelykiss", "darkvoid", "yawn"]
+
+[default]
+nom = "Standard"
+
+[default.simple]
+actif = true
+nom = "Simple"
+# Pokémon montrés à l'aperçu (les 6 de l'équipe au plus) et Pokémon amenés au combat
+equipe_visible = 6
+equipe_choisie = 3
+# Niveau imposé à tous les Pokémon (0 = niveaux réels)
+niveau = 50
+# Secondes par tour (0 = pas de minuteur) et durée max du match en minutes (0 = illimitée)
+minuteur_tour = 90
+duree_match = 15
+mega = true
+tera = false
+z = true
+dynamax = false
+clause_espece = true
+# Nombre max d'exemplaires d'un même objet tenu (0 = pas de limite)
+clause_objet = 1
+clause_ohko = true
+clause_esquive = true
+clause_sommeil = true
+limite_capacites_sommeil = false
+max_restreints = 1
+# Tier supplémentaire (fichiers tiers/*.toml), ex. "ou". Vide = aucun.
+tier = ""
+# aucun, monotype, petite_coupe (niveau 5, non évolués), nfe (pas au stade final), chromatique, pokedex (dex_min..dex_max)
+format_special = "aucun"
+dex_min = 1
+dex_max = 1025
+especes_interdites = ["koraidon", "miraidon"]
+capacites_interdites = []
+talents_interdits = ["moody"]
+objets_interdits = []
+
+[default.simple.matchmaking]
+# Écart d'Elo autorisé, qui s'élargit avec l'attente (classé uniquement)
+ecart_elo = true
+ecart_initial = 200
+delai_elargissement = 30
+pas_elargissement = 50
+multiplicateur_max = 3.0
+# Match immédiat si l'écart est sous cette valeur
+ecart_immediat = 100
+
+[default.double]
+actif = true
+nom = "Double"
+equipe_visible = 6
+equipe_choisie = 4
+niveau = 50
+minuteur_tour = 120
+duree_match = 20
+mega = false
+tera = true
+z = false
+dynamax = false
+clause_espece = true
+clause_objet = 1
+clause_ohko = true
+clause_esquive = true
+clause_sommeil = false
+limite_capacites_sommeil = false
+max_restreints = 2
+tier = ""
+format_special = "aucun"
+dex_min = 1
+dex_max = 1025
+especes_interdites = []
+capacites_interdites = []
+talents_interdits = ["moody"]
+objets_interdits = []
+
+[default.double.matchmaking]
+ecart_elo = true
+ecart_initial = 200
+delai_elargissement = 30
+pas_elargissement = 50
+multiplicateur_max = 3.0
+ecart_immediat = 100

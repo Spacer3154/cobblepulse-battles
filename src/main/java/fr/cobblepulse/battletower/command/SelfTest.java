@@ -62,13 +62,13 @@ import java.util.concurrent.ConcurrentHashMap;
 /** Auto-diagnostic (CI) : vrais combats contre l'IA de la tour, pilotes cote joueur par un bot. */
 public final class SelfTest {
     private static final List<String> REPORT = new ArrayList<>();
-    private static final Map<String, List<String>> LOGS = new ConcurrentHashMap<>();
-    private static final Map<UUID, String> TAGS = new ConcurrentHashMap<>();
+    public static final Map<String, List<String>> LOGS = new ConcurrentHashMap<>();
+    public static final Map<UUID, String> TAGS = new ConcurrentHashMap<>();
     private static boolean botStarted;
 
     private SelfTest() {}
 
-    private static void check(CommandSourceStack src, String name, boolean ok, String detail) {
+    public static void check(CommandSourceStack src, String name, boolean ok, String detail) {
         String line = (ok ? "PASS " : "FAIL ") + name + (detail == null || detail.isEmpty() ? "" : " - " + detail);
         REPORT.add(line);
         Battletower.LOG.info("[Battletower][selftest] {}", line);
@@ -77,7 +77,7 @@ public final class SelfTest {
 
     // ------------------------------------------------------------------ Bot de test (cote joueur)
 
-    private static void startBot() {
+    public static void startBot() {
         if (botStarted) return;
         botStarted = true;
         TowerBattle.observer = (battle, live) -> {
@@ -165,7 +165,7 @@ public final class SelfTest {
         return PassActionResponse.INSTANCE;
     }
 
-    private static FakePlayer fake(ServerLevel level, String name) {
+    public static FakePlayer fake(ServerLevel level, String name) {
         FakePlayer fp = FakePlayer.get(level, new GameProfile(UUID.nameUUIDFromBytes(("bt-" + name).getBytes(StandardCharsets.UTF_8)), name));
         Players.registerTest(fp);
         registerInPlayerList(level.getServer(), fp);
@@ -197,7 +197,7 @@ public final class SelfTest {
         }
     }
 
-    private static void party(ServerPlayer p, MonSpec... mons) {
+    public static void party(ServerPlayer p, MonSpec... mons) {
         var party = CobblemonBridge.party(p);
         for (Pokemon pk : CobblemonBridge.partyList(p)) party.remove(pk);
         for (MonSpec m : mons) {
@@ -208,7 +208,7 @@ public final class SelfTest {
         }
     }
 
-    private static MonSpec mon(String species, int level, String... moves) {
+    public static MonSpec mon(String species, int level, String... moves) {
         MonSpec m = new MonSpec();
         m.species = species;
         m.level = level;
@@ -216,7 +216,7 @@ public final class SelfTest {
         return m;
     }
 
-    private static TrainerSpec trainer(String name, String ai, MonSpec... team) {
+    public static TrainerSpec trainer(String name, String ai, MonSpec... team) {
         TrainerSpec t = new TrainerSpec();
         t.name = name;
         t.ai = ai;
@@ -228,7 +228,7 @@ public final class SelfTest {
     }
 
     /** Execute {@code then} des que {@code cond} est vraie (verifiee chaque seconde), ou au bout de {@code maxSeconds}. */
-    private static void waitFor(java.util.function.BooleanSupplier cond, int maxSeconds, Runnable then) {
+    public static void waitFor(java.util.function.BooleanSupplier cond, int maxSeconds, Runnable then) {
         long deadline = Scheduler.currentTick() + maxSeconds * 20L;
         Runnable[] step = new Runnable[1];
         step[0] = () -> {
@@ -246,7 +246,7 @@ public final class SelfTest {
 
     private static boolean forced;
 
-    private static BlockPos base(ServerLevel level) {
+    public static BlockPos base(ServerLevel level) {
         BlockPos b = level.getSharedSpawnPos();
         if (!forced) {
             forced = true;

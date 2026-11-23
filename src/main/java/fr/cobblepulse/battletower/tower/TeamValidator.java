@@ -30,6 +30,12 @@ public final class TeamValidator {
             errors.add(Msg.format("tier.team_read_error"));
             return errors;
         }
+        return validate(team, r, ignoreLevel);
+    }
+
+    /** Validation d'une liste de Pokemon (selection de la Ranked, equipe transmise par un autre serveur...). */
+    public static List<String> validate(List<MonInfo> team, TierRules r, boolean ignoreLevel) {
+        List<String> errors = new ArrayList<>();
         if (team.size() < r.minTeamSize) errors.add(Msg.format("tier.team_too_small", "min", r.minTeamSize));
         if (team.size() > r.maxTeamSize) errors.add(Msg.format("tier.team_too_big", "max", r.maxTeamSize));
         Set<String> species = new HashSet<>();

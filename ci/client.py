@@ -53,7 +53,7 @@ with open(os.path.join(MC, "options.txt"), "w") as fh:
              "renderDistance:2\nmaxFps:30\nsoundCategory_master:0.0\n")
 env = dict(os.environ, LIBGL_ALWAYS_SOFTWARE="1", MESA_GL_VERSION_OVERRIDE="4.5")
 cmd = ["xvfb-run", "-n", "97", "-s", "-screen 0 1280x720x24"] + base + ["start", "-u", "BTClientTest", "--resolution", "1280x720", "--jvm", java,
-       "--jvm-args=-Xmx3G -Dcobblepulse_battletower.clienttest=true", version]
+       "--jvm-args=-Xmx3G -Dcobblepulse_battles.clienttest=true", version]
 log.write("\n$ " + " ".join(cmd) + "\n")
 log.flush()
 proc = subprocess.Popen(cmd, stdout=log, stderr=subprocess.STDOUT, env=env)

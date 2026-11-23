@@ -101,6 +101,9 @@ public final class SqlStorage implements Storage {
             st.executeUpdate("CREATE TABLE IF NOT EXISTS " + p + "daily_logs (" + autoId + ", day VARCHAR(16), boss_id VARCHAR(64),"
                     + " player_uuid VARCHAR(36), player_name VARCHAR(32), result VARCHAR(16), turns INT, at BIGINT)" + charset);
             st.executeUpdate("CREATE TABLE IF NOT EXISTS " + p + "kv (k VARCHAR(128) PRIMARY KEY, v MEDIUMTEXT)" + charset);
+            st.executeUpdate("CREATE TABLE IF NOT EXISTS " + p + "rk_profiles (uuid VARCHAR(36) PRIMARY KEY, name VARCHAR(32),"
+                    + " updated BIGINT, data MEDIUMTEXT)" + charset);
+            st.executeUpdate("CREATE TABLE IF NOT EXISTS " + p + "rk_matches (" + autoId + ", at BIGINT, data TEXT)" + charset);
         } finally {
             release(c);
         }
@@ -217,6 +220,60 @@ public final class SqlStorage implements Storage {
             ps.setString(5, log.result());
             ps.setInt(6, log.turns());
             ps.setLong(7, log.at());
+            ps.executeUpdate();
+        } finally {
+            release(c);
+        }
+    }
+
+    @Override
+    public List<String> loadRankedProfiles() throws SQLException {
+        List<String> out = new ArrayList<>();
+        Connection c = conn();
+        try (PreparedStatement ps = c.prepareStatement("SELECT data FROM " + p + "rk_profiles"); ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                String d = rs.getString(1);
+                if (d != null && !d.isBlank()) out.add(d);
+            }
+        } finally {
+            release(c);
+        }
+        return out;
+    }
+
+    @Override
+    public String loadRankedProfile(String uuid) throws SQLException {
+        Connection c = conn();
+        try (PreparedStatement ps = c.prepareStatement("SELECT data FROM " + p + "rk_profiles WHERE uuid = ?")) {
+            ps.setString(1, uuid);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() ? rs.getString(1) : null;
+            }
+        } finally {
+            release(c);
+        }
+    }
+
+    @Override
+    public void saveRankedProfile(String uuid, String name, String json) throws SQLException {
+        Connection c = conn();
+        try (PreparedStatement ps = c.prepareStatement("REPLACE INTO " + p + "rk_profiles (uuid, name, updated, data) VALUES (?,?,?,?)")) {
+            ps.setString(1, uuid);
+            ps.setString(2, name);
+            ps.setLong(3, System.currentTimeMillis());
+            ps.setString(4, json);
+            ps.executeUpdate();
+        } finally {
+            release(c);
+        }
+    }
+
+    @Override
+    public void logRankedMatch(String json) throws SQLException {
+        Connection c = conn();
+        try (PreparedStatement ps = c.prepareStatement("INSERT INTO " + p + "rk_matches (at, data) VALUES (?,?)")) {
+            ps.setLong(1, System.currentTimeMillis());
+            ps.setString(2, json);
             ps.executeUpdate();
         } finally {
             release(c);

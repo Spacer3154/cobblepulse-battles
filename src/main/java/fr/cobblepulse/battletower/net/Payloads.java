@@ -11,7 +11,33 @@ import net.minecraft.resources.ResourceLocation;
 public final class Payloads {
     private static final StreamCodec<ByteBuf, String> BIG_STRING = ByteBufCodecs.stringUtf8(1 << 20);
 
+    private static final StreamCodec<ByteBuf, String> HUGE_STRING = ByteBufCodecs.stringUtf8(1 << 22);
+
     private Payloads() {}
+
+    /** Client -> serveur : action des ecrans (clic, saisie, fermeture...) + arguments JSON. */
+    public record Action(String action, String json) implements CustomPacketPayload {
+        public static final Type<Action> TYPE = makeType("action");
+        public static final StreamCodec<ByteBuf, Action> CODEC = StreamCodec.composite(
+                ByteBufCodecs.STRING_UTF8, Action::action, HUGE_STRING, Action::json, Action::new);
+
+        @Override
+        public Type<? extends CustomPacketPayload> type() {
+            return TYPE;
+        }
+    }
+
+    /** Serveur -> client : donnees des ecrans (menu, saisie, hub, selection d'equipe...). */
+    public record Data(String kind, String json) implements CustomPacketPayload {
+        public static final Type<Data> TYPE = makeType("data");
+        public static final StreamCodec<ByteBuf, Data> CODEC = StreamCodec.composite(
+                ByteBufCodecs.STRING_UTF8, Data::kind, HUGE_STRING, Data::json, Data::new);
+
+        @Override
+        public Type<? extends CustomPacketPayload> type() {
+            return TYPE;
+        }
+    }
 
     private static <T extends CustomPacketPayload> CustomPacketPayload.Type<T> makeType(String path) {
         return new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(Battletower.MOD_ID, path));

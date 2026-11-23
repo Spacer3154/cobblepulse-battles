@@ -1,0 +1,24 @@
+# ═══════════════════════════════════════════════════════════════════════
+#  Ranked : restrictions pendant la file d'attente et pendant le match
+#  (de « match trouvé » jusqu'au retour après le combat). true = interdit.
+# ═══════════════════════════════════════════════════════════════════════
+
+[file]
+pc = true
+casser_blocs = false
+poser_blocs = false
+interagir_blocs = false
+utiliser_objets = false
+interagir_entites = false
+attaquer = false
+commandes_bloquees = ["tp", "teleport", "spawn", "home", "warp", "tpa", "pc", "pokeheal", "rtp", "back"]
+
+[match]
+pc = true
+casser_blocs = true
+poser_blocs = true
+interagir_blocs = true
+utiliser_objets = true
+interagir_entites = true
+attaquer = true
+commandes_bloquees = ["tp", "teleport", "spawn", "home", "warp", "tpa", "pc", "pokeheal", "rtp", "back", "battletower", "bt"]

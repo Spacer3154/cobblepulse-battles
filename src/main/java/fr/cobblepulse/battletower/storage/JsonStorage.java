@@ -101,4 +101,41 @@ public final class JsonStorage implements Storage {
         Files.writeString(root.resolve("daily_logs.jsonl"), Json.COMPACT.toJson(log) + "\n", StandardCharsets.UTF_8,
                 StandardOpenOption.CREATE, StandardOpenOption.APPEND);
     }
+
+    private Path ranked() {
+        return root.resolve("ranked");
+    }
+
+    @Override
+    public List<String> loadRankedProfiles() throws IOException {
+        List<String> out = new java.util.ArrayList<>();
+        if (!Files.isDirectory(ranked())) return out;
+        try (Stream<Path> s = Files.list(ranked())) {
+            for (Path f : s.filter(x -> x.toString().endsWith(".json")).toList()) {
+                try {
+                    out.add(Files.readString(f, StandardCharsets.UTF_8));
+                } catch (Exception e) {
+                    fr.cobblepulse.battletower.Battletower.LOG.warn("[Battles] Profil Ranked illisible {} : {}", f, e.toString());
+                }
+            }
+        }
+        return out;
+    }
+
+    @Override
+    public String loadRankedProfile(String uuid) throws IOException {
+        Path f = ranked().resolve(safe(uuid) + ".json");
+        return Files.exists(f) ? Files.readString(f, StandardCharsets.UTF_8) : null;
+    }
+
+    @Override
+    public void saveRankedProfile(String uuid, String name, String json) throws IOException {
+        writeAtomic(ranked().resolve(safe(uuid) + ".json"), json);
+    }
+
+    @Override
+    public void logRankedMatch(String json) throws IOException {
+        Files.writeString(root.resolve("ranked_matches.jsonl"), json + "\n", StandardCharsets.UTF_8,
+                StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+    }
 }

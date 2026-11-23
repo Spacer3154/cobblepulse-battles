@@ -62,7 +62,7 @@ public final class AdminMenus {
         });
         gui.button(20, ItemBuilder.of(Items.CLOCK).name(Msg.raw("admin.runs")).lore(Msg.format("admin.running", "n", TowerManager.runs().size())).build(),
                 AdminMenus::runs);
-        gui.button(22, ItemBuilder.of(Items.BARRIER).name(Msg.raw("menu.close")).build(), ServerPlayer::closeContainer);
+        gui.button(22, ItemBuilder.of(Items.BARRIER).name(Msg.raw("menu.close")).build(), fr.cobblepulse.battletower.gui.Gui::close);
         gui.button(24, ItemBuilder.of(Items.REPEATER).name(Msg.raw("admin.reload")).build(), pl -> {
             if (!Perms.admin(pl, Perms.ADMIN_RELOAD)) {
                 Msg.send(pl, "general.no_permission");
@@ -101,10 +101,10 @@ public final class AdminMenus {
         gui.fill(Gui.pane());
         gui.button(10, ItemBuilder.of(Items.ENDER_PEARL).name(Msg.raw("admin.floor_goto")).build(), pl -> {
             if (fe.arrival != null) fe.arrival.teleport(pl);
-            pl.closeContainer();
+            fr.cobblepulse.battletower.gui.Gui.close(pl);
         });
         gui.button(11, ItemBuilder.of(Items.WRITABLE_BOOK).name(Msg.raw("admin.floor_edit")).lore(Msg.raw("admin.floor_edit_lore")).build(), pl -> {
-            pl.closeContainer();
+            fr.cobblepulse.battletower.gui.Gui.close(pl);
             EditorService.openFloor(pl, n);
         });
         gui.button(13, ItemBuilder.of(Items.COMPASS).name(Msg.raw("admin.floor_settp")).build(), pl -> {
@@ -139,7 +139,7 @@ public final class AdminMenus {
                     .name("&c" + t.display() + " &8(" + e.getKey() + ")").lore(Msg.format("admin.floor_team", "n", t.team.size()),
                             "&7IA : &f" + t.aiLevel() + " &7| Tier : &f" + t.tier, Msg.raw("admin.boss_click")).glow(e.getKey().equals(current)).build(),
                     (pl, c) -> {
-                        pl.closeContainer();
+                        fr.cobblepulse.battletower.gui.Gui.close(pl);
                         EditorService.openBoss(pl, e.getKey());
                     }));
         }

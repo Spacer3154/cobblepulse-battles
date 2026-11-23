@@ -155,7 +155,10 @@ public final class TrainerEditorScreen extends Screen {
         py = (height - ph) / 2;
         moveBoxes.clear();
         speciesBox = null;
-        String[] tabs = {"Paramètres", "Équipe (" + spec.team.size() + "/6)", "Apparence"};
+        boolean world = "world".equals(kind);
+        if (world && spec.world == null) spec.world = new TrainerSpec.WorldOptions();
+        String[] tabs = world ? new String[]{"Paramètres", "Équipe (" + spec.team.size() + "/6)", "Apparence", "Récompenses"}
+                : new String[]{"Paramètres", "Équipe (" + spec.team.size() + "/6)", "Apparence"};
         int tx = px + 6;
         for (int i = 0; i < tabs.length; i++) {
             int idx = i;
@@ -167,8 +170,9 @@ public final class TrainerEditorScreen extends Screen {
             addRenderableWidget(b);
             tx += w + (tab == i ? 8 : 0) + 3;
         }
-        int iw = font.width("Importer Showdown") + 12;
-        addRenderableWidget(Button.builder(Component.literal("Importer Showdown"), b -> minecraft.setScreen(new ImportScreen(this)))
+        String importLabel = world ? "Importer" : "Importer Showdown";
+        int iw = font.width(importLabel) + 12;
+        addRenderableWidget(Button.builder(Component.literal(importLabel), b -> minecraft.setScreen(new ImportScreen(this)))
                 .bounds(px + pw - 90 - iw, py + 18, iw, 16).tooltip(Tooltip.create(Component.literal("Coller une équipe exportée depuis le teambuilder de Pokémon Showdown"))).build());
         addRenderableWidget(Button.builder(Component.literal("Exporter"), b -> {
             Minecraft.getInstance().keyboardHandler.setClipboard(ShowdownFormat.export(spec.team));
@@ -177,6 +181,7 @@ public final class TrainerEditorScreen extends Screen {
         switch (tab) {
             case 0 -> initGeneral();
             case 1 -> initTeam();
+            case 3 -> initWorld();
             default -> initAppearance();
         }
         int by = py + ph - 22;
@@ -247,6 +252,75 @@ public final class TrainerEditorScreen extends Screen {
         box(mx, y, px + pw - 10 - mx, spec.introMessage, 200, s -> spec.introMessage = s);
         y += 22;
         box(mx, y, px + pw - 10 - mx, spec.defeatMessage, 200, s -> spec.defeatMessage = s);
+    }
+
+    // ------------------------------------------------------------------ Onglet recompenses (dresseurs du monde)
+
+    private static final List<Integer> REMATCH = List.of(-1, 0, 1, 6, 12, 24, 48, 168);
+    private static final List<Integer> LOSS_WAIT = List.of(0, 5, 15, 30, 60, 180, 1440);
+
+    private static String hours(int h) {
+        return switch (h) {
+            case -1 -> "Jamais (une seule victoire)";
+            case 0 -> "Immédiate";
+            case 168 -> "7 jours";
+            default -> h + " h";
+        };
+    }
+
+    private static String minutes(int m) {
+        if (m == 0) return "Aucun";
+        if (m >= 60 && m % 60 == 0) return (m / 60) + " h";
+        return m + " min";
+    }
+
+    private static List<String> splitList(String s) {
+        List<String> out = new ArrayList<>();
+        for (String part : s.split(";")) {
+            String t = part.trim();
+            if (!t.isEmpty()) out.add(t);
+        }
+        return out;
+    }
+
+    private void initWorld() {
+        TrainerSpec.WorldOptions o = spec.world;
+        int c1 = px + 10;
+        int c2 = px + pw / 2 + 4;
+        int half = pw / 2 - 18;
+        int y = py + 44;
+        cycle(c1, y, half, "Mode", List.of("normal", "exhibition"), o.mode, v -> "exhibition".equals(v) ? "Exhibition" : "Normal", v -> o.mode = v);
+        cycle(c2, y, half, "Revanche", REMATCH, o.rematchHours, TrainerEditorScreen::hours, v -> o.rematchHours = v);
+        y += 22;
+        cycle(c1, y, half, "Récomp. revanche", List.of(false, true), o.rematchRewards, v -> v ? "Oui" : "Non", v -> o.rematchRewards = v);
+        cycle(c2, y, half, "Après défaite", LOSS_WAIT, o.lossCooldownMinutes, TrainerEditorScreen::minutes, v -> o.lossCooldownMinutes = v);
+        y += 26;
+        int lx = c1 + Math.max(font.width("Phrase de victoire"), font.width("Commandes")) + 8;
+        box(lx, y, 60, String.valueOf(o.bp), 7, s -> {
+            try {
+                o.bp = Math.max(0, Integer.parseInt(s.trim()));
+            } catch (NumberFormatException ignored) {
+            }
+        });
+        y += 22;
+        box(lx, y, px + pw - 10 - lx, String.join("; ", o.items), 600, s -> o.items = splitList(s));
+        y += 22;
+        box(lx, y, px + pw - 10 - lx, String.join("; ", o.commands), 1500, s -> o.commands = splitList(s));
+        y += 22;
+        box(lx, y, px + pw - 10 - lx, o.winMessage, 200, s -> o.winMessage = s);
+    }
+
+    private void renderWorldLabels(GuiGraphics g) {
+        int c1 = px + 10;
+        int y = py + 44 + 22 + 26 + 4;
+        g.drawString(font, "Battle Points", c1, y, TEXT, false);
+        g.drawString(font, "Objets", c1, y + 22, TEXT, false);
+        g.drawString(font, "Commandes", c1, y + 44, TEXT, false);
+        g.drawString(font, "Phrase de victoire", c1, y + 66, TEXT, false);
+        g.drawWordWrap(font, net.minecraft.network.chat.FormattedText.of(
+                        "Objets et commandes séparés par « ; » (ex. cobblemon:rare_candy 3; minecraft:diamond 2). Commandes lancées par la console, %player% = joueur. "
+                                + "Normal : l'équipe réelle du joueur combat (expérience, PV et objets). Exhibition : copie soignée, sans gain."),
+                c1, y + 88, pw - 20, MUTED);
     }
 
     private String tierName(String id) {
@@ -458,6 +532,7 @@ public final class TrainerEditorScreen extends Screen {
         switch (tab) {
             case 0 -> renderGeneralLabels(g);
             case 1 -> renderTeamLabels(g);
+            case 3 -> renderWorldLabels(g);
             default -> renderAppearance(g);
         }
         int sy = py + ph - 20;

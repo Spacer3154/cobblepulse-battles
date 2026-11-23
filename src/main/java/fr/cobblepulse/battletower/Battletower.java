@@ -32,7 +32,9 @@ import org.slf4j.LoggerFactory;
 
 /** CobblePulse Battletower : Tour de Combat 50 etages, Boss du Jour, Battle Points, boutique et succes. */
 public final class Battletower implements ModInitializer {
-    public static final String MOD_ID = "cobblepulse_battletower";
+    public static final String MOD_ID = "cobblepulse_battles";
+    /** Espace de noms des ressources (textures, langues) conserve depuis Battletower. */
+    public static final String ASSET_NS = "cobblepulse_battletower";
     public static final Logger LOG = LoggerFactory.getLogger("Battletower");
     private static MinecraftServer server;
     private static boolean ready;
@@ -52,17 +54,35 @@ public final class Battletower implements ModInitializer {
         Skins.load();
         EditorService.registerPayloads();
         EditorService.registerReceivers();
-        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> Commands.register(dispatcher));
+        fr.cobblepulse.battletower.net.Net.registerTypes();
+        fr.cobblepulse.battletower.net.Net.registerServer();
+        // Saisie dans le chat (joueurs sans le mod cote client) : la reponse n'est pas diffusee
+        net.fabricmc.fabric.api.message.v1.ServerMessageEvents.ALLOW_CHAT_MESSAGE.register((message, sender, params) ->
+                !fr.cobblepulse.battletower.gui.ChatInput.intercept(sender, message.signedContent()));
+        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
+            Commands.register(dispatcher);
+            fr.cobblepulse.battles.ranked.RankedCommands.register(dispatcher);
+            fr.cobblepulse.battles.trainers.TrainerCommands.register(dispatcher);
+        });
+        fr.cobblepulse.battles.ranked.Ranked.init();
         ServerLifecycleEvents.SERVER_STARTING.register(s -> server = s);
         ServerLifecycleEvents.SERVER_STARTED.register(Battletower::onStarted);
         ServerLifecycleEvents.SERVER_STOPPING.register(Battletower::onStopping);
         ServerLifecycleEvents.SERVER_STOPPED.register(s -> server = null);
         ServerTickEvents.END_SERVER_TICK.register(Scheduler::tick);
         ServerPlayConnectionEvents.JOIN.register((handler, sender, s) -> {
-            if (ready) TowerManager.onJoin(handler.getPlayer());
+            if (ready) {
+                TowerManager.onJoin(handler.getPlayer());
+                fr.cobblepulse.battles.ranked.Ranked.onJoin(handler.getPlayer());
+            }
         });
         ServerPlayConnectionEvents.DISCONNECT.register((handler, s) -> {
-            if (ready) TowerManager.onQuit(handler.getPlayer());
+            fr.cobblepulse.battletower.gui.Screens.forget(handler.getPlayer().getUUID());
+            fr.cobblepulse.battletower.gui.ChatInput.clear(handler.getPlayer().getUUID());
+            if (ready) {
+                fr.cobblepulse.battles.ranked.Ranked.onQuit(handler.getPlayer());
+                TowerManager.onQuit(handler.getPlayer());
+            }
         });
         UseEntityCallback.EVENT.register((player, level, hand, entity, hit) -> {
             if (level.isClientSide() || !(player instanceof ServerPlayer sp) || !TrainerNpcs.isOurs(entity)) return InteractionResult.PASS;
@@ -84,10 +104,20 @@ public final class Battletower implements ModInitializer {
         });
         TowerBattle.register();
         PlaceholderBridge.init();
-        LOG.info("[Battletower] Initialise");
+        LOG.info("[Battles] CobblePulse-Battles initialise");
     }
 
     private static void onNpcInteract(ServerPlayer p, NPCEntity npc) {
+        if (fr.cobblepulse.battles.trainers.WorldTrainers.isWorld(npc)) {
+            var w = fr.cobblepulse.battles.trainers.WorldTrainers.of(npc);
+            if (w == null) return;
+            if (p.isShiftKeyDown() && fr.cobblepulse.battletower.core.Perms.admin(p, fr.cobblepulse.battles.trainers.TrainerCommands.PERM_ADMIN)) {
+                fr.cobblepulse.battletower.net.EditorService.openWorld(p, w.id);
+            } else {
+                fr.cobblepulse.battles.trainers.TrainerMenus.challenge(p, w);
+            }
+            return;
+        }
         if (npc.getTags().contains(TrainerNpcs.TAG_SHOP)) {
             Shop.open(p);
             return;
@@ -113,6 +143,8 @@ public final class Battletower implements ModInitializer {
         TowerConfig.load();
         TowerManager.load();
         DailyBoss.init();
+        fr.cobblepulse.battles.trainers.WorldTrainers.load();
+        fr.cobblepulse.battles.ranked.Ranked.onStarted(s);
         ready = true;
         LOG.info("[Battletower] Pret en {} ms ({} etages, {} tiers depuis {})", System.currentTimeMillis() - t0, Cfg.floors(), Cfg.TIERS.size(), Cfg.tiersSource);
     }
@@ -120,6 +152,7 @@ public final class Battletower implements ModInitializer {
     private static void onStopping(MinecraftServer s) {
         try {
             TowerManager.onServerStopping();
+            fr.cobblepulse.battles.ranked.Ranked.onStopping();
             DataService.shutdown();
         } finally {
             ready = false;
@@ -127,6 +160,7 @@ public final class Battletower implements ModInitializer {
             TowerBattle.clear();
             TowerManager.clearRuntime();
             PlayerStore.clear();
+            fr.cobblepulse.battles.ranked.Ranked.afterStop();
         }
     }
 
@@ -136,6 +170,9 @@ public final class Battletower implements ModInitializer {
         Skins.load();
         TowerConfig.load();
         DailyBoss.rotateIfNeeded(true);
+        fr.cobblepulse.battles.trainers.WorldTrainers.load();
+        if (server != null) fr.cobblepulse.battles.trainers.WorldTrainers.refreshAll(server);
+        fr.cobblepulse.battles.ranked.Ranked.reload();
         if (server != null) TrainerNpcs.refreshAll(server);
     }
 

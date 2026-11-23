@@ -27,5 +27,18 @@ public interface Storage {
     /** Journal des tentatives du Boss du Jour. */
     void logDaily(DailyLog log) throws Exception;
 
+    // ------------------------------------------------------------------ Ranked (CobblePulse-Battles)
+
+    /** Tous les profils Ranked (JSON). */
+    List<String> loadRankedProfiles() throws Exception;
+
+    /** Un profil Ranked relu depuis le stockage (multi-serveur : donnees fraiches), ou null. */
+    String loadRankedProfile(String uuid) throws Exception;
+
+    void saveRankedProfile(String uuid, String name, String json) throws Exception;
+
+    /** Journal des matchs Ranked (une ligne JSON par match). */
+    void logRankedMatch(String json) throws Exception;
+
     record DailyLog(String day, String bossId, String playerUuid, String playerName, String result, int turns, long at) {}
 }
