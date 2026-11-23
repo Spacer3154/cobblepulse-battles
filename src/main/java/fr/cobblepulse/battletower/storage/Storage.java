@@ -35,7 +35,8 @@ public interface Storage {
     /** Un profil Ranked relu depuis le stockage (multi-serveur : donnees fraiches), ou null. */
     String loadRankedProfile(String uuid) throws Exception;
 
-    void saveRankedProfile(String uuid, String name, String json) throws Exception;
+    /** {@code updated} : horodatage du profil ; une version plus ancienne n'ecrase pas une plus recente (SQL). */
+    void saveRankedProfile(String uuid, String name, long updated, String json) throws Exception;
 
     /** Journal des matchs Ranked (une ligne JSON par match). */
     void logRankedMatch(String json) throws Exception;

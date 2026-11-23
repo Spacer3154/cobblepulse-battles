@@ -43,6 +43,10 @@ public final class TrainerCommands {
                     TrainerMenus.list(c.getSource().getPlayerOrException());
                     return 1;
                 }))
+                .then(Commands.literal("outil").executes(c -> {
+                    fr.cobblepulse.battles.tool.NpcEditorTool.give(c.getSource().getPlayerOrException());
+                    return 1;
+                }))
                 .then(Commands.literal("creer").then(Commands.argument("id", StringArgumentType.word()).executes(c -> {
                     ServerPlayer p = c.getSource().getPlayerOrException();
                     String id = StringArgumentType.getString(c, "id");

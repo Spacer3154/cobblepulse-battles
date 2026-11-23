@@ -41,7 +41,7 @@ for slug, ver in {"fabric-api": None, "fabric-language-kotlin": None, "cobblemon
             open(os.path.join(MC, "mods", f[0]["filename"]), "wb").write(get(f[0]["url"]))
             log.write(f"mod {slug} {v['version_number']}\n")
             break
-for j in [j for j in glob.glob("build/libs/*.jar") if not j.endswith("-sources.jar")]:
+for j in [j for j in (glob.glob("build/libs/*.jar") or glob.glob(os.path.join(OUT, "cobblepulse-battles-*.jar"))) if not j.endswith("-sources.jar")]:
     shutil.copy(j, os.path.join(MC, "mods"))
 version = "fabric:1.21.1:" + props.get("loader_version", "0.19.5")
 base = [sys.executable, "-m", "portablemc", "--main-dir", MC, "--work-dir", MC]

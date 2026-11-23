@@ -4,5 +4,10 @@
   "cobblemon.battle.weather.fog.end": "The fog lifted.",
   "cobblemon.battle.weather.btfog.start": "A thick fog covers the battlefield!",
   "cobblemon.battle.weather.btfog.upkeep": "The fog is deep.",
-  "cobblemon.battle.weather.btfog.end": "The fog lifted."
+  "cobblemon.battle.weather.btfog.end": "The fog lifted.",
+  "item.cobblepulse_battles.editeur_pnj": "Éditeur de PNJ",
+  "item.cobblepulse_battles.editeur_pnj.npc": "Clic droit sur un PNJ : ouvrir son éditeur",
+  "item.cobblepulse_battles.editeur_pnj.block": "Clic droit sur un bloc : poser un nouveau dresseur",
+  "item.cobblepulse_battles.editeur_pnj.air": "Clic droit dans le vide : liste des dresseurs",
+  "item.cobblepulse_battles.editeur_pnj.staff": "Réservé au staff"
 }

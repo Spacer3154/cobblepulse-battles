@@ -129,7 +129,7 @@ public final class JsonStorage implements Storage {
     }
 
     @Override
-    public void saveRankedProfile(String uuid, String name, String json) throws IOException {
+    public void saveRankedProfile(String uuid, String name, long updated, String json) throws IOException {
         writeAtomic(ranked().resolve(safe(uuid) + ".json"), json);
     }
 

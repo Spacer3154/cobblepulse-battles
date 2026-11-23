@@ -65,9 +65,13 @@ public final class Hub {
 
     static void admin(ServerPlayer p) {
         Gui g = new Gui(3, f("hub.admin"));
-        if (Perms.admin(p, Perms.ADMIN)) g.button(11, ItemBuilder.of(Items.NETHERITE_SWORD).name(f("hub.admin_tower")).hideExtra().build(), AdminMenus::panel);
-        if (Perms.admin(p, Ranked.PERM_ADMIN)) g.button(13, ItemBuilder.of(Items.DIAMOND_SWORD).name(f("hub.admin_ranked")).hideExtra().build(), RankedMenus::admin);
-        if (Perms.admin(p, TrainerCommands.PERM_ADMIN)) g.button(15, ItemBuilder.of(Items.PLAYER_HEAD).name(f("hub.admin_trainers")).build(), TrainerMenus::list);
+        if (Perms.admin(p, Perms.ADMIN)) g.button(10, ItemBuilder.of(Items.NETHERITE_SWORD).name(f("hub.admin_tower")).hideExtra().build(), AdminMenus::panel);
+        if (Perms.admin(p, Ranked.PERM_ADMIN)) g.button(12, ItemBuilder.of(Items.DIAMOND_SWORD).name(f("hub.admin_ranked")).hideExtra().build(), RankedMenus::admin);
+        if (Perms.admin(p, TrainerCommands.PERM_ADMIN)) g.button(14, ItemBuilder.of(Items.PLAYER_HEAD).name(f("hub.admin_trainers")).build(), TrainerMenus::list);
+        if (fr.cobblepulse.battles.tool.NpcEditorTool.allowed(p)) {
+            g.button(16, ItemBuilder.of(fr.cobblepulse.battles.tool.NpcEditorTool.ITEM).name(f("tool.button")).lore(f("tool.button_lore")).build(),
+                    fr.cobblepulse.battles.tool.NpcEditorTool::give);
+        }
         g.button(18, ItemBuilder.of(Items.ARROW).name(f("hub.back")).build(), Hub::open);
         g.open(p);
     }

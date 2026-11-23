@@ -595,3 +595,11 @@ create_here = "&a&lCréer un dresseur ici"
 create_here_lore = "&7Le PNJ apparaît à votre position."
 ask_id = "Identifiant du dresseur (ex. pecheur_lac) :"
 delete = "&cSupprimer ce dresseur ?"
+
+[tool]
+# Objet d'administration « Éditeur de PNJ » (/dresseur outil, menu Administration)
+given = "%prefix_trainer%&aÉditeur de PNJ reçu &7: clic droit sur un PNJ pour l'éditer, sur un bloc pour poser un dresseur, dans le vide pour la liste."
+no_permission = "%prefix_trainer%&cL'Éditeur de PNJ est réservé au staff."
+not_ours = "%prefix_trainer%&7Ce PNJ n'est pas géré par CobblePulse-Battles (étage de la Tour, Boss du Jour, boutique ou dresseur)."
+button = "&d&lÉditeur de PNJ"
+button_lore = "&7Recevoir l'outil d'édition des PNJ"

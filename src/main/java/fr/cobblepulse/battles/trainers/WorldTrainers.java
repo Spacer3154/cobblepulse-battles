@@ -121,11 +121,16 @@ public final class WorldTrainers {
 
     /** Nouveau dresseur a la position du joueur. */
     public static WorldTrainer create(ServerPlayer p, String rawId) {
+        return create(p, rawId, Loc.of(p));
+    }
+
+    /** Nouveau dresseur a une position donnee (Editeur de PNJ : bloc clique). */
+    public static WorldTrainer create(ServerPlayer p, String rawId, Loc at) {
         String id = normalizeId(rawId);
         if (id.isEmpty() || TRAINERS.containsKey(id)) return null;
         WorldTrainer w = new WorldTrainer();
         w.id = id;
-        w.location = Loc.of(p);
+        w.location = at;
         w.trainer.name = rawId.trim();
         w.trainer.world = new TrainerSpec.WorldOptions();
         w.trainer.normalize();

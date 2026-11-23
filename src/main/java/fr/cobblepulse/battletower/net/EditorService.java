@@ -53,6 +53,9 @@ public final class EditorService {
         ServerPlayNetworking.registerGlobalReceiver(Payloads.SkinRequest.TYPE, (payload, ctx) -> ctx.server().execute(() -> onSkinRequest(ctx.player(), payload.ref())));
     }
 
+    /** Auto-tests : dernier editeur demande par joueur ("floor:3", "boss:x", "world:y"). */
+    public static final java.util.Map<java.util.UUID, String> OPENED = new java.util.concurrent.ConcurrentHashMap<>();
+
     private static boolean clientReady(ServerPlayer p) {
         if (ServerPlayNetworking.canSend(p, Payloads.OpenEditor.TYPE)) return true;
         Msg.send(p, "editor.client_required");
@@ -69,6 +72,7 @@ public final class EditorService {
             Msg.send(p, "admin.floor_unknown", "floor", floor);
             return;
         }
+        OPENED.put(p.getUUID(), "floor:" + floor);
         if (!clientReady(p)) return;
         ServerPlayNetworking.send(p, new Payloads.OpenEditor("floor", String.valueOf(floor), Json.GSON.toJson(fe.trainer),
                 meta(Msg.format("editor.title_floor", "floor", floor))));
@@ -84,6 +88,7 @@ public final class EditorService {
             Msg.send(p, "admin.boss_unknown", "id", id);
             return;
         }
+        OPENED.put(p.getUUID(), "boss:" + id);
         if (!clientReady(p)) return;
         ServerPlayNetworking.send(p, new Payloads.OpenEditor("boss", id.toLowerCase(Locale.ROOT), Json.GSON.toJson(t),
                 meta(Msg.format("editor.title_boss", "id", id))));
@@ -100,6 +105,7 @@ public final class EditorService {
             Msg.send(p, "trainer.unknown", "id", id);
             return;
         }
+        OPENED.put(p.getUUID(), "world:" + w.id);
         if (!clientReady(p)) return;
         if (w.trainer.world == null) w.trainer.world = new TrainerSpec.WorldOptions();
         ServerPlayNetworking.send(p, new Payloads.OpenEditor("world", w.id, Json.GSON.toJson(w.trainer),

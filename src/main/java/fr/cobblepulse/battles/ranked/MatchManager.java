@@ -403,9 +403,31 @@ public final class MatchManager {
                 }
             }
         }
+        if (m.arena == null) separate(m);
         m.state = State.COUNTDOWN;
         m.countdown = Math.max(0, RankedConfig.general.i("minuteurs.compte_a_rebours", 5));
         m.deadline = System.currentTimeMillis() + m.countdown * 1000L;
+    }
+
+    /**
+     * Combat sur place : deux joueurs au meme endroit (arrivee au point d'apparition du serveur de combat, file rejointe
+     * cote a cote) bloquent l'envoi des Pokemon de Cobblemon. Le second joueur est place a 6 blocs, face au premier.
+     */
+    static void separate(Match m) {
+        ServerPlayer pa = m.a.player();
+        ServerPlayer pb = m.b.player();
+        if (pa == null || pb == null || pa.level() != pb.level() || pa.distanceTo(pb) >= 4) return;
+        net.minecraft.server.level.ServerLevel level = pa.serverLevel();
+        net.minecraft.world.phys.Vec3 dir = net.minecraft.world.phys.Vec3.directionFromRotation(0, pa.getYRot());
+        double x = pa.getX() + dir.x * 6;
+        double z = pa.getZ() + dir.z * 6;
+        int y = level.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                net.minecraft.util.Mth.floor(x), net.minecraft.util.Mth.floor(z));
+        if (Math.abs(y - pa.getY()) > 4) y = (int) Math.floor(pa.getY());
+        float yawB = (float) (Math.toDegrees(Math.atan2(pa.getZ() - z, pa.getX() - x)) - 90.0);
+        if (m.b.returnLoc == null) m.b.returnLoc = Loc.of(pb);
+        pb.teleportTo(level, x, y, z, yawB, 0f);
+        pa.teleportTo(level, pa.getX(), pa.getY(), pa.getZ(), yawB + 180f, 0f);
     }
 
     static BattleFormat format(FormatRules r) {

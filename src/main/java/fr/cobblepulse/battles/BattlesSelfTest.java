@@ -164,6 +164,13 @@ public final class BattlesSelfTest {
         // Commande d'administration (Elo) : les deux joueurs a 1390 (une victoire fait passer Hyper Ball)
         src.getServer().getCommands().performPrefixedCommand(src.getServer().createCommandSourceStack(), "ranked admin elo definir RKAce simple 1390");
         src.getServer().getCommands().performPrefixedCommand(src.getServer().createCommandSourceStack(), "ranked admin elo definir RKFish simple 1390");
+        // les commandes lancees depuis une commande s'executent juste apres elle (vanilla 1.21) : suite au tick suivant
+        Scheduler.later(5, () -> rankedQueue(src, ace, fish, home, arena, pAce, pFish));
+        return 1;
+    }
+
+    private static void rankedQueue(CommandSourceStack src, FakePlayer ace, FakePlayer fish, Loc home, Arenas.Arena arena, RankedProfile pAce,
+                                    RankedProfile pFish) {
         check(src, "ranked.admin_elo", pAce.stats("simple").elo == 1390 && pFish.stats("simple").elo == 1390,
                 pAce.stats("simple").elo + "/" + pFish.stats("simple").elo);
         // Missions deterministes pour le test
@@ -203,21 +210,22 @@ public final class BattlesSelfTest {
             matchId[0] = m.id;
             check(src, "screens.ready", Screens.slotNamed(ace.getUUID(), "Accepter") == 11 && Screens.slotNamed(fish.getUUID(), "Refuser") == 15,
                     Screens.names(ace.getUUID()).toString());
+            // les clics d'ecran sont traites au tick suivant : une action toutes les 3 ticks
             click(ace, 11);
             click(fish, 11);
             MatchManager.Side sa = m.side(ace.getUUID().toString());
             MatchManager.Side sf = m.side(fish.getUUID().toString());
-            check(src, "ranked.accepted", m.state == MatchManager.State.SELECT && sa.partyLoaded && sf.partyLoaded, m.state.name());
-            check(src, "screens.select", Screens.slotNamed(ace.getUUID(), "Confirmer") == 40 && Screens.names(ace.getUUID()).size() >= 4 + 3 + 3,
-                    Screens.names(ace.getUUID()).toString());
-            // Choix par l'ecran : Garchomp (meneur), Lucario, Leviator ; l'adversaire en selection automatique
-            click(ace, 9);
-            click(ace, 10);
-            click(ace, 11);
-            check(src, "ranked.select_picks", sa.picks.equals(List.of(0, 1, 2)), sa.picks.toString());
-            click(ace, 40);
-            click(fish, 36);
-            click(fish, 40);
+            chain(() -> {
+                check(src, "ranked.accepted", m.state == MatchManager.State.SELECT && sa.partyLoaded && sf.partyLoaded, m.state.name());
+                check(src, "screens.select", Screens.slotNamed(ace.getUUID(), "Confirmer") == 40 && Screens.names(ace.getUUID()).size() >= 4 + 3 + 3,
+                        Screens.names(ace.getUUID()).toString());
+                // Choix par l'ecran : Garchomp (meneur), Lucario, Leviator ; l'adversaire en selection automatique
+                click(ace, 9);
+            }, () -> click(ace, 10), () -> click(ace, 11), () -> {
+                check(src, "ranked.select_picks", sa.picks.equals(List.of(0, 1, 2)), sa.picks.toString());
+                click(ace, 40);
+                click(fish, 36);
+            }, () -> click(fish, 40), () -> {
             check(src, "ranked.countdown", m.state == MatchManager.State.COUNTDOWN && m.arena != null, m.state.name());
             check(src, "ranked.arena_teleport", dist(ace, arena.pos1) < 2 && dist(fish, arena.pos2) < 2,
                     String.format("%.1f / %.1f", dist(ace, arena.pos1), dist(fish, arena.pos2)));
@@ -290,8 +298,13 @@ public final class BattlesSelfTest {
                     });
                 });
             });
+            });
         });
-        return 1;
+    }
+
+    /** Etapes espacees de 3 ticks (les clics d'ecran sont traites au tick suivant). */
+    static void chain(Runnable... steps) {
+        for (int i = 0; i < steps.length; i++) Scheduler.later(3L * (i + 1), steps[i]);
     }
 
     // ------------------------------------------------------------------ Ranked : minuteur, deconnexion, nul, refus
@@ -315,9 +328,16 @@ public final class BattlesSelfTest {
         // Refus : amical double
         FakePlayer decA = fake(level, "RKDecA");
         FakePlayer decB = fake(level, "RKDecB");
-        Loc spot = loc(level, -8, 20);
+        // chaque paire au meme point (le match les ecarte avant le combat), les paires a distance les unes des autres
+        loc(level, -8, 20).teleport(idle);
+        loc(level, -8, 20).teleport(busy);
+        loc(level, -22, 20).teleport(quitA);
+        loc(level, -22, 20).teleport(quitB);
+        loc(level, -8, 34).teleport(tieA);
+        loc(level, -8, 34).teleport(tieB);
+        loc(level, -22, 34).teleport(decA);
+        loc(level, -22, 34).teleport(decB);
         for (FakePlayer p : List.of(idle, busy, quitA, quitB, tieA, tieB, decA, decB)) {
-            spot.teleport(p);
             RankedStore.get(p);
             if (p != decA && p != decB) AUTO.add(p.getUUID());
         }
@@ -344,11 +364,13 @@ public final class BattlesSelfTest {
             MatchManager.Match m = MatchManager.matchOf(decA.getUUID());
             check(src, "ranked.casual_double_match", m != null && !m.ranked && "double".equals(m.format), m == null ? "aucun" : m.format);
             click(decA, 15);
-            RankedProfile pd = RankedStore.get(decA);
-            check(src, "ranked.decline", m != null && m.state == MatchManager.State.ENDED && pd.declineUntil > System.currentTimeMillis()
-                    && RankedQueue.queued(decB.getUUID()) && !RankedQueue.queued(decA.getUUID()), null);
-            check(src, "ranked.decline_cooldown", !RankedQueue.join(decA, "double", false), null);
-            RankedQueue.leave(decB.getUUID());
+            chain(() -> {
+                RankedProfile pd = RankedStore.get(decA);
+                check(src, "ranked.decline", m != null && m.state == MatchManager.State.ENDED && pd.declineUntil > System.currentTimeMillis()
+                        && RankedQueue.queued(decB.getUUID()) && !RankedQueue.queued(decA.getUUID()), m == null ? "-" : m.state.name());
+                check(src, "ranked.decline_cooldown", !RankedQueue.join(decA, "double", false), null);
+                RankedQueue.leave(decB.getUUID());
+            });
         });
         // Deconnexion pendant le combat
         waitFor(() -> {
@@ -383,7 +405,8 @@ public final class BattlesSelfTest {
                 String tie = MatchManager.RESULTS.getOrDefault(ids[1], "aucun");
                 RankedProfile pt = RankedStore.get(tieA);
                 check(src, "ranked.match_duration_tie", tie.startsWith("nul:duree") && pt.stats("simple").elo == 1000
-                        && !pt.history.isEmpty() && "nul".equals(pt.history.get(0).result), tie);
+                        && !pt.history.isEmpty() && "nul".equals(pt.history.get(0).result) && pt.history.get(0).turns >= 3,
+                        tie + (pt.history.isEmpty() ? "" : " tours=" + pt.history.get(0).turns));
                 fr.cobblepulse.battletower.command.SelfTest.PASSIVE.remove(idle.getUUID());
                 for (FakePlayer p : List.of(idle, busy, tieA, tieB)) AUTO.remove(p.getUUID());
                 check(src, "ranked.battles_closed", !CobblemonBridge.isInBattle(idle) && !CobblemonBridge.isInBattle(tieA), null);
@@ -440,7 +463,7 @@ public final class BattlesSelfTest {
         int fight = Screens.slotNamed(win.getUUID(), "Défier");
         check(src, "screens.trainer_challenge", fight == 20, Screens.names(win.getUUID()).toString());
         click(win, fight);
-        check(src, "trainers.battle_started", CobblemonBridge.isInBattle(win), null);
+        Scheduler.later(10, () -> check(src, "trainers.battle_started", CobblemonBridge.isInBattle(win), null));
         // Defaite en exhibition (copie de l'equipe) : delai apres defaite
         FakePlayer lose = fake(level, "TRLose");
         party(lose, mon("magikarp", 5, "splash"));
@@ -480,8 +503,163 @@ public final class BattlesSelfTest {
             TrainerMenus.list(win);
             check(src, "screens.trainer_list", Screens.names(win.getUUID()).stream().anyMatch(n -> n.contains("Gamin Route")),
                     Screens.names(win.getUUID()).toString());
+            tool(src, admin, w1);
             done("trainers");
         });
+        return 1;
+    }
+
+    /** Objet « Editeur de PNJ » : enregistrement, reserve au staff, edition d'un PNJ, liste, pose d'un dresseur. */
+    static void tool(CommandSourceStack src, FakePlayer admin, WorldTrainers.WorldTrainer w1) {
+        var tool = fr.cobblepulse.battles.tool.NpcEditorTool.class;
+        check(src, "tool.registered", fr.cobblepulse.battles.tool.NpcEditorTool.ITEM != null
+                && "cobblepulse_battles:editeur_pnj".equals(net.minecraft.core.registries.BuiltInRegistries.ITEM
+                .getKey(fr.cobblepulse.battles.tool.NpcEditorTool.ITEM).toString()), tool.getSimpleName());
+        FakePlayer visitor = fake(src.getServer().overworld(), "TRVisitor");
+        com.cobblemon.mod.common.entity.npc.NPCEntity npc = WorldTrainers.npc(src.getServer(), w1, false);
+        fr.cobblepulse.battletower.net.EditorService.OPENED.remove(visitor.getUUID());
+        if (npc != null) fr.cobblepulse.battles.tool.NpcEditorTool.onNpc(visitor, npc);
+        check(src, "tool.staff_only", !fr.cobblepulse.battles.tool.NpcEditorTool.allowed(visitor)
+                && !fr.cobblepulse.battletower.net.EditorService.OPENED.containsKey(visitor.getUUID()), null);
+        src.getServer().getPlayerList().op(admin.getGameProfile());
+        Screens.capture(admin.getUUID(), true);
+        admin.getInventory().clearContent();
+        fr.cobblepulse.battles.tool.NpcEditorTool.give(admin);
+        boolean inHand = fr.cobblepulse.battles.tool.NpcEditorTool.is(admin.getMainHandItem());
+        if (npc != null) fr.cobblepulse.battles.tool.NpcEditorTool.onNpc(admin, npc);
+        check(src, "tool.edit_world_npc", inHand && fr.cobblepulse.battles.tool.NpcEditorTool.allowed(admin)
+                && ("world:" + w1.id).equals(fr.cobblepulse.battletower.net.EditorService.OPENED.get(admin.getUUID())),
+                fr.cobblepulse.battletower.net.EditorService.OPENED.get(admin.getUUID()));
+        int floor = 0;
+        for (net.minecraft.world.entity.Entity e : src.getServer().overworld().getAllEntities()) {
+            if (e instanceof com.cobblemon.mod.common.entity.npc.NPCEntity n && fr.cobblepulse.battletower.npc.TrainerNpcs.floorOf(n) > 0) {
+                floor = fr.cobblepulse.battletower.npc.TrainerNpcs.floorOf(n);
+                fr.cobblepulse.battles.tool.NpcEditorTool.onNpc(admin, n);
+                break;
+            }
+        }
+        check(src, "tool.edit_floor_npc", floor == 0 || ("floor:" + floor).equals(fr.cobblepulse.battletower.net.EditorService.OPENED.get(admin.getUUID())),
+                floor == 0 ? "aucun PNJ d'etage (tests de la Tour non lances)" : "etage " + floor + " -> " + fr.cobblepulse.battletower.net.EditorService.OPENED.get(admin.getUUID()));
+        // clic dans le vide : liste des dresseurs (avec le bouton de l'outil pour le staff)
+        fr.cobblepulse.battles.tool.NpcEditorTool.ITEM.use(admin.level(), admin, net.minecraft.world.InteractionHand.MAIN_HAND);
+        check(src, "tool.air_list", Screens.names(admin.getUUID()).stream().anyMatch(n -> n.contains("Gamin Route"))
+                && Screens.slotNamed(admin.getUUID(), "Éditeur de PNJ") == 51, Screens.names(admin.getUUID()).toString());
+        // clic sur un bloc : nouveau dresseur pose dessus
+        BlockPos ground = BlockPos.containing(loc(src.getServer().overworld(), 18, 4).x, loc(src.getServer().overworld(), 18, 4).y - 1,
+                loc(src.getServer().overworld(), 18, 4).z);
+        fr.cobblepulse.battles.tool.NpcEditorTool.onBlock(admin, ground, net.minecraft.core.Direction.UP);
+        fr.cobblepulse.battletower.gui.ChatInput.answer(admin, "outil_test", false);
+        WorldTrainers.WorldTrainer placed = WorldTrainers.get("outil_test");
+        check(src, "tool.place_trainer", placed != null && placed.location != null && (int) Math.floor(placed.location.y) == ground.getY() + 1
+                        && placed.npcUuid != null && ("world:outil_test").equals(fr.cobblepulse.battletower.net.EditorService.OPENED.get(admin.getUUID())),
+                placed == null ? "absent" : placed.location.pretty());
+        if (placed != null) WorldTrainers.remove(src.getServer(), placed);
+    }
+
+    // ------------------------------------------------------------------ Multi-serveur (CI : serveurs lobby + combat, Redis, MySQL)
+
+    /** Serveur « lobby » : deux joueurs entrent en file ; le serveur de combat les apparie et ils y sont transferes. */
+    public static int multiLobby(CommandSourceStack src) {
+        ServerLevel level = src.getServer().overworld();
+        check(src, "multi.lobby_config", fr.cobblepulse.battles.ranked.CrossServer.enabled() && !fr.cobblepulse.battles.ranked.CrossServer.isMatchmaker()
+                && "lobby".equals(fr.cobblepulse.battles.ranked.CrossServer.serverId()), fr.cobblepulse.battles.ranked.CrossServer.serverId());
+        FakePlayer a = fake(level, "MSAce");
+        FakePlayer b = fake(level, "MSFish");
+        party(a, mon("garchomp", 60, "dragonclaw"), mon("lucario", 60, "flashcannon"), mon("gyarados", 60, "waterfall"), mon("snorlax", 60, "bodyslam"));
+        party(b, splash(3));
+        loc(level, 0, 0).teleport(a);
+        loc(level, 0, 0).teleport(b);
+        RankedStore.get(a);
+        RankedStore.get(b);
+        boolean ja = RankedQueue.join(a, "simple", true);
+        boolean jb = RankedQueue.join(b, "simple", true);
+        check(src, "multi.queue_join", ja && jb, ja + "/" + jb);
+        waitFor(() -> RankedQueue.count("simple", true) >= 2, 10, () -> {
+            check(src, "multi.queue_shared", RankedQueue.count("simple", true) >= 2 || fr.cobblepulse.battles.ranked.CrossServer.TRANSFERS.size() >= 2,
+                    "file vue par le lobby : " + RankedQueue.count("simple", true));
+            waitFor(() -> "combat".equals(fr.cobblepulse.battles.ranked.CrossServer.TRANSFERS.get(a.getUUID().toString()))
+                    && "combat".equals(fr.cobblepulse.battles.ranked.CrossServer.TRANSFERS.get(b.getUUID().toString())), 40, () -> {
+                check(src, "multi.transfer_to_battle", "combat".equals(fr.cobblepulse.battles.ranked.CrossServer.TRANSFERS.get(a.getUUID().toString()))
+                        && "combat".equals(fr.cobblepulse.battles.ranked.CrossServer.TRANSFERS.get(b.getUUID().toString())),
+                        fr.cobblepulse.battles.ranked.CrossServer.TRANSFERS.toString());
+                check(src, "multi.queue_left", !RankedQueue.queued(a.getUUID()) && !RankedQueue.queued(b.getUUID()), null);
+                fr.cobblepulse.battles.ranked.CrossServer.TRANSFERS.clear();
+                done("multi-lobby");
+            });
+        });
+        return 1;
+    }
+
+    /** Serveur « combat » : les joueurs « arrivent », l'equipe vient du lobby (Redis), combat, Elo, retour. */
+    public static int multiCombat(CommandSourceStack src) {
+        fr.cobblepulse.battletower.command.SelfTest.startBot();
+        startAuto();
+        ServerLevel level = src.getServer().overworld();
+        check(src, "multi.battle_config", fr.cobblepulse.battles.ranked.CrossServer.enabled() && fr.cobblepulse.battles.ranked.CrossServer.isMatchmaker(), null);
+        MatchManager.Match found = null;
+        for (MatchManager.Match m : MatchManager.all()) if ("MSAce".equals(m.a.name) || "MSAce".equals(m.b.name)) found = m;
+        MatchManager.Match m = found;
+        check(src, "multi.match_waiting_arrival", m != null && m.state == MatchManager.State.ARRIVING, m == null ? "aucun match" : m.state.name());
+        if (m == null) {
+            done("multi-combat");
+            return 0;
+        }
+        FakePlayer a = fake(level, "MSAce");
+        FakePlayer b = fake(level, "MSFish");
+        loc(level, 0, 0).teleport(a);
+        loc(level, 0, 0).teleport(b);
+        check(src, "multi.empty_local_party", CobblemonBridge.partyList(a).isEmpty(), null);
+        AUTO.add(a.getUUID());
+        AUTO.add(b.getUUID());
+        Discord.SENT.clear();
+        Ranked.onJoin(a);
+        Ranked.onJoin(b);
+        waitFor(() -> m.state == MatchManager.State.BATTLE || m.state == MatchManager.State.ENDED, 40, () -> {
+            MatchManager.Side sa = m.side(a.getUUID().toString());
+            boolean fromLobby = sa != null && sa.party.size() == 4 && "garchomp".equals(sa.party.get(0).getSpecies().getName().toLowerCase(java.util.Locale.ROOT));
+            check(src, "multi.party_from_lobby", fromLobby, sa == null ? "-" : sa.party.size() + " Pokemon");
+            check(src, "multi.battle_started", m.state == MatchManager.State.BATTLE, m.state.name());
+            waitFor(() -> MatchManager.RESULTS.containsKey(m.id), 150, () -> {
+                String res = MatchManager.RESULTS.getOrDefault(m.id, "aucun");
+                check(src, "multi.result", res.startsWith("victoire:MSAce:victoire") && res.contains("1000->1045") && res.contains("1000->1000"), res);
+                check(src, "multi.discord", Discord.SENT.stream().anyMatch(x -> x.startsWith("resultat_classe")), null);
+                Scheduler.later(20 * 6, () -> {
+                    check(src, "multi.return_to_origin", "lobby".equals(fr.cobblepulse.battles.ranked.CrossServer.TRANSFERS.get(a.getUUID().toString()))
+                            && "lobby".equals(fr.cobblepulse.battles.ranked.CrossServer.TRANSFERS.get(b.getUUID().toString())),
+                            fr.cobblepulse.battles.ranked.CrossServer.TRANSFERS.toString());
+                    AUTO.remove(a.getUUID());
+                    AUTO.remove(b.getUUID());
+                    done("multi-combat");
+                });
+            });
+        });
+        return 1;
+    }
+
+    /** Retour au lobby : profil relu depuis MySQL apres le message « profil » du serveur de combat. */
+    public static int multiCheck(CommandSourceStack src) {
+        RankedProfile a = RankedStore.get(UUID.nameUUIDFromBytes("bt-MSAce".getBytes(StandardCharsets.UTF_8)));
+        RankedProfile b = RankedStore.get(UUID.nameUUIDFromBytes("bt-MSFish".getBytes(StandardCharsets.UTF_8)));
+        check(src, "multi.profile_synced", a != null && a.stats("simple").elo == 1045 && a.stats("simple").wins == 1 && !a.history.isEmpty()
+                && b != null && b.stats("simple").losses == 1, a == null ? "absent" : "elo=" + a.stats("simple").elo);
+        check(src, "multi.lobby_idle", !MatchManager.inMatch(UUID.nameUUIDFromBytes("bt-MSAce".getBytes(StandardCharsets.UTF_8)))
+                && RankedQueue.count("simple", true) == 0, null);
+        // profil plus ancien ecrit en retard par un autre serveur : ignore (ecriture conditionnelle)
+        if (a != null) {
+            RankedProfile stale = new com.google.gson.Gson().fromJson(new com.google.gson.Gson().toJson(a), RankedProfile.class);
+            stale.stats("simple").elo = 1;
+            String json = new com.google.gson.Gson().toJson(stale);
+            String uuid = a.uuid;
+            DataService.async(s -> {
+                s.saveRankedProfile(uuid, "MSAce", 1L, json);
+                return s.loadRankedProfile(uuid);
+            }).whenComplete((v, e) -> DataService.main(() -> {
+                check(src, "multi.stale_write_ignored", v != null && v.contains("\"elo\":1045"), e == null ? null : e.toString());
+                done("multi-check");
+            }));
+        } else {
+            done("multi-check");
+        }
         return 1;
     }
 

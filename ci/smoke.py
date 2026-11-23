@@ -41,7 +41,7 @@ for slug, ver in wanted.items():
     open(os.path.join(SRV, "mods", f[0]["filename"]), "wb").write(get(f[0]["url"]))
     log(f"mod {slug} {pick['version_number']} -> {f[0]['filename']}")
 
-for j in [j for j in glob.glob("build/libs/*.jar") if not j.endswith("-sources.jar")]:
+for j in [j for j in (glob.glob("build/libs/*.jar") or glob.glob(os.path.join(OUT, "cobblepulse-battles-*.jar"))) if not j.endswith("-sources.jar")]:
     shutil.copy(j, os.path.join(SRV, "mods"))
     log("mod battles " + j)
 

@@ -94,8 +94,9 @@ public final class RankedStore {
         String json = Json.COMPACT.toJson(p);
         String uuid = p.uuid;
         String name = p.name;
+        long updated = p.updated;
         DataService.async(s -> {
-            s.saveRankedProfile(uuid, name, json);
+            s.saveRankedProfile(uuid, name, updated, json);
             return null;
         }).whenComplete((v, t) -> {
             if (after != null) DataService.main(after);
@@ -105,12 +106,14 @@ public final class RankedStore {
     private static void flush() {
         Map<String, String[]> snaps = new LinkedHashMap<>();
         synchronized (DIRTY) {
-            for (RankedProfile p : DIRTY.values()) snaps.put(p.uuid, new String[]{p.name, Json.COMPACT.toJson(p)});
+            for (RankedProfile p : DIRTY.values()) snaps.put(p.uuid, new String[]{p.name, Json.COMPACT.toJson(p), String.valueOf(p.updated)});
             DIRTY.clear();
         }
         if (snaps.isEmpty()) return;
         DataService.async(s -> {
-            for (Map.Entry<String, String[]> e : snaps.entrySet()) s.saveRankedProfile(e.getKey(), e.getValue()[0], e.getValue()[1]);
+            for (Map.Entry<String, String[]> e : snaps.entrySet()) {
+                s.saveRankedProfile(e.getKey(), e.getValue()[0], Long.parseLong(e.getValue()[2]), e.getValue()[1]);
+            }
             return null;
         });
     }

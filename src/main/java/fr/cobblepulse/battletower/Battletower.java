@@ -51,6 +51,7 @@ public final class Battletower implements ModInitializer {
     @Override
     public void onInitialize() {
         Cfg.loadAll();
+        fr.cobblepulse.battles.tool.NpcEditorTool.register();
         Skins.load();
         EditorService.registerPayloads();
         EditorService.registerReceivers();
@@ -85,6 +86,16 @@ public final class Battletower implements ModInitializer {
             }
         });
         UseEntityCallback.EVENT.register((player, level, hand, entity, hit) -> {
+            // Editeur de PNJ en main : edition au lieu de l'interaction normale (combat, boutique, dialogue de Cobblemon)
+            if (entity instanceof NPCEntity && fr.cobblepulse.battles.tool.NpcEditorTool.is(player.getMainHandItem())) {
+                if (level.isClientSide() || !(player instanceof ServerPlayer tp)) return InteractionResult.SUCCESS;
+                if (hand != InteractionHand.MAIN_HAND) return InteractionResult.SUCCESS;
+                long t = tp.serverLevel().getGameTime();
+                Long prev = LAST_INTERACT.put(tp.getUUID(), t);
+                if (prev != null && t - prev < 5) return InteractionResult.SUCCESS;
+                fr.cobblepulse.battles.tool.NpcEditorTool.onNpc(tp, (NPCEntity) entity);
+                return InteractionResult.SUCCESS;
+            }
             if (level.isClientSide() || !(player instanceof ServerPlayer sp) || !TrainerNpcs.isOurs(entity)) return InteractionResult.PASS;
             if (hand != InteractionHand.MAIN_HAND) return InteractionResult.SUCCESS;
             // Un clic droit envoie deux paquets (interact + interactAt) : un seul traitement par clic

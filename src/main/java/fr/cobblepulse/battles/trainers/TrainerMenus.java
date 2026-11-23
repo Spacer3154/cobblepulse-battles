@@ -142,6 +142,8 @@ public final class TrainerMenus {
         g.button(45, ItemBuilder.of(Items.ARROW).name(f("hub.back")).build(), Hub::open);
         g.set(49, ItemBuilder.of(Items.EMERALD).name(f("trainer.progress", "n", beaten, "total", all.size())).build());
         if (admin) {
+            g.button(51, ItemBuilder.of(fr.cobblepulse.battles.tool.NpcEditorTool.ITEM).name(f("tool.button")).lore(f("tool.button_lore")).build(),
+                    fr.cobblepulse.battles.tool.NpcEditorTool::give);
             g.button(53, ItemBuilder.of(Items.LIME_DYE).name(f("trainer.create_here")).lore(f("trainer.create_here_lore")).build(), pl ->
                     ChatInput.ask(pl, "trainer.ask_id", id -> {
                         WorldTrainers.WorldTrainer w = WorldTrainers.create(pl, id);

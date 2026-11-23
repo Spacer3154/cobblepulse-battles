@@ -189,6 +189,10 @@ public final class Commands {
                         .then(literal("rankedstorage").executes(ctx -> fr.cobblepulse.battles.BattlesSelfTest.storage(ctx.getSource())))
                         .then(literal("rankedpersisted").executes(ctx -> fr.cobblepulse.battles.BattlesSelfTest.storagePersisted(ctx.getSource())))
                         .then(literal("battlespersisted").executes(ctx -> fr.cobblepulse.battles.BattlesSelfTest.persisted(ctx.getSource())))
+                        .then(literal("multi")
+                                .then(literal("lobby").executes(ctx -> fr.cobblepulse.battles.BattlesSelfTest.multiLobby(ctx.getSource())))
+                                .then(literal("combat").executes(ctx -> fr.cobblepulse.battles.BattlesSelfTest.multiCombat(ctx.getSource())))
+                                .then(literal("check").executes(ctx -> fr.cobblepulse.battles.BattlesSelfTest.multiCheck(ctx.getSource()))))
                         .then(literal("report").executes(ctx -> SelfTest.report(ctx.getSource())))));
         d.register(literal("bt").requires(Perms.playerReq(Perms.USE)).executes(ctx -> player(ctx, Menus::main)).redirect(root));
     }

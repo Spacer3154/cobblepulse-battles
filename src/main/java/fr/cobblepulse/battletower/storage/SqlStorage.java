@@ -255,12 +255,20 @@ public final class SqlStorage implements Storage {
     }
 
     @Override
-    public void saveRankedProfile(String uuid, String name, String json) throws SQLException {
+    public void saveRankedProfile(String uuid, String name, long updated, String json) throws SQLException {
         Connection c = conn();
-        try (PreparedStatement ps = c.prepareStatement("REPLACE INTO " + p + "rk_profiles (uuid, name, updated, data) VALUES (?,?,?,?)")) {
+        // ecriture conditionnelle : une copie plus ancienne (autre serveur du reseau) n'ecrase jamais un resultat plus recent
+        String t = p + "rk_profiles";
+        String sql = sqlite
+                ? "INSERT INTO " + t + " (uuid, name, updated, data) VALUES (?,?,?,?) ON CONFLICT(uuid) DO UPDATE SET name = excluded.name,"
+                + " data = excluded.data, updated = excluded.updated WHERE excluded.updated >= " + t + ".updated"
+                : "INSERT INTO " + t + " (uuid, name, updated, data) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE"
+                + " name = IF(VALUES(updated) >= updated, VALUES(name), name), data = IF(VALUES(updated) >= updated, VALUES(data), data),"
+                + " updated = GREATEST(updated, VALUES(updated))";
+        try (PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setString(1, uuid);
             ps.setString(2, name);
-            ps.setLong(3, System.currentTimeMillis());
+            ps.setLong(3, updated);
             ps.setString(4, json);
             ps.executeUpdate();
         } finally {
