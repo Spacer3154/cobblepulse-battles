@@ -23,6 +23,8 @@ import java.util.concurrent.ConcurrentHashMap;
 /** Restrictions pendant la file d'attente et pendant un match (restrictions.toml). */
 public final class Restrictions {
     private static final Map<UUID, Long> LAST_WARN = new ConcurrentHashMap<>();
+    /** Auto-tests : nombre de commandes bloquees. */
+    public static final java.util.concurrent.atomic.AtomicInteger BLOCKED = new java.util.concurrent.atomic.AtomicInteger();
 
     private Restrictions() {}
 
@@ -33,7 +35,7 @@ public final class Restrictions {
         return null;
     }
 
-    static boolean blocked(Player p, String rule) {
+    public static boolean blocked(Player p, String rule) {
         if (!(p instanceof ServerPlayer sp) || RankedConfig.restrictions == null) return false;
         String sec = section(sp.getUUID());
         if (sec == null) return false;
@@ -65,6 +67,7 @@ public final class Restrictions {
         for (String b : RankedConfig.restrictions.list(sec + ".commandes_bloquees")) {
             if (root.equalsIgnoreCase(b.trim())) {
                 Msg.send(p, "ranked.command_blocked", "command", root);
+                BLOCKED.incrementAndGet();
                 return true;
             }
         }

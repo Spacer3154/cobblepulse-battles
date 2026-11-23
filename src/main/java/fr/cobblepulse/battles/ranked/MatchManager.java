@@ -101,6 +101,7 @@ public final class MatchManager {
         public long battleGoneSince;
         public int countdown;
         public boolean tiebreak;
+        public long tiebreakAt;
         public String endReason = "";
         final Set<Integer> warned = new HashSet<>();
 
@@ -286,6 +287,11 @@ public final class MatchManager {
         m.state = State.SELECT;
         m.deadline = System.currentTimeMillis() + RankedConfig.general.i("minuteurs.selection", 60) * 1000L;
         for (Side s : List.of(m.a, m.b)) loadParty(m, s);
+        // ecrans ouverts une fois les equipes locales chargees (l'apercu de l'adversaire est complet des l'ouverture)
+        for (Side s : List.of(m.a, m.b)) {
+            ServerPlayer p = s.player();
+            if (p != null && s.partyLoaded) RankedMenus.select(p, m, s);
+        }
     }
 
     private static void loadParty(Match m, Side s) {
@@ -299,13 +305,15 @@ public final class MatchManager {
                 s.party.removeIf(java.util.Objects::isNull);
                 s.partyLoaded = true;
                 RankedMenus.select(again, m, s);
+                Side o = m.other(s);
+                ServerPlayer op = o.player();
+                if (op != null && o.partyLoaded) RankedMenus.refreshSelect(op, m, o);
             });
             return;
         }
         s.party = new ArrayList<>(CobblemonBridge.partyList(p));
         s.party.removeIf(java.util.Objects::isNull);
         s.partyLoaded = true;
-        RankedMenus.select(p, m, s);
     }
 
     /** Clic sur un Pokemon de l'equipe : ajoute (dans l'ordre) ou retire de la selection. */
@@ -412,10 +420,14 @@ public final class MatchManager {
     static List<BattlePokemon> team(Side s, FormatRules r) {
         List<BattlePokemon> out = new ArrayList<>();
         for (Pokemon pk : s.selection()) {
-            BattlePokemon bp = BattlePokemon.Companion.safeCopyOf(pk);
-            if (r.level > 0) bp.getEffectedPokemon().setLevel(r.level);
-            bp.getEffectedPokemon().heal();
-            out.add(bp);
+            // copie complete (original compris) : aucun gain d'EXP, d'EV ni d'objet sur les vrais Pokemon du joueur
+            Pokemon copy = BattlePokemon.Companion.safeCopyOf(pk).getEffectedPokemon();
+            if (r.level > 0) copy.setLevel(r.level);
+            copy.heal();
+            out.add(new BattlePokemon(copy, copy, entity -> {
+                entity.discard();
+                return kotlin.Unit.INSTANCE;
+            }));
         }
         return out;
     }
@@ -533,6 +545,25 @@ public final class MatchManager {
             return;
         }
         m.battleGoneSince = 0;
+        if (m.tiebreak) {
+            // Cobblemon ne gere pas le message « |tie » de Showdown : un nul au departage termine le match ici
+            if (m.tiebreakAt == 0) m.tiebreakAt = now;
+            boolean tie = false;
+            boolean win = false;
+            List<String> msgs = battle.getShowdownMessages();
+            for (int i = Math.max(0, msgs.size() - 30); i < msgs.size(); i++) {
+                for (String line : msgs.get(i).split("\n")) {
+                    if (line.equals("|tie") || line.startsWith("|tie|")) tie = true;
+                    if (line.startsWith("|win|")) win = true;
+                }
+            }
+            long waited = now - m.tiebreakAt;
+            if (tie || (!win && waited > 20_000) || waited > 60_000) {
+                Battletower.LOG.info("[Battles] Match {} : departage {} apres {} s", m.id, tie ? "nul" : "sans reponse", waited / 1000);
+                finish(m, null, "duree", false);
+            }
+            return;
+        }
         int maxTimeouts = Math.max(1, RankedConfig.general.i("minuteurs.tours_expires_max", 3));
         if (m.rules.turnTimer > 0) {
             for (BattleActor actor : battle.getActors()) {
@@ -562,8 +593,8 @@ public final class MatchManager {
                 }
             }
         }
-        if (m.rules.matchMinutes > 0 && !m.tiebreak) {
-            long left = m.rules.matchMinutes * 60L - (now - m.battleStart) / 1000;
+        if (m.rules.matchSeconds > 0 && !m.tiebreak) {
+            long left = m.rules.matchSeconds - (now - m.battleStart) / 1000;
             for (String w : RankedConfig.general.list("minuteurs.avertissements")) {
                 int sec;
                 try {

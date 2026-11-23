@@ -20,6 +20,10 @@ public final class RankedConfig {
     public static final Set<String> EVASION = new LinkedHashSet<>();
     public static final Set<String> SLEEP = new LinkedHashSet<>();
     public static final List<String> FORMATS = List.of("simple", "double");
+    /** Auto-tests : minuteur de tour raccourci (0 = valeur du fichier). */
+    public static int testTurnTimer;
+    /** Auto-tests : duree de match raccourcie en secondes (0 = valeur du fichier). */
+    public static int testMatchSeconds;
 
     public record Rank(String id, String name, int minElo, String icon) {}
 

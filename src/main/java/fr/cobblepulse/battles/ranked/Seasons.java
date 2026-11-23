@@ -141,6 +141,12 @@ public final class Seasons {
         rotate(lastProcessed, currentId());
     }
 
+    /** Auto-tests : traitement de fin d'une saison fictive vers la saison en cours. */
+    public static void testRotate(String oldId) {
+        current = find(ZonedDateTime.now(zone()));
+        rotate(oldId, currentId());
+    }
+
     private static void rotate(String oldId, String newId) {
         Battletower.LOG.info("[Battles] Ranked : changement de saison {} -> {}", oldId, newId);
         // 1. archive + recompenses de fin de saison de l'ancienne saison
@@ -220,7 +226,7 @@ public final class Seasons {
     }
 
     /** Profil d'une saison passee (joueur absent lors du changement) : reset a la volee. */
-    static void ensureSeason(RankedProfile p) {
+    public static void ensureSeason(RankedProfile p) {
         String id = currentId();
         if (p.season == null || p.season.isEmpty()) {
             p.season = id;

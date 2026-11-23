@@ -64,6 +64,8 @@ public final class SelfTest {
     private static final List<String> REPORT = new ArrayList<>();
     public static final Map<String, List<String>> LOGS = new ConcurrentHashMap<>();
     public static final Map<UUID, String> TAGS = new ConcurrentHashMap<>();
+    /** Joueurs de test que le bot ne fait pas jouer (test du minuteur de tour de la Ranked). */
+    public static final java.util.Set<UUID> PASSIVE = ConcurrentHashMap.newKeySet();
     private static boolean botStarted;
 
     private SelfTest() {}
@@ -129,7 +131,7 @@ public final class SelfTest {
     private static void drive() {
         for (UUID id : new ArrayList<>(TAGS.keySet())) {
             ServerPlayer p = Players.get(id);
-            if (p == null) continue;
+            if (p == null || PASSIVE.contains(id)) continue;
             PokemonBattle b = BattleRegistry.getBattleByParticipatingPlayer(p);
             if (b == null || b.getEnded()) continue;
             BattleActor actor = b.getActor(p);

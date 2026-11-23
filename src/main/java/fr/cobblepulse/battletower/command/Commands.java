@@ -182,6 +182,13 @@ public final class Commands {
                         .then(literal("extreme").executes(ctx -> SelfTest.extreme(ctx.getSource())))
                         .then(literal("resume").executes(ctx -> SelfTest.resumeSetup(ctx.getSource())))
                         .then(literal("persisted").executes(ctx -> SelfTest.persisted(ctx.getSource())))
+                        .then(literal("ranked").executes(ctx -> fr.cobblepulse.battles.BattlesSelfTest.ranked(ctx.getSource())))
+                        .then(literal("rankedtimer").executes(ctx -> fr.cobblepulse.battles.BattlesSelfTest.rankedTimers(ctx.getSource())))
+                        .then(literal("trainers").executes(ctx -> fr.cobblepulse.battles.BattlesSelfTest.trainers(ctx.getSource())))
+                        .then(literal("season").executes(ctx -> fr.cobblepulse.battles.BattlesSelfTest.season(ctx.getSource())))
+                        .then(literal("rankedstorage").executes(ctx -> fr.cobblepulse.battles.BattlesSelfTest.storage(ctx.getSource())))
+                        .then(literal("rankedpersisted").executes(ctx -> fr.cobblepulse.battles.BattlesSelfTest.storagePersisted(ctx.getSource())))
+                        .then(literal("battlespersisted").executes(ctx -> fr.cobblepulse.battles.BattlesSelfTest.persisted(ctx.getSource())))
                         .then(literal("report").executes(ctx -> SelfTest.report(ctx.getSource())))));
         d.register(literal("bt").requires(Perms.playerReq(Perms.USE)).executes(ctx -> player(ctx, Menus::main)).redirect(root));
     }

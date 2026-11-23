@@ -17,6 +17,8 @@ public final class FormatRules {
     public final int level;
     public final int turnTimer;
     public final int matchMinutes;
+    /** Duree maximale du match en secondes (0 = illimitee). */
+    public final int matchSeconds;
     public final boolean mega, tera, z, dynamax;
     public final boolean speciesClause, ohkoClause, evasionClause, sleepClause, limitSleepMoves;
     public final int itemClause;
@@ -41,8 +43,9 @@ public final class FormatRules {
         teamVisible = clamp(t.i("equipe_visible", 6), 1, 6);
         teamSize = clamp(t.i("equipe_choisie", doubles ? 4 : 3), doubles ? 2 : 1, 6);
         level = clamp(t.i("niveau", 50), 0, 100);
-        turnTimer = Math.max(0, t.i("minuteur_tour", 90));
+        turnTimer = RankedConfig.testTurnTimer > 0 ? RankedConfig.testTurnTimer : Math.max(0, t.i("minuteur_tour", 90));
         matchMinutes = Math.max(0, t.i("duree_match", 15));
+        matchSeconds = RankedConfig.testMatchSeconds > 0 ? RankedConfig.testMatchSeconds : matchMinutes * 60;
         mega = t.b("mega", true);
         tera = t.b("tera", false);
         z = t.b("z", true);

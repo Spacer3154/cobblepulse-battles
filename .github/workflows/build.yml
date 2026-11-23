@@ -64,7 +64,7 @@ jobs:
         run: python3 ci/smoke.py out || true
 
       - name: Client screenshots
-        if: steps.build.outputs.status == '0' && hashFiles('ci/client.py') != '' && hashFiles('ci/QUICK') == ''
+        if: steps.build.outputs.status == '0' && hashFiles('ci/client.py') != '' && hashFiles('ci/QUICK') == '' && hashFiles('ci/SKIPCLIENT') == ''
         timeout-minutes: 30
         run: python3 ci/client.py out || true
 

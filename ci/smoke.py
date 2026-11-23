@@ -5,7 +5,7 @@ import glob, json, os, queue, shutil, subprocess, sys, threading, time, urllib.r
 OUT = os.path.abspath(sys.argv[1] if len(sys.argv) > 1 else "out")
 DISC = os.path.join(OUT, "discover", "modrinth.json")
 SRV = os.path.abspath("run-server")
-UA = {"User-Agent": "cobblepulse-battletower-ci/1.0 (github actions)"}
+UA = {"User-Agent": "cobblepulse-battles-ci/2.0 (github actions)"}
 props = dict(l.strip().split("=", 1) for l in open("gradle.properties") if "=" in l and not l.startswith("#"))
 
 
@@ -43,7 +43,7 @@ for slug, ver in wanted.items():
 
 for j in [j for j in glob.glob("build/libs/*.jar") if not j.endswith("-sources.jar")]:
     shutil.copy(j, os.path.join(SRV, "mods"))
-    log("mod battletower " + j)
+    log("mod battles " + j)
 
 # Datapack de test : un fakemon dans un autre espace de noms (btfake:testmon_ex), derive de l'espece Pikachu de Cobblemon
 try:
@@ -65,6 +65,23 @@ try:
     log(f"datapack fakemon btfake:testmon_ex (depuis {src} de {os.path.basename(cj[0])})")
 except Exception as e:
     log(f"!! datapack fakemon : {e}")
+
+# Ancienne configuration de Battletower : doit etre deplacee vers config/cobblepulse_battles au premier demarrage
+try:
+    import struct, zlib
+    legacy = os.path.join(SRV, "config", "cobblepulse_battletower", "skins")
+    os.makedirs(legacy, exist_ok=True)
+
+    def chunk(t, d):
+        c = struct.pack(">I", len(d)) + t + d
+        return c + struct.pack(">I", zlib.crc32(t + d) & 0xffffffff)
+
+    raw = b"".join(b"\x00" + b"\xff\x00\x00\xff" * 64 for _ in range(64))
+    png = b"\x89PNG\r\n\x1a\n" + chunk(b"IHDR", struct.pack(">IIBBBBB", 64, 64, 8, 6, 0, 0, 0)) + chunk(b"IDAT", zlib.compress(raw)) + chunk(b"IEND", b"")
+    open(os.path.join(legacy, "Legacy-Marker.png"), "wb").write(png)
+    log("ancienne configuration cobblepulse_battletower creee (migration)")
+except Exception as e:
+    log(f"!! ancienne configuration : {e}")
 
 installer = json.loads(get("https://meta.fabricmc.net/v2/versions/installer"))[0]["version"]
 loader = props.get("loader_version")
@@ -110,6 +127,12 @@ def run_server(label, commands):
             if c.startswith("sleep "):
                 time.sleep(float(c.split()[1]))
                 continue
+            if c.startswith("wait "):
+                _, secs, token = c.split(" ", 2)
+                t0 = time.time()
+                found = wait_for(token, float(secs))
+                log("wait %s : %s (%.0f s)" % (token, found, time.time() - t0))
+                continue
             log("> " + c)
             proc.stdin.write(c + "\n")
             proc.stdin.flush()
@@ -131,25 +154,39 @@ def run_server(label, commands):
     log("exit code %s" % proc.returncode)
 
 
-FULL = ["sleep 5", "battletower selftest", "sleep 5", "battletower selftest ascension", "sleep 85",
-        "battletower selftest defeat", "sleep 45", "battletower selftest daily", "sleep 100",
-        "battletower selftest extreme", "sleep 290", "battletower selftest resume", "sleep 3", "battletower selftest report"]
-CHECK = ["sleep 5", "battletower selftest persisted", "sleep 3", "battletower selftest report"]
+TOWER = ["sleep 5", "battletower selftest", "sleep 5", "battletower selftest ascension", "sleep 85",
+         "battletower selftest defeat", "sleep 45", "battletower selftest daily", "sleep 100",
+         "battletower selftest extreme", "sleep 290"]
+BATTLES = ["battletower selftest ranked", "wait 240 SELFTEST-DONE ranked",
+           "battletower selftest rankedtimer", "wait 240 SELFTEST-DONE rankedtimer",
+           "battletower selftest trainers", "wait 200 SELFTEST-DONE trainers",
+           "battletower selftest season", "wait 40 SELFTEST-DONE season"]
+STORE = ["battletower selftest rankedstorage", "wait 40 SELFTEST-DONE rankedstorage"]
+END = ["battletower selftest resume", "sleep 3", "battletower selftest report"]
+CHECK = ["sleep 5", "battletower selftest persisted", "battletower selftest rankedpersisted", "sleep 3", "battletower selftest report"]
+CHECK_BATTLES = ["sleep 5", "battletower selftest battlespersisted", "battletower selftest rankedpersisted", "sleep 3", "battletower selftest report"]
+CFG = os.path.join(SRV, "config", "cobblepulse_battles")
 
-QUICK = os.path.exists("ci/QUICKSMOKE")
-if QUICK:
-    run_server("json-1", FULL)
+mode = open("ci/QUICKSMOKE").read().strip() if os.path.exists("ci/QUICKSMOKE") else ""
+if mode == "battles":
+    # iteration rapide : uniquement les nouveautes de CobblePulse-Battles (stockage JSON)
+    run_server("json-1", ["sleep 5", "battletower selftest"] + BATTLES + STORE + ["sleep 3", "battletower selftest report"])
+    run_server("json-2", CHECK_BATTLES)
+    shutil.copytree(CFG, os.path.join(OUT, "server-config-json"), dirs_exist_ok=True)
     sys.exit(0)
-run_server("json-1", FULL)
-run_server("json-2", CHECK)
-shutil.copytree(os.path.join(SRV, "config", "cobblepulse_battletower"), os.path.join(OUT, "server-config-json"), dirs_exist_ok=True)
-cfg = os.path.join(SRV, "config", "cobblepulse_battletower", "storage.toml")
+if os.path.exists("ci/QUICKSMOKE"):
+    run_server("json-1", TOWER + BATTLES + STORE + END)
+    sys.exit(0)
+run_server("json-1", TOWER + BATTLES + STORE + END)
+run_server("json-2", CHECK + ["battletower selftest battlespersisted", "sleep 2", "battletower selftest report"])
+shutil.copytree(CFG, os.path.join(OUT, "server-config-json"), dirs_exist_ok=True)
+cfg = os.path.join(CFG, "storage.toml")
 if os.environ.get("BT_MYSQL") == "1":
     open(cfg, "w").write('mode = "mysql"\n[mysql]\nhost = "127.0.0.1"\nport = 3306\ndatabase = "cobblepulse"\nusername = "root"\npassword = "battletower"\n')
-    run_server("mysql-1", FULL)
+    run_server("mysql-1", TOWER + STORE + END)
     run_server("mysql-2", CHECK)
 open(cfg, "w").write('mode = "sqlite"\n')
-run_server("sqlite-1", FULL)
+run_server("sqlite-1", TOWER + STORE + END)
 run_server("sqlite-2", CHECK)
 for crash in glob.glob(os.path.join(SRV, "crash-reports", "*")):
     shutil.copy(crash, OUT)
