@@ -2,7 +2,7 @@
 
 Addon de **CobblePulse** pour **Fabric 1.21.1** et **Cobblemon 1.8.4**, qui remplace CobblePulse Battletower :
 
-- **Tour de Combat** : 50 étages, Boss du Jour, Battle Points (BP) et boutique, succès, éditeur graphique de dresseurs ;
+- **Tours de Combat** : la grande tour (50 étages par défaut) et autant de tours plus petites (ou plus grandes) que voulu, Boss du Jour, Battle Points (BP) et boutique, succès, éditeur graphique de dresseurs ;
 - **Ranked** : files classée et amicale, en simple et en double, avec Elo, rangs, saisons, missions quotidiennes et hebdomadaires, webhook Discord et multi-serveur (Velocity + Redis) ;
 - **Dresseurs du monde** : des PNJ dresseurs posés n'importe où hors de la Tour, avec récompenses et revanche ;
 - **Écrans** : tous les menus sont des écrans client (hub `/battles`), avec des menus coffre pour un joueur qui n'aurait pas le mod ;
@@ -29,7 +29,8 @@ SQLite, MySQL (HikariCP), Redis (Jedis) et NightConfig (TOML) sont embarqués da
 | `storage.toml` | `mode = "json"` (défaut), `"mysql"` ou `"sqlite"` ; `share_cobblepulse = true` reprend la base de CobblePulse |
 | `tower.toml`, `rewards.toml`, `daily_boss.toml`, `shop.toml`, `achievements.toml` | Tour de Combat (voir plus bas) |
 | `messages.toml` | tous les textes (sections `[hub]`, `[ranked]`, `[trainer]`, `[tool]` comprises) |
-| `data/floors.json`, `data/bosses.json` | étages et Boss du Jour |
+| `data/floors.json`, `data/bosses.json` | étages de la tour principale et Boss du Jour |
+| `data/tours/<id>.json` | tours secondaires : nom, nombre d'étages, icône, cooldown, multiplicateur de BP, récompense de fin (BP + commandes), permission, hall de sortie, étages |
 | `dresseurs.json` | dresseurs du monde (position, PNJ, équipe, récompenses) |
 | `ranked/ranked.toml` | minuteurs, délais, adversaires récents, pénalités de fuite, commandes de récompense par match, arènes |
 | `ranked/elo.toml` | Elo (formule de Pokémon Showdown ou K personnalisé), Elo de départ et plancher, gain maximal par jour, rangs |
@@ -91,6 +92,16 @@ Un joueur rejoint la file depuis n'importe quel serveur. Quand le serveur de com
 
 ## Tour de Combat
 
+### Plusieurs tours
+
+En plus de la tour principale (`tower.toml` → `floors`, 50 par défaut), on peut créer des tours de n'importe quelle taille, par exemple une Tour Débutant de 10 dresseurs :
+
+1. `/bt tour creer debutant 10 Tour Débutant` (ou Administration → Tours de combat → Nouvelle tour) ;
+2. placer ses étages comme ceux de la grande tour en ajoutant l'identifiant : `/bt npc settp 1 debutant`, `/bt npc spawn 1 debutant`, `/bt npc edit 1 debutant` (ou l'Éditeur de PNJ) ;
+3. réglages : `/bt tour etages|nom|cooldown|recompense|sortie|supprimer <id> …`, ou directement dans `data/tours/<id>.json` (icône, multiplicateur de BP, commandes de fin, permission).
+
+Chaque tour a ses propres records (meilleur étage, victoires, meilleur temps) et son propre cooldown : une défaite dans la petite tour ne bloque pas la grande. Le menu de la Tour propose alors « Choisir une tour » (`/bt tours`, ou `/bt start <id>`). Le classement, les paliers, les succès d'étage et les placeholders restent ceux de la tour principale ; les BP par étage suivent `rewards.toml` (× le multiplicateur de la tour).
+
 ### Mise en route
 
 1. `/bt admin setexit` : hall de retour (sinon le joueur revient là où il a lancé l'assaut).
@@ -139,13 +150,13 @@ Météo et terrain permanents : ils sont posés au début du combat, avec une du
 | Commande | Permission |
 |---|---|
 | `/battles`, `/combats` (hub) | — |
-| `/battletower`, `/bt` (menu), `top`, `succes`, `start`, `engage`, `pc`, `abandon`, `boss` | `cobblepulse.battletower.use` |
+| `/battletower`, `/bt` (menu), `top`, `succes`, `start [tour]`, `tours`, `engage`, `pc`, `abandon`, `boss` | `cobblepulse.battletower.use` |
 | PNJ marchand (clic) | `cobblepulse.battletower.shop` |
 | Bonus de BP | `cobblepulse.battletower.vip.bp_boost` |
 | `/bt staff disqualify <joueurs>`, `/bt staff inspect <joueur>` | `cobblepulse.battletower.staff.disqualify` |
 | `/bt staff resetcooldown <joueur>` | `cobblepulse.battletower.staff.resetcooldown` |
 | `/bt admin toggle` | `cobblepulse.battletower.admin.toggle` |
-| `/bt npc …`, `/bt admin setexit`, `/bt admin floors` | `cobblepulse.battletower.admin.npc` |
+| `/bt npc … <étage> [tour]`, `/bt tour …`, `/bt admin setexit`, `/bt admin floors` | `cobblepulse.battletower.admin.npc` |
 | `/bt boss create/edit/delete/settp/spawn/rotate/list` | `cobblepulse.battletower.admin.boss` |
 | `/bt shop spawn/remove` | `cobblepulse.battletower.admin.shop` |
 | `/bt admin reload` | `cobblepulse.battletower.admin.reload` |
