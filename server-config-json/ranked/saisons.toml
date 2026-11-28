@@ -1,0 +1,37 @@
+# ═══════════════════════════════════════════════════════════════════════
+#  Ranked : saisons
+#  La première saison active (debut <= maintenant < fin) est utilisée.
+#  Dates : "AAAA-MM-JJ" ou "AAAA-MM-JJ HH:MM:SS", dans le fuseau de general.toml.
+# ═══════════════════════════════════════════════════════════════════════
+
+# Fréquence de vérification du changement de saison (minutes)
+verification_minutes = 1
+
+[[saison]]
+nom = "Saison 1"
+debut = "2026-01-01"
+fin = "2030-12-31 23:59:59"
+preset = "default"
+
+[fin_de_saison]
+# Remise à zéro complète de l'Elo (elo_depart)
+reset_total = false
+# Rapprochement vers l'Elo de départ : nouvel Elo = départ + (Elo - départ) × facteur
+reset_partiel = true
+facteur = 0.5
+reset_victoires = true
+reset_series = true
+# Les récompenses de rang peuvent être regagnées la saison suivante
+reset_recompenses_rang = true
+
+[hors_saison]
+# Sans saison active : amical possible, classé fermé (profils consultables)
+amical_autorise = true
+
+[archive]
+# Nombre de joueurs gardés par format dans l'archive de fin de saison
+top = 100
+
+[annonces]
+actif = true
+intervalle_minutes = 30

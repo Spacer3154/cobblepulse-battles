@@ -1,0 +1,167 @@
+{
+  "id": "mini",
+  "name": "Mini Tour",
+  "size": 2,
+  "icon": "",
+  "cooldownHours": 1,
+  "bpMultiplier": 2.0,
+  "finalBp": 30,
+  "finalCommands": [],
+  "permission": "",
+  "order": 1,
+  "exit": null,
+  "bossArrival": null,
+  "bossNpcLocation": null,
+  "bossNpcUuid": null,
+  "shops": [],
+  "floors": [
+    {
+      "floor": 1,
+      "arrival": {
+        "world": "minecraft:overworld",
+        "x": -231.5,
+        "y": 68.0,
+        "z": -61.5,
+        "yaw": 0.0,
+        "pitch": 0.0
+      },
+      "npcLocation": {
+        "world": "minecraft:overworld",
+        "x": -228.5,
+        "y": 68.0,
+        "z": -61.5,
+        "yaw": 0.0,
+        "pitch": 0.0
+      },
+      "npcUuid": "3d55df0e-a2bd-4798-af8b-8151f132227f",
+      "trainer": {
+        "name": "Mini 1",
+        "title": "",
+        "skin": "builtin:ace_trainer_m",
+        "format": "singles",
+        "tier": "ag",
+        "ai": "EASY",
+        "levelScale": 0,
+        "inverse": false,
+        "weather": "none",
+        "terrain": "none",
+        "introMessage": "",
+        "defeatMessage": "",
+        "team": [
+          {
+            "species": "caterpie",
+            "form": "",
+            "nickname": "",
+            "level": 5,
+            "nature": "",
+            "ability": "",
+            "gender": "",
+            "shiny": false,
+            "heldItem": "",
+            "ivs": {
+              "hp": 31,
+              "atk": 31,
+              "def": 31,
+              "spa": 31,
+              "spd": 31,
+              "spe": 31
+            },
+            "evs": {
+              "hp": 0,
+              "atk": 0,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 0
+            },
+            "moves": [
+              {
+                "id": "tackle",
+                "ppMax": 0,
+                "pp": -1
+              }
+            ],
+            "teraType": "",
+            "allowMega": false,
+            "allowTera": false
+          }
+        ],
+        "world": null
+      }
+    },
+    {
+      "floor": 2,
+      "arrival": {
+        "world": "minecraft:overworld",
+        "x": -231.5,
+        "y": 67.0,
+        "z": -49.5,
+        "yaw": 0.0,
+        "pitch": 0.0
+      },
+      "npcLocation": {
+        "world": "minecraft:overworld",
+        "x": -228.5,
+        "y": 66.0,
+        "z": -49.5,
+        "yaw": 0.0,
+        "pitch": 0.0
+      },
+      "npcUuid": "1536aa83-1a0f-401c-8dc6-d5e425ede955",
+      "trainer": {
+        "name": "Mini 2",
+        "title": "",
+        "skin": "builtin:ace_trainer_m",
+        "format": "singles",
+        "tier": "ag",
+        "ai": "EASY",
+        "levelScale": 0,
+        "inverse": false,
+        "weather": "none",
+        "terrain": "none",
+        "introMessage": "",
+        "defeatMessage": "",
+        "team": [
+          {
+            "species": "caterpie",
+            "form": "",
+            "nickname": "",
+            "level": 5,
+            "nature": "",
+            "ability": "",
+            "gender": "",
+            "shiny": false,
+            "heldItem": "",
+            "ivs": {
+              "hp": 31,
+              "atk": 31,
+              "def": 31,
+              "spa": 31,
+              "spd": 31,
+              "spe": 31
+            },
+            "evs": {
+              "hp": 0,
+              "atk": 0,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 0
+            },
+            "moves": [
+              {
+                "id": "tackle",
+                "ppMax": 0,
+                "pp": -1
+              }
+            ],
+            "teraType": "",
+            "allowMega": false,
+            "allowTera": false
+          }
+        ],
+        "world": null
+      }
+    }
+  ]
+}

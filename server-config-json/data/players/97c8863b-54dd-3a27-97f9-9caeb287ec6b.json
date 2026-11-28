@@ -1,0 +1,34 @@
+{
+  "uuid": "97c8863b-54dd-3a27-97f9-9caeb287ec6b",
+  "name": "TRLose",
+  "bp": 0,
+  "bpEarned": 0,
+  "maxFloor": 0,
+  "completions": 0,
+  "totalWins": 0,
+  "totalLosses": 0,
+  "bestTimeMs": 0,
+  "cooldownUntil": 0,
+  "lastRunAt": 0,
+  "dailyBossDay": "",
+  "dailyBossWins": 0,
+  "dailyBossBeaten": [],
+  "achievements": {},
+  "trainers": {
+    "champion": {
+      "wins": 0,
+      "losses": 1,
+      "firstWinAt": 0,
+      "lastWinAt": 0,
+      "lastLossAt": 1795856575348,
+      "lastBattleAt": 1795856575348
+    }
+  },
+  "towers": {},
+  "pendingExitTower": "",
+  "bestNoKoStreak": 0,
+  "monotypeFloors": 0,
+  "purchases": {},
+  "pendingExit": false,
+  "pendingMessage": ""
+}

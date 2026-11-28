@@ -1,0 +1,60 @@
+# ═══════════════════════════════════════════════════════════════════════
+#  Ranked : récompenses de rang et de fin de saison
+#  Commandes exécutées par la console. Variables : %player%, %uuid%, %rang%, %saison%, %format%, %place%
+#  Un joueur hors ligne reçoit ses récompenses à sa prochaine connexion.
+# ═══════════════════════════════════════════════════════════════════════
+
+# Récompense donnée la première fois qu'un rang est atteint dans la saison (par format)
+recompenses_rang = true
+
+[rang.superball]
+commandes = ["give %player% cobblemon:poke_ball 10"]
+
+[rang.hyperball]
+commandes = ["give %player% cobblemon:great_ball 10"]
+
+[rang.masterball]
+commandes = ["give %player% cobblemon:ultra_ball 10"]
+
+[rang.ultraball]
+commandes = ["give %player% cobblemon:master_ball 1"]
+
+[rang.memoire]
+commandes = ["give %player% cobblemon:master_ball 3"]
+
+# Récompenses de fin de saison selon la place au classement (place = "1", "2-3", "4-10"...)
+[[saison]]
+format = "simple"
+place = "1"
+nom = "&6&l★ Champion Simple ★"
+commandes = ["give %player% cobblemon:master_ball 5", "give %player% minecraft:nether_star 1"]
+
+[[saison]]
+format = "simple"
+place = "2-3"
+nom = "&ePodium Simple"
+commandes = ["give %player% cobblemon:master_ball 2"]
+
+[[saison]]
+format = "simple"
+place = "4-10"
+nom = "&fTop 10 Simple"
+commandes = ["give %player% cobblemon:ultra_ball 32"]
+
+[[saison]]
+format = "double"
+place = "1"
+nom = "&6&l★ Champion Double ★"
+commandes = ["give %player% cobblemon:master_ball 5", "give %player% minecraft:nether_star 1"]
+
+[[saison]]
+format = "double"
+place = "2-3"
+nom = "&ePodium Double"
+commandes = ["give %player% cobblemon:master_ball 2"]
+
+[[saison]]
+format = "double"
+place = "4-10"
+nom = "&fTop 10 Double"
+commandes = ["give %player% cobblemon:ultra_ball 32"]

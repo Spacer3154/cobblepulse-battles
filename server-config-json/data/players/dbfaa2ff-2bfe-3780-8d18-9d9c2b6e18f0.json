@@ -1,0 +1,27 @@
+{
+  "uuid": "dbfaa2ff-2bfe-3780-8d18-9d9c2b6e18f0",
+  "name": "BTDisq",
+  "bp": 70,
+  "bpEarned": 0,
+  "maxFloor": 0,
+  "completions": 0,
+  "totalWins": 0,
+  "totalLosses": 0,
+  "bestTimeMs": 0,
+  "cooldownUntil": 1795942472809,
+  "lastRunAt": 1795856072809,
+  "dailyBossDay": "",
+  "dailyBossWins": 0,
+  "dailyBossBeaten": [],
+  "achievements": {},
+  "trainers": {},
+  "towers": {},
+  "pendingExitTower": "",
+  "bestNoKoStreak": 0,
+  "monotypeFloors": 0,
+  "purchases": {
+    "item_2": 1
+  },
+  "pendingExit": false,
+  "pendingMessage": ""
+}

@@ -1,0 +1,23 @@
+[
+  {
+    "name": "selftest",
+    "enabled": true,
+    "pos1": {
+      "world": "minecraft:overworld",
+      "x": -269.5,
+      "y": 68.0,
+      "z": -109.5,
+      "yaw": 0.0,
+      "pitch": 0.0
+    },
+    "pos2": {
+      "world": "minecraft:overworld",
+      "x": -269.5,
+      "y": 69.0,
+      "z": -101.5,
+      "yaw": 0.0,
+      "pitch": 0.0
+    },
+    "exit": null
+  }
+]

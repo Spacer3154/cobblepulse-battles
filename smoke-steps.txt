@@ -1,0 +1,92 @@
+mod fabric-api 0.116.18+1.21.1 -> fabric-api-0.116.18+1.21.1.jar
+mod fabric-language-kotlin 1.14.2+kotlin.2.4.21 -> fabric-language-kotlin-1.14.2+kotlin.2.4.21.jar
+mod luckperms v5.4.140-fabric -> LuckPerms-Fabric-5.4.140.jar
+mod placeholder-api 2.4.2+1.21 -> placeholder-api-2.4.2+1.21.jar
+mod cobblemon 1.8.4F -> Cobblemon-fabric-1.8.4+1.21.1.jar
+mod cobblemon-mega-showdown 1.4+1.8.4+1.21.1-release -> mega_showdown-fabric-1.4+1.8.4+1.21.1-release.jar
+mod accessories 1.1.0-beta.54+1.21.1 -> accessories-fabric-1.1.0-beta.54+1.21.1.jar
+mod architectury-api 13.0.12+fabric -> architectury-13.0.12-fabric.jar
+mod owo-lib 0.13.0-alpha.15.1+1.21 -> owo-lib-0.13.0-alpha.15.1+1.21.jar
+mod battles /home/runner/work/cobblepulse-battles/cobblepulse-battles/out/cobblepulse-battles-2.0.0.jar
+datapack fakemon btfake:testmon_ex (depuis data/cobblemon/species/generation1/pikachu.json de Cobblemon-fabric-1.8.4+1.21.1.jar)
+ancienne configuration cobblepulse_battletower creee (migration)
+===== run json-1 =====
+server ready: True
+> battletower selftest
+> battletower selftest ascension
+> battletower selftest defeat
+> battletower selftest daily
+> battletower selftest extreme
+> battletower selftest ranked
+wait SELFTEST-DONE ranked : True (38 s)
+> battletower selftest rankedtimer
+wait SELFTEST-DONE rankedtimer : True (49 s)
+> battletower selftest trainers
+wait SELFTEST-DONE trainers : True (13 s)
+> battletower selftest towers
+wait SELFTEST-DONE towers : True (40 s)
+> battletower selftest season
+wait SELFTEST-DONE season : True (0 s)
+> battletower selftest rankedstorage
+wait SELFTEST-DONE rankedstorage : True (0 s)
+> battletower selftest resume
+> battletower selftest report
+[json-1] [09:03:51] [Server thread/INFO]: [Battletower][selftest] SELFTEST SUMMARY pass=131 fail=0
+[json-1] [09:03:51] [Server thread/INFO]: SELFTEST SUMMARY pass=131 fail=0
+exit code 0
+===== run json-2 =====
+server ready: True
+> battletower selftest persisted
+> battletower selftest rankedpersisted
+> battletower selftest report
+> battletower selftest battlespersisted
+> battletower selftest report
+[json-2] [09:04:31] [Server thread/INFO]: [Battletower][selftest] SELFTEST SUMMARY pass=6 fail=0
+[json-2] [09:04:31] [Server thread/INFO]: SELFTEST SUMMARY pass=6 fail=0
+[json-2] [09:04:37] [Server thread/INFO]: [Battletower][selftest] SELFTEST SUMMARY pass=15 fail=0
+[json-2] [09:04:37] [Server thread/INFO]: SELFTEST SUMMARY pass=15 fail=0
+exit code 0
+===== run mysql-1 =====
+server ready: True
+> battletower selftest
+> battletower selftest ascension
+> battletower selftest defeat
+> battletower selftest daily
+> battletower selftest extreme
+> battletower selftest rankedstorage
+wait SELFTEST-DONE rankedstorage : True (0 s)
+> battletower selftest resume
+> battletower selftest report
+[mysql-1] [09:14:13] [Server thread/INFO]: [Battletower][selftest] SELFTEST SUMMARY pass=51 fail=0
+[mysql-1] [09:14:13] [Server thread/INFO]: SELFTEST SUMMARY pass=51 fail=0
+exit code 0
+===== run mysql-2 =====
+server ready: True
+> battletower selftest persisted
+> battletower selftest rankedpersisted
+> battletower selftest report
+[mysql-2] [09:14:52] [Server thread/INFO]: [Battletower][selftest] SELFTEST SUMMARY pass=6 fail=0
+[mysql-2] [09:14:52] [Server thread/INFO]: SELFTEST SUMMARY pass=6 fail=0
+exit code 0
+===== run sqlite-1 =====
+server ready: True
+> battletower selftest
+> battletower selftest ascension
+> battletower selftest defeat
+> battletower selftest daily
+> battletower selftest extreme
+> battletower selftest rankedstorage
+wait SELFTEST-DONE rankedstorage : True (0 s)
+> battletower selftest resume
+> battletower selftest report
+[sqlite-1] [09:24:26] [Server thread/INFO]: [Battletower][selftest] SELFTEST SUMMARY pass=51 fail=0
+[sqlite-1] [09:24:26] [Server thread/INFO]: SELFTEST SUMMARY pass=51 fail=0
+exit code 0
+===== run sqlite-2 =====
+server ready: True
+> battletower selftest persisted
+> battletower selftest rankedpersisted
+> battletower selftest report
+[sqlite-2] [09:25:05] [Server thread/INFO]: [Battletower][selftest] SELFTEST SUMMARY pass=6 fail=0
+[sqlite-2] [09:25:05] [Server thread/INFO]: SELFTEST SUMMARY pass=6 fail=0
+exit code 0

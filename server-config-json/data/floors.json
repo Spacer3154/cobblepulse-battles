@@ -1,0 +1,1294 @@
+{
+  "id": "principale",
+  "name": "",
+  "size": 0,
+  "icon": "",
+  "cooldownHours": -1,
+  "bpMultiplier": 1.0,
+  "finalBp": 0,
+  "finalCommands": [],
+  "permission": "",
+  "order": 0,
+  "exit": null,
+  "bossArrival": {
+    "world": "minecraft:overworld",
+    "x": -255.5,
+    "y": 66.0,
+    "z": -87.5,
+    "yaw": 0.0,
+    "pitch": 0.0
+  },
+  "bossNpcLocation": {
+    "world": "minecraft:overworld",
+    "x": -252.5,
+    "y": 68.0,
+    "z": -87.5,
+    "yaw": 0.0,
+    "pitch": 0.0
+  },
+  "bossNpcUuid": "fe975b13-28dc-48cc-9517-0172c0902574",
+  "shops": [],
+  "floors": [
+    {
+      "floor": 1,
+      "arrival": {
+        "world": "minecraft:overworld",
+        "x": -255.5,
+        "y": 68.0,
+        "z": -63.5,
+        "yaw": 0.0,
+        "pitch": 0.0
+      },
+      "npcLocation": {
+        "world": "minecraft:overworld",
+        "x": -252.5,
+        "y": 68.0,
+        "z": -63.5,
+        "yaw": 0.0,
+        "pitch": 0.0
+      },
+      "npcUuid": "58491b1b-d1c9-4046-a200-6b63dd684135",
+      "trainer": {
+        "name": "Extreme Test",
+        "title": "",
+        "skin": "builtin:ace_trainer_m",
+        "format": "singles",
+        "tier": "ag",
+        "ai": "EXTREME",
+        "levelScale": 0,
+        "inverse": false,
+        "weather": "none",
+        "terrain": "none",
+        "introMessage": "",
+        "defeatMessage": "",
+        "team": [
+          {
+            "species": "charizard",
+            "form": "",
+            "nickname": "",
+            "level": 50,
+            "nature": "",
+            "ability": "",
+            "gender": "",
+            "shiny": false,
+            "heldItem": "mega_showdown:charizardite_y",
+            "ivs": {
+              "hp": 31,
+              "atk": 31,
+              "def": 31,
+              "spa": 31,
+              "spd": 31,
+              "spe": 31
+            },
+            "evs": {
+              "hp": 0,
+              "atk": 0,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 0
+            },
+            "moves": [
+              {
+                "id": "flamethrower",
+                "ppMax": 0,
+                "pp": -1
+              },
+              {
+                "id": "airslash",
+                "ppMax": 0,
+                "pp": -1
+              },
+              {
+                "id": "dragonpulse",
+                "ppMax": 0,
+                "pp": -1
+              },
+              {
+                "id": "roost",
+                "ppMax": 0,
+                "pp": -1
+              }
+            ],
+            "teraType": "",
+            "allowMega": true,
+            "allowTera": false
+          },
+          {
+            "species": "blastoise",
+            "form": "",
+            "nickname": "",
+            "level": 50,
+            "nature": "",
+            "ability": "",
+            "gender": "",
+            "shiny": false,
+            "heldItem": "",
+            "ivs": {
+              "hp": 31,
+              "atk": 31,
+              "def": 31,
+              "spa": 31,
+              "spd": 31,
+              "spe": 31
+            },
+            "evs": {
+              "hp": 0,
+              "atk": 0,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 0
+            },
+            "moves": [
+              {
+                "id": "surf",
+                "ppMax": 0,
+                "pp": -1
+              },
+              {
+                "id": "icebeam",
+                "ppMax": 0,
+                "pp": -1
+              }
+            ],
+            "teraType": "",
+            "allowMega": false,
+            "allowTera": false
+          }
+        ],
+        "world": null
+      }
+    },
+    {
+      "floor": 2,
+      "arrival": {
+        "world": "minecraft:overworld",
+        "x": -255.5,
+        "y": 72.0,
+        "z": -99.5,
+        "yaw": 0.0,
+        "pitch": 0.0
+      },
+      "npcLocation": {
+        "world": "minecraft:overworld",
+        "x": -252.5,
+        "y": 71.0,
+        "z": -99.5,
+        "yaw": 0.0,
+        "pitch": 0.0
+      },
+      "npcUuid": "d8d021c0-4595-4e62-a784-da37c1dc4f9a",
+      "trainer": {
+        "name": "Testeur Inverse",
+        "title": "",
+        "skin": "builtin:ace_trainer_m",
+        "format": "singles",
+        "tier": "ag",
+        "ai": "MEDIUM",
+        "levelScale": 0,
+        "inverse": true,
+        "weather": "rain",
+        "terrain": "electric",
+        "introMessage": "",
+        "defeatMessage": "",
+        "team": [
+          {
+            "species": "magikarp",
+            "form": "",
+            "nickname": "",
+            "level": 5,
+            "nature": "",
+            "ability": "",
+            "gender": "",
+            "shiny": false,
+            "heldItem": "",
+            "ivs": {
+              "hp": 31,
+              "atk": 31,
+              "def": 31,
+              "spa": 31,
+              "spd": 31,
+              "spe": 31
+            },
+            "evs": {
+              "hp": 0,
+              "atk": 0,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 0
+            },
+            "moves": [
+              {
+                "id": "tackle",
+                "ppMax": 0,
+                "pp": -1
+              }
+            ],
+            "teraType": "",
+            "allowMega": false,
+            "allowTera": false
+          }
+        ],
+        "world": null
+      }
+    },
+    {
+      "floor": 3,
+      "arrival": null,
+      "npcLocation": null,
+      "npcUuid": null,
+      "trainer": {
+        "name": "Dresseur de l'étage 3",
+        "title": "",
+        "skin": "builtin:ace_trainer_m",
+        "format": "singles",
+        "tier": "ag",
+        "ai": "EASY",
+        "levelScale": 0,
+        "inverse": false,
+        "weather": "none",
+        "terrain": "none",
+        "introMessage": "",
+        "defeatMessage": "",
+        "team": [],
+        "world": null
+      }
+    },
+    {
+      "floor": 4,
+      "arrival": null,
+      "npcLocation": null,
+      "npcUuid": null,
+      "trainer": {
+        "name": "Dresseur de l'étage 4",
+        "title": "",
+        "skin": "builtin:ace_trainer_m",
+        "format": "singles",
+        "tier": "ag",
+        "ai": "EASY",
+        "levelScale": 0,
+        "inverse": false,
+        "weather": "none",
+        "terrain": "none",
+        "introMessage": "",
+        "defeatMessage": "",
+        "team": [],
+        "world": null
+      }
+    },
+    {
+      "floor": 5,
+      "arrival": null,
+      "npcLocation": null,
+      "npcUuid": null,
+      "trainer": {
+        "name": "Dresseur de l'étage 5",
+        "title": "",
+        "skin": "builtin:ace_trainer_m",
+        "format": "singles",
+        "tier": "ag",
+        "ai": "EASY",
+        "levelScale": 0,
+        "inverse": false,
+        "weather": "none",
+        "terrain": "none",
+        "introMessage": "",
+        "defeatMessage": "",
+        "team": [],
+        "world": null
+      }
+    },
+    {
+      "floor": 6,
+      "arrival": null,
+      "npcLocation": null,
+      "npcUuid": null,
+      "trainer": {
+        "name": "Dresseur de l'étage 6",
+        "title": "",
+        "skin": "builtin:ace_trainer_m",
+        "format": "singles",
+        "tier": "ag",
+        "ai": "EASY",
+        "levelScale": 0,
+        "inverse": false,
+        "weather": "none",
+        "terrain": "none",
+        "introMessage": "",
+        "defeatMessage": "",
+        "team": [],
+        "world": null
+      }
+    },
+    {
+      "floor": 7,
+      "arrival": null,
+      "npcLocation": null,
+      "npcUuid": null,
+      "trainer": {
+        "name": "Dresseur de l'étage 7",
+        "title": "",
+        "skin": "builtin:ace_trainer_m",
+        "format": "singles",
+        "tier": "ag",
+        "ai": "EASY",
+        "levelScale": 0,
+        "inverse": false,
+        "weather": "none",
+        "terrain": "none",
+        "introMessage": "",
+        "defeatMessage": "",
+        "team": [],
+        "world": null
+      }
+    },
+    {
+      "floor": 8,
+      "arrival": null,
+      "npcLocation": null,
+      "npcUuid": null,
+      "trainer": {
+        "name": "Dresseur de l'étage 8",
+        "title": "",
+        "skin": "builtin:ace_trainer_m",
+        "format": "singles",
+        "tier": "ag",
+        "ai": "EASY",
+        "levelScale": 0,
+        "inverse": false,
+        "weather": "none",
+        "terrain": "none",
+        "introMessage": "",
+        "defeatMessage": "",
+        "team": [],
+        "world": null
+      }
+    },
+    {
+      "floor": 9,
+      "arrival": null,
+      "npcLocation": null,
+      "npcUuid": null,
+      "trainer": {
+        "name": "Dresseur de l'étage 9",
+        "title": "",
+        "skin": "builtin:ace_trainer_m",
+        "format": "singles",
+        "tier": "ag",
+        "ai": "EASY",
+        "levelScale": 0,
+        "inverse": false,
+        "weather": "none",
+        "terrain": "none",
+        "introMessage": "",
+        "defeatMessage": "",
+        "team": [],
+        "world": null
+      }
+    },
+    {
+      "floor": 10,
+      "arrival": null,
+      "npcLocation": null,
+      "npcUuid": null,
+      "trainer": {
+        "name": "Dresseur de l'étage 10",
+        "title": "",
+        "skin": "builtin:ace_trainer_m",
+        "format": "singles",
+        "tier": "ag",
+        "ai": "EASY",
+        "levelScale": 0,
+        "inverse": false,
+        "weather": "none",
+        "terrain": "none",
+        "introMessage": "",
+        "defeatMessage": "",
+        "team": [],
+        "world": null
+      }
+    },
+    {
+      "floor": 11,
+      "arrival": null,
+      "npcLocation": null,
+      "npcUuid": null,
+      "trainer": {
+        "name": "Dresseur de l'étage 11",
+        "title": "",
+        "skin": "builtin:ace_trainer_m",
+        "format": "singles",
+        "tier": "ag",
+        "ai": "EASY",
+        "levelScale": 0,
+        "inverse": false,
+        "weather": "none",
+        "terrain": "none",
+        "introMessage": "",
+        "defeatMessage": "",
+        "team": [],
+        "world": null
+      }
+    },
+    {
+      "floor": 12,
+      "arrival": null,
+      "npcLocation": null,
+      "npcUuid": null,
+      "trainer": {
+        "name": "Dresseur de l'étage 12",
+        "title": "",
+        "skin": "builtin:ace_trainer_m",
+        "format": "singles",
+        "tier": "ag",
+        "ai": "EASY",
+        "levelScale": 0,
+        "inverse": false,
+        "weather": "none",
+        "terrain": "none",
+        "introMessage": "",
+        "defeatMessage": "",
+        "team": [],
+        "world": null
+      }
+    },
+    {
+      "floor": 13,
+      "arrival": null,
+      "npcLocation": null,
+      "npcUuid": null,
+      "trainer": {
+        "name": "Dresseur de l'étage 13",
+        "title": "",
+        "skin": "builtin:ace_trainer_m",
+        "format": "singles",
+        "tier": "ag",
+        "ai": "EASY",
+        "levelScale": 0,
+        "inverse": false,
+        "weather": "none",
+        "terrain": "none",
+        "introMessage": "",
+        "defeatMessage": "",
+        "team": [],
+        "world": null
+      }
+    },
+    {
+      "floor": 14,
+      "arrival": null,
+      "npcLocation": null,
+      "npcUuid": null,
+      "trainer": {
+        "name": "Dresseur de l'étage 14",
+        "title": "",
+        "skin": "builtin:ace_trainer_m",
+        "format": "singles",
+        "tier": "ag",
+        "ai": "EASY",
+        "levelScale": 0,
+        "inverse": false,
+        "weather": "none",
+        "terrain": "none",
+        "introMessage": "",
+        "defeatMessage": "",
+        "team": [],
+        "world": null
+      }
+    },
+    {
+      "floor": 15,
+      "arrival": null,
+      "npcLocation": null,
+      "npcUuid": null,
+      "trainer": {
+        "name": "Dresseur de l'étage 15",
+        "title": "",
+        "skin": "builtin:ace_trainer_m",
+        "format": "singles",
+        "tier": "ag",
+        "ai": "EASY",
+        "levelScale": 0,
+        "inverse": false,
+        "weather": "none",
+        "terrain": "none",
+        "introMessage": "",
+        "defeatMessage": "",
+        "team": [],
+        "world": null
+      }
+    },
+    {
+      "floor": 16,
+      "arrival": null,
+      "npcLocation": null,
+      "npcUuid": null,
+      "trainer": {
+        "name": "Dresseur de l'étage 16",
+        "title": "",
+        "skin": "builtin:ace_trainer_m",
+        "format": "singles",
+        "tier": "ag",
+        "ai": "EASY",
+        "levelScale": 0,
+        "inverse": false,
+        "weather": "none",
+        "terrain": "none",
+        "introMessage": "",
+        "defeatMessage": "",
+        "team": [],
+        "world": null
+      }
+    },
+    {
+      "floor": 17,
+      "arrival": null,
+      "npcLocation": null,
+      "npcUuid": null,
+      "trainer": {
+        "name": "Dresseur de l'étage 17",
+        "title": "",
+        "skin": "builtin:ace_trainer_m",
+        "format": "singles",
+        "tier": "ag",
+        "ai": "EASY",
+        "levelScale": 0,
+        "inverse": false,
+        "weather": "none",
+        "terrain": "none",
+        "introMessage": "",
+        "defeatMessage": "",
+        "team": [],
+        "world": null
+      }
+    },
+    {
+      "floor": 18,
+      "arrival": null,
+      "npcLocation": null,
+      "npcUuid": null,
+      "trainer": {
+        "name": "Dresseur de l'étage 18",
+        "title": "",
+        "skin": "builtin:ace_trainer_m",
+        "format": "singles",
+        "tier": "ag",
+        "ai": "EASY",
+        "levelScale": 0,
+        "inverse": false,
+        "weather": "none",
+        "terrain": "none",
+        "introMessage": "",
+        "defeatMessage": "",
+        "team": [],
+        "world": null
+      }
+    },
+    {
+      "floor": 19,
+      "arrival": null,
+      "npcLocation": null,
+      "npcUuid": null,
+      "trainer": {
+        "name": "Dresseur de l'étage 19",
+        "title": "",
+        "skin": "builtin:ace_trainer_m",
+        "format": "singles",
+        "tier": "ag",
+        "ai": "EASY",
+        "levelScale": 0,
+        "inverse": false,
+        "weather": "none",
+        "terrain": "none",
+        "introMessage": "",
+        "defeatMessage": "",
+        "team": [],
+        "world": null
+      }
+    },
+    {
+      "floor": 20,
+      "arrival": null,
+      "npcLocation": null,
+      "npcUuid": null,
+      "trainer": {
+        "name": "Dresseur de l'étage 20",
+        "title": "",
+        "skin": "builtin:ace_trainer_m",
+        "format": "singles",
+        "tier": "ag",
+        "ai": "EASY",
+        "levelScale": 0,
+        "inverse": false,
+        "weather": "none",
+        "terrain": "none",
+        "introMessage": "",
+        "defeatMessage": "",
+        "team": [],
+        "world": null
+      }
+    },
+    {
+      "floor": 21,
+      "arrival": null,
+      "npcLocation": null,
+      "npcUuid": null,
+      "trainer": {
+        "name": "Dresseur de l'étage 21",
+        "title": "",
+        "skin": "builtin:ace_trainer_m",
+        "format": "singles",
+        "tier": "ag",
+        "ai": "EASY",
+        "levelScale": 0,
+        "inverse": false,
+        "weather": "none",
+        "terrain": "none",
+        "introMessage": "",
+        "defeatMessage": "",
+        "team": [],
+        "world": null
+      }
+    },
+    {
+      "floor": 22,
+      "arrival": null,
+      "npcLocation": null,
+      "npcUuid": null,
+      "trainer": {
+        "name": "Dresseur de l'étage 22",
+        "title": "",
+        "skin": "builtin:ace_trainer_m",
+        "format": "singles",
+        "tier": "ag",
+        "ai": "EASY",
+        "levelScale": 0,
+        "inverse": false,
+        "weather": "none",
+        "terrain": "none",
+        "introMessage": "",
+        "defeatMessage": "",
+        "team": [],
+        "world": null
+      }
+    },
+    {
+      "floor": 23,
+      "arrival": null,
+      "npcLocation": null,
+      "npcUuid": null,
+      "trainer": {
+        "name": "Dresseur de l'étage 23",
+        "title": "",
+        "skin": "builtin:ace_trainer_m",
+        "format": "singles",
+        "tier": "ag",
+        "ai": "EASY",
+        "levelScale": 0,
+        "inverse": false,
+        "weather": "none",
+        "terrain": "none",
+        "introMessage": "",
+        "defeatMessage": "",
+        "team": [],
+        "world": null
+      }
+    },
+    {
+      "floor": 24,
+      "arrival": null,
+      "npcLocation": null,
+      "npcUuid": null,
+      "trainer": {
+        "name": "Dresseur de l'étage 24",
+        "title": "",
+        "skin": "builtin:ace_trainer_m",
+        "format": "singles",
+        "tier": "ag",
+        "ai": "EASY",
+        "levelScale": 0,
+        "inverse": false,
+        "weather": "none",
+        "terrain": "none",
+        "introMessage": "",
+        "defeatMessage": "",
+        "team": [],
+        "world": null
+      }
+    },
+    {
+      "floor": 25,
+      "arrival": null,
+      "npcLocation": null,
+      "npcUuid": null,
+      "trainer": {
+        "name": "Dresseur de l'étage 25",
+        "title": "",
+        "skin": "builtin:ace_trainer_m",
+        "format": "singles",
+        "tier": "ag",
+        "ai": "EASY",
+        "levelScale": 0,
+        "inverse": false,
+        "weather": "none",
+        "terrain": "none",
+        "introMessage": "",
+        "defeatMessage": "",
+        "team": [],
+        "world": null
+      }
+    },
+    {
+      "floor": 26,
+      "arrival": null,
+      "npcLocation": null,
+      "npcUuid": null,
+      "trainer": {
+        "name": "Dresseur de l'étage 26",
+        "title": "",
+        "skin": "builtin:ace_trainer_m",
+        "format": "singles",
+        "tier": "ag",
+        "ai": "EASY",
+        "levelScale": 0,
+        "inverse": false,
+        "weather": "none",
+        "terrain": "none",
+        "introMessage": "",
+        "defeatMessage": "",
+        "team": [],
+        "world": null
+      }
+    },
+    {
+      "floor": 27,
+      "arrival": null,
+      "npcLocation": null,
+      "npcUuid": null,
+      "trainer": {
+        "name": "Dresseur de l'étage 27",
+        "title": "",
+        "skin": "builtin:ace_trainer_m",
+        "format": "singles",
+        "tier": "ag",
+        "ai": "EASY",
+        "levelScale": 0,
+        "inverse": false,
+        "weather": "none",
+        "terrain": "none",
+        "introMessage": "",
+        "defeatMessage": "",
+        "team": [],
+        "world": null
+      }
+    },
+    {
+      "floor": 28,
+      "arrival": null,
+      "npcLocation": null,
+      "npcUuid": null,
+      "trainer": {
+        "name": "Dresseur de l'étage 28",
+        "title": "",
+        "skin": "builtin:ace_trainer_m",
+        "format": "singles",
+        "tier": "ag",
+        "ai": "EASY",
+        "levelScale": 0,
+        "inverse": false,
+        "weather": "none",
+        "terrain": "none",
+        "introMessage": "",
+        "defeatMessage": "",
+        "team": [],
+        "world": null
+      }
+    },
+    {
+      "floor": 29,
+      "arrival": null,
+      "npcLocation": null,
+      "npcUuid": null,
+      "trainer": {
+        "name": "Dresseur de l'étage 29",
+        "title": "",
+        "skin": "builtin:ace_trainer_m",
+        "format": "singles",
+        "tier": "ag",
+        "ai": "EASY",
+        "levelScale": 0,
+        "inverse": false,
+        "weather": "none",
+        "terrain": "none",
+        "introMessage": "",
+        "defeatMessage": "",
+        "team": [],
+        "world": null
+      }
+    },
+    {
+      "floor": 30,
+      "arrival": null,
+      "npcLocation": null,
+      "npcUuid": null,
+      "trainer": {
+        "name": "Dresseur de l'étage 30",
+        "title": "",
+        "skin": "builtin:ace_trainer_m",
+        "format": "singles",
+        "tier": "ag",
+        "ai": "EASY",
+        "levelScale": 0,
+        "inverse": false,
+        "weather": "none",
+        "terrain": "none",
+        "introMessage": "",
+        "defeatMessage": "",
+        "team": [],
+        "world": null
+      }
+    },
+    {
+      "floor": 31,
+      "arrival": null,
+      "npcLocation": null,
+      "npcUuid": null,
+      "trainer": {
+        "name": "Dresseur de l'étage 31",
+        "title": "",
+        "skin": "builtin:ace_trainer_m",
+        "format": "singles",
+        "tier": "ag",
+        "ai": "EASY",
+        "levelScale": 0,
+        "inverse": false,
+        "weather": "none",
+        "terrain": "none",
+        "introMessage": "",
+        "defeatMessage": "",
+        "team": [],
+        "world": null
+      }
+    },
+    {
+      "floor": 32,
+      "arrival": null,
+      "npcLocation": null,
+      "npcUuid": null,
+      "trainer": {
+        "name": "Dresseur de l'étage 32",
+        "title": "",
+        "skin": "builtin:ace_trainer_m",
+        "format": "singles",
+        "tier": "ag",
+        "ai": "EASY",
+        "levelScale": 0,
+        "inverse": false,
+        "weather": "none",
+        "terrain": "none",
+        "introMessage": "",
+        "defeatMessage": "",
+        "team": [],
+        "world": null
+      }
+    },
+    {
+      "floor": 33,
+      "arrival": null,
+      "npcLocation": null,
+      "npcUuid": null,
+      "trainer": {
+        "name": "Dresseur de l'étage 33",
+        "title": "",
+        "skin": "builtin:ace_trainer_m",
+        "format": "singles",
+        "tier": "ag",
+        "ai": "EASY",
+        "levelScale": 0,
+        "inverse": false,
+        "weather": "none",
+        "terrain": "none",
+        "introMessage": "",
+        "defeatMessage": "",
+        "team": [],
+        "world": null
+      }
+    },
+    {
+      "floor": 34,
+      "arrival": null,
+      "npcLocation": null,
+      "npcUuid": null,
+      "trainer": {
+        "name": "Dresseur de l'étage 34",
+        "title": "",
+        "skin": "builtin:ace_trainer_m",
+        "format": "singles",
+        "tier": "ag",
+        "ai": "EASY",
+        "levelScale": 0,
+        "inverse": false,
+        "weather": "none",
+        "terrain": "none",
+        "introMessage": "",
+        "defeatMessage": "",
+        "team": [],
+        "world": null
+      }
+    },
+    {
+      "floor": 35,
+      "arrival": null,
+      "npcLocation": null,
+      "npcUuid": null,
+      "trainer": {
+        "name": "Dresseur de l'étage 35",
+        "title": "",
+        "skin": "builtin:ace_trainer_m",
+        "format": "singles",
+        "tier": "ag",
+        "ai": "EASY",
+        "levelScale": 0,
+        "inverse": false,
+        "weather": "none",
+        "terrain": "none",
+        "introMessage": "",
+        "defeatMessage": "",
+        "team": [],
+        "world": null
+      }
+    },
+    {
+      "floor": 36,
+      "arrival": null,
+      "npcLocation": null,
+      "npcUuid": null,
+      "trainer": {
+        "name": "Dresseur de l'étage 36",
+        "title": "",
+        "skin": "builtin:ace_trainer_m",
+        "format": "singles",
+        "tier": "ag",
+        "ai": "EASY",
+        "levelScale": 0,
+        "inverse": false,
+        "weather": "none",
+        "terrain": "none",
+        "introMessage": "",
+        "defeatMessage": "",
+        "team": [],
+        "world": null
+      }
+    },
+    {
+      "floor": 37,
+      "arrival": null,
+      "npcLocation": null,
+      "npcUuid": null,
+      "trainer": {
+        "name": "Dresseur de l'étage 37",
+        "title": "",
+        "skin": "builtin:ace_trainer_m",
+        "format": "singles",
+        "tier": "ag",
+        "ai": "EASY",
+        "levelScale": 0,
+        "inverse": false,
+        "weather": "none",
+        "terrain": "none",
+        "introMessage": "",
+        "defeatMessage": "",
+        "team": [],
+        "world": null
+      }
+    },
+    {
+      "floor": 38,
+      "arrival": null,
+      "npcLocation": null,
+      "npcUuid": null,
+      "trainer": {
+        "name": "Dresseur de l'étage 38",
+        "title": "",
+        "skin": "builtin:ace_trainer_m",
+        "format": "singles",
+        "tier": "ag",
+        "ai": "EASY",
+        "levelScale": 0,
+        "inverse": false,
+        "weather": "none",
+        "terrain": "none",
+        "introMessage": "",
+        "defeatMessage": "",
+        "team": [],
+        "world": null
+      }
+    },
+    {
+      "floor": 39,
+      "arrival": null,
+      "npcLocation": null,
+      "npcUuid": null,
+      "trainer": {
+        "name": "Dresseur de l'étage 39",
+        "title": "",
+        "skin": "builtin:ace_trainer_m",
+        "format": "singles",
+        "tier": "ag",
+        "ai": "EASY",
+        "levelScale": 0,
+        "inverse": false,
+        "weather": "none",
+        "terrain": "none",
+        "introMessage": "",
+        "defeatMessage": "",
+        "team": [],
+        "world": null
+      }
+    },
+    {
+      "floor": 40,
+      "arrival": null,
+      "npcLocation": null,
+      "npcUuid": null,
+      "trainer": {
+        "name": "Dresseur de l'étage 40",
+        "title": "",
+        "skin": "builtin:ace_trainer_m",
+        "format": "singles",
+        "tier": "ag",
+        "ai": "EASY",
+        "levelScale": 0,
+        "inverse": false,
+        "weather": "none",
+        "terrain": "none",
+        "introMessage": "",
+        "defeatMessage": "",
+        "team": [],
+        "world": null
+      }
+    },
+    {
+      "floor": 41,
+      "arrival": null,
+      "npcLocation": null,
+      "npcUuid": null,
+      "trainer": {
+        "name": "Dresseur de l'étage 41",
+        "title": "",
+        "skin": "builtin:ace_trainer_m",
+        "format": "singles",
+        "tier": "ag",
+        "ai": "EASY",
+        "levelScale": 0,
+        "inverse": false,
+        "weather": "none",
+        "terrain": "none",
+        "introMessage": "",
+        "defeatMessage": "",
+        "team": [],
+        "world": null
+      }
+    },
+    {
+      "floor": 42,
+      "arrival": null,
+      "npcLocation": null,
+      "npcUuid": null,
+      "trainer": {
+        "name": "Dresseur de l'étage 42",
+        "title": "",
+        "skin": "builtin:ace_trainer_m",
+        "format": "singles",
+        "tier": "ag",
+        "ai": "EASY",
+        "levelScale": 0,
+        "inverse": false,
+        "weather": "none",
+        "terrain": "none",
+        "introMessage": "",
+        "defeatMessage": "",
+        "team": [],
+        "world": null
+      }
+    },
+    {
+      "floor": 43,
+      "arrival": null,
+      "npcLocation": null,
+      "npcUuid": null,
+      "trainer": {
+        "name": "Dresseur de l'étage 43",
+        "title": "",
+        "skin": "builtin:ace_trainer_m",
+        "format": "singles",
+        "tier": "ag",
+        "ai": "EASY",
+        "levelScale": 0,
+        "inverse": false,
+        "weather": "none",
+        "terrain": "none",
+        "introMessage": "",
+        "defeatMessage": "",
+        "team": [],
+        "world": null
+      }
+    },
+    {
+      "floor": 44,
+      "arrival": null,
+      "npcLocation": null,
+      "npcUuid": null,
+      "trainer": {
+        "name": "Dresseur de l'étage 44",
+        "title": "",
+        "skin": "builtin:ace_trainer_m",
+        "format": "singles",
+        "tier": "ag",
+        "ai": "EASY",
+        "levelScale": 0,
+        "inverse": false,
+        "weather": "none",
+        "terrain": "none",
+        "introMessage": "",
+        "defeatMessage": "",
+        "team": [],
+        "world": null
+      }
+    },
+    {
+      "floor": 45,
+      "arrival": null,
+      "npcLocation": null,
+      "npcUuid": null,
+      "trainer": {
+        "name": "Dresseur de l'étage 45",
+        "title": "",
+        "skin": "builtin:ace_trainer_m",
+        "format": "singles",
+        "tier": "ag",
+        "ai": "EASY",
+        "levelScale": 0,
+        "inverse": false,
+        "weather": "none",
+        "terrain": "none",
+        "introMessage": "",
+        "defeatMessage": "",
+        "team": [],
+        "world": null
+      }
+    },
+    {
+      "floor": 46,
+      "arrival": null,
+      "npcLocation": null,
+      "npcUuid": null,
+      "trainer": {
+        "name": "Dresseur de l'étage 46",
+        "title": "",
+        "skin": "builtin:ace_trainer_m",
+        "format": "singles",
+        "tier": "ag",
+        "ai": "EASY",
+        "levelScale": 0,
+        "inverse": false,
+        "weather": "none",
+        "terrain": "none",
+        "introMessage": "",
+        "defeatMessage": "",
+        "team": [],
+        "world": null
+      }
+    },
+    {
+      "floor": 47,
+      "arrival": null,
+      "npcLocation": null,
+      "npcUuid": null,
+      "trainer": {
+        "name": "Dresseur de l'étage 47",
+        "title": "",
+        "skin": "builtin:ace_trainer_m",
+        "format": "singles",
+        "tier": "ag",
+        "ai": "EASY",
+        "levelScale": 0,
+        "inverse": false,
+        "weather": "none",
+        "terrain": "none",
+        "introMessage": "",
+        "defeatMessage": "",
+        "team": [],
+        "world": null
+      }
+    },
+    {
+      "floor": 48,
+      "arrival": null,
+      "npcLocation": null,
+      "npcUuid": null,
+      "trainer": {
+        "name": "Dresseur de l'étage 48",
+        "title": "",
+        "skin": "builtin:ace_trainer_m",
+        "format": "singles",
+        "tier": "ag",
+        "ai": "EASY",
+        "levelScale": 0,
+        "inverse": false,
+        "weather": "none",
+        "terrain": "none",
+        "introMessage": "",
+        "defeatMessage": "",
+        "team": [],
+        "world": null
+      }
+    },
+    {
+      "floor": 49,
+      "arrival": null,
+      "npcLocation": null,
+      "npcUuid": null,
+      "trainer": {
+        "name": "Dresseur de l'étage 49",
+        "title": "",
+        "skin": "builtin:ace_trainer_m",
+        "format": "singles",
+        "tier": "ag",
+        "ai": "EASY",
+        "levelScale": 0,
+        "inverse": false,
+        "weather": "none",
+        "terrain": "none",
+        "introMessage": "",
+        "defeatMessage": "",
+        "team": [],
+        "world": null
+      }
+    },
+    {
+      "floor": 50,
+      "arrival": null,
+      "npcLocation": null,
+      "npcUuid": null,
+      "trainer": {
+        "name": "Dresseur de l'étage 50",
+        "title": "",
+        "skin": "builtin:ace_trainer_m",
+        "format": "singles",
+        "tier": "ag",
+        "ai": "EASY",
+        "levelScale": 0,
+        "inverse": false,
+        "weather": "none",
+        "terrain": "none",
+        "introMessage": "",
+        "defeatMessage": "",
+        "team": [],
+        "world": null
+      }
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "uuid": "6137931c-c180-3788-b008-fd10b7638ff8",
+  "name": "TRWin",
+  "bp": 7,
+  "bpEarned": 7,
+  "maxFloor": 0,
+  "completions": 0,
+  "totalWins": 0,
+  "totalLosses": 0,
+  "bestTimeMs": 0,
+  "cooldownUntil": 0,
+  "lastRunAt": 0,
+  "dailyBossDay": "",
+  "dailyBossWins": 0,
+  "dailyBossBeaten": [],
+  "achievements": {},
+  "trainers": {
+    "route1": {
+      "wins": 1,
+      "losses": 0,
+      "firstWinAt": 1795856577148,
+      "lastWinAt": 1795856577148,
+      "lastLossAt": 0,
+      "lastBattleAt": 1795856577148
+    }
+  },
+  "towers": {},
+  "pendingExitTower": "",
+  "bestNoKoStreak": 0,
+  "monotypeFloors": 0,
+  "purchases": {},
+  "pendingExit": false,
+  "pendingMessage": ""
+}

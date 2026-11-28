@@ -1,0 +1,123 @@
+# ═══════════════════════════════════════════════════════════════════════
+#  Ranked : missions quotidiennes et hebdomadaires
+#  declencheur : victoire, partie, serie (série de victoires atteinte), ko (Pokémon adverses mis K.O.)
+#  type : amical, classe ou tous (matchs comptés). format : "" (tous), "simple" ou "double".
+#  chance : poids du tirage (sur 100). Commandes : %player%, %uuid%.
+# ═══════════════════════════════════════════════════════════════════════
+
+actif = true
+nombre_quotidiennes = 3
+nombre_hebdomadaires = 2
+heure_reset = "00:00"
+jour_reset_hebdo = "MONDAY"
+# true = récompense donnée dès la mission terminée ; false = à réclamer dans le menu
+reclamation_auto = false
+annoncer = false
+
+[[quotidienne]]
+id = "gagner_1"
+titre = "&aGagner un match"
+description = "Gagnez 1 match (classé ou amical)."
+declencheur = "victoire"
+type = "tous"
+format = ""
+requis = 1
+chance = 100
+icone = "minecraft:diamond"
+commandes = ["give %player% minecraft:diamond 1"]
+
+[[quotidienne]]
+id = "gagner_3"
+titre = "&aGagner 3 matchs"
+description = "Gagnez 3 matchs."
+declencheur = "victoire"
+type = "tous"
+format = ""
+requis = 3
+chance = 80
+icone = "minecraft:diamond"
+commandes = ["give %player% minecraft:diamond 3"]
+
+[[quotidienne]]
+id = "jouer_3"
+titre = "&bJouer 3 matchs"
+description = "Jouez 3 matchs, victoire ou défaite."
+declencheur = "partie"
+type = "tous"
+format = ""
+requis = 3
+chance = 80
+icone = "cobblemon:poke_ball"
+commandes = ["give %player% cobblemon:poke_ball 5"]
+
+[[quotidienne]]
+id = "simple_1"
+titre = "&6Gagner en Simple"
+description = "Gagnez un match en format Simple."
+declencheur = "victoire"
+type = "tous"
+format = "simple"
+requis = 1
+chance = 60
+icone = "cobblemon:great_ball"
+commandes = ["give %player% cobblemon:great_ball 5"]
+
+[[quotidienne]]
+id = "double_1"
+titre = "&6Gagner en Double"
+description = "Gagnez un match en format Double."
+declencheur = "victoire"
+type = "tous"
+format = "double"
+requis = 1
+chance = 60
+icone = "cobblemon:great_ball"
+commandes = ["give %player% cobblemon:great_ball 5"]
+
+[[quotidienne]]
+id = "ko_10"
+titre = "&cMettre 10 Pokémon K.O."
+description = "Mettez K.O. 10 Pokémon adverses."
+declencheur = "ko"
+type = "tous"
+format = ""
+requis = 10
+chance = 70
+icone = "minecraft:iron_sword"
+commandes = ["give %player% cobblemon:rare_candy 1"]
+
+[[hebdomadaire]]
+id = "classe_10"
+titre = "&5Gagner 10 matchs classés"
+description = "Gagnez 10 matchs classés cette semaine."
+declencheur = "victoire"
+type = "classe"
+format = ""
+requis = 10
+chance = 100
+icone = "cobblemon:ultra_ball"
+commandes = ["give %player% cobblemon:ultra_ball 10"]
+
+[[hebdomadaire]]
+id = "serie_5"
+titre = "&5Série de 5"
+description = "Enchaînez 5 victoires classées."
+declencheur = "serie"
+type = "classe"
+format = ""
+requis = 5
+chance = 70
+icone = "minecraft:blaze_powder"
+commandes = ["give %player% cobblemon:master_ball 1"]
+
+[[hebdomadaire]]
+id = "jouer_25"
+titre = "&5Jouer 25 matchs"
+description = "Jouez 25 matchs cette semaine."
+declencheur = "partie"
+type = "tous"
+format = ""
+requis = 25
+chance = 80
+icone = "cobblemon:exp_candy_l"
+commandes = ["give %player% cobblemon:exp_candy_l 5"]

@@ -1,0 +1,84 @@
+# ═══════════════════════════════════════════════════════════════════════
+#  CobblePulse-Battles — Ranked : réglages généraux
+# ═══════════════════════════════════════════════════════════════════════
+
+# false = la Ranked est désactivée (commandes et menus refusés)
+actif = true
+
+[minuteurs]
+# Secondes pour accepter le match trouvé
+pret = 17
+# Secondes pour choisir son équipe (et son meneur) à l'aperçu
+selection = 60
+# Compte à rebours avant le combat
+compte_a_rebours = 5
+# Avertissements de fin de match (secondes restantes)
+avertissements = [300, 60, 30]
+# Tours expirés (minuteur de tour dépassé) avant forfait automatique
+tours_expires_max = 3
+
+[delais]
+# Secondes entre la fin d'un match et une nouvelle entrée en file
+entre_matchs = 10
+# Secondes entre deux entrées en file
+rejoindre_file = 3
+# Secondes de pénalité après un refus ou une absence de réponse au match trouvé
+refus = 30
+
+[adversaires_recents]
+# Évite de retomber sur les mêmes adversaires
+actif = true
+nombre = 3
+expiration_secondes = 300
+# Après cette attente, on accepte un adversaire récent
+relache_apres_secondes = 120
+# On n'évite que si au moins ce nombre de joueurs est en file
+file_minimum = 4
+
+[penalites]
+# Interdiction de file croissante pour les fuites (déconnexion ou abandon en classé)
+actif = true
+# Une fuite en moins toutes les N heures
+decroissance_heures = 24
+# Un abandon avant ce tour compte comme « abandon précoce »
+abandon_precoce_tours = 6
+# Multiplicateur de pénalité d'un abandon précoce
+abandon_precoce_multiplicateur = 1.5
+# Abandon interdit pendant les N premiers tours (0 = autorisé)
+blocage_abandon_tours = 0
+
+[[penalites.palier]]
+fuites_min = 1
+fuites_max = 2
+minutes = 0
+
+[[penalites.palier]]
+fuites_min = 3
+fuites_max = 4
+minutes = 5
+
+[[penalites.palier]]
+fuites_min = 5
+fuites_max = 7
+minutes = 15
+
+[[penalites.palier]]
+fuites_min = 8
+fuites_max = 999
+minutes = 60
+
+[recompenses_match]
+# Commandes console après chaque match (%player%, %uuid%, %format%, %elo%)
+# Exemple CobbleDollars : "cobbledollars give %player% 500"
+classe_victoire = []
+classe_defaite = []
+amical_victoire = []
+amical_defaite = []
+
+[arenes]
+# aleatoire ou sequentiel
+selection = "aleatoire"
+# Sans arène libre : "sur_place" (combat là où sont les joueurs) ou "attendre" (le match attend une arène)
+sans_arene = "sur_place"
+# Délai (secondes) avant le retour des joueurs à leur position après le combat
+retour_secondes = 3

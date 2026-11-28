@@ -1,0 +1,13 @@
+{
+  "simple": [
+    {
+      "place": 1,
+      "uuid": "5ffd6b3d-f732-3fd7-805a-9ee36f292ead",
+      "nom": "RKSeason",
+      "elo": 1300,
+      "victoires": 3,
+      "defaites": 0
+    }
+  ],
+  "double": []
+}

@@ -1,0 +1,164 @@
+{
+  "bosses": {
+    "boss_exemple": {
+      "name": "Maitre de la Tour",
+      "title": "Boss",
+      "skin": "builtin:champion",
+      "format": "singles",
+      "tier": "ag",
+      "ai": "EXTREME",
+      "levelScale": 50,
+      "inverse": false,
+      "weather": "none",
+      "terrain": "none",
+      "introMessage": "",
+      "defeatMessage": "",
+      "team": [
+        {
+          "species": "garchomp",
+          "form": "",
+          "nickname": "",
+          "level": 50,
+          "nature": "jolly",
+          "ability": "roughskin",
+          "gender": "",
+          "shiny": false,
+          "heldItem": "cobblemon:life_orb",
+          "ivs": {
+            "hp": 31,
+            "atk": 31,
+            "def": 31,
+            "spa": 31,
+            "spd": 31,
+            "spe": 31
+          },
+          "evs": {
+            "hp": 4,
+            "atk": 252,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 252
+          },
+          "moves": [
+            {
+              "id": "earthquake",
+              "ppMax": 0,
+              "pp": -1
+            },
+            {
+              "id": "dragonclaw",
+              "ppMax": 0,
+              "pp": -1
+            },
+            {
+              "id": "swordsdance",
+              "ppMax": 0,
+              "pp": -1
+            },
+            {
+              "id": "stoneedge",
+              "ppMax": 0,
+              "pp": -1
+            }
+          ],
+          "teraType": "steel",
+          "allowMega": false,
+          "allowTera": true
+        }
+      ],
+      "world": null
+    },
+    "selftest_boss": {
+      "name": "Boss Test",
+      "title": "",
+      "skin": "builtin:ace_trainer_m",
+      "format": "singles",
+      "tier": "ag",
+      "ai": "EXTREME",
+      "levelScale": 0,
+      "inverse": false,
+      "weather": "fog",
+      "terrain": "none",
+      "introMessage": "",
+      "defeatMessage": "",
+      "team": [
+        {
+          "species": "caterpie",
+          "form": "",
+          "nickname": "",
+          "level": 5,
+          "nature": "",
+          "ability": "",
+          "gender": "",
+          "shiny": false,
+          "heldItem": "",
+          "ivs": {
+            "hp": 31,
+            "atk": 31,
+            "def": 31,
+            "spa": 31,
+            "spd": 31,
+            "spe": 31
+          },
+          "evs": {
+            "hp": 0,
+            "atk": 0,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 0
+          },
+          "moves": [
+            {
+              "id": "tackle",
+              "ppMax": 0,
+              "pp": -1
+            }
+          ],
+          "teraType": "",
+          "allowMega": false,
+          "allowTera": false
+        },
+        {
+          "species": "btfake:testmon_ex",
+          "form": "",
+          "nickname": "",
+          "level": 5,
+          "nature": "",
+          "ability": "",
+          "gender": "",
+          "shiny": false,
+          "heldItem": "",
+          "ivs": {
+            "hp": 31,
+            "atk": 31,
+            "def": 31,
+            "spa": 31,
+            "spd": 31,
+            "spe": 31
+          },
+          "evs": {
+            "hp": 0,
+            "atk": 0,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 0
+          },
+          "moves": [
+            {
+              "id": "thundershock",
+              "ppMax": 0,
+              "pp": -1
+            }
+          ],
+          "teraType": "",
+          "allowMega": false,
+          "allowTera": false
+        }
+      ],
+      "world": null
+    }
+  }
+}

@@ -1,0 +1,82 @@
+# ═══════════════════════════════════════════════════════════════════════
+#  Ranked : Elo et rangs
+# ═══════════════════════════════════════════════════════════════════════
+
+# "showdown" : formule et K dynamique de Pokémon Showdown (recommandé)
+# "personnalise" : K fixé par les paliers ci-dessous
+systeme = "showdown"
+elo_depart = 1000
+elo_plancher = 1000
+# Gain positif maximal par jour et par format (les pertes ne sont jamais plafonnées). 0 = illimité.
+gain_max_par_jour = 200
+
+[personnalise]
+parties_debutant = 30
+k_debutant = 50
+bonus_serie = false
+bonus_serie_3 = 3
+bonus_serie_5 = 5
+
+[[personnalise.palier]]
+elo_max = 1500
+k = 48
+
+[[personnalise.palier]]
+elo_max = 1700
+k = 36
+
+[[personnalise.palier]]
+elo_max = 2000
+k = 24
+
+[[personnalise.palier]]
+elo_max = 2500
+k = 18
+
+[[personnalise.palier]]
+elo_max = 999999
+k = 12
+
+# Rangs (du plus bas au plus haut). icone = objet affiché dans les menus.
+[[rang]]
+id = "pokeball"
+nom = "&cPoké Ball"
+elo_min = 0
+icone = "cobblemon:poke_ball"
+
+[[rang]]
+id = "superball"
+nom = "&9Super Ball"
+elo_min = 1200
+icone = "cobblemon:great_ball"
+
+[[rang]]
+id = "hyperball"
+nom = "&eHyper Ball"
+elo_min = 1400
+icone = "cobblemon:ultra_ball"
+
+[[rang]]
+id = "masterball"
+nom = "&5Master Ball"
+elo_min = 1600
+icone = "cobblemon:master_ball"
+
+[[rang]]
+id = "ultraball"
+nom = "&bUltra Ball"
+elo_min = 1800
+icone = "cobblemon:beast_ball"
+
+[[rang]]
+id = "memoire"
+nom = "&6&lMémoire Ball"
+elo_min = 2000
+icone = "cobblemon:cherish_ball"
+
+[declin]
+# Perte d'Elo des joueurs inactifs au-dessus d'un seuil
+actif = false
+jours_inactivite = 14
+perte_par_jour = 10
+elo_minimum = 1500

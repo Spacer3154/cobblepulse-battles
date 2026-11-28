@@ -1,0 +1,159 @@
+{
+  "route1": {
+    "id": "route1",
+    "location": {
+      "world": "minecraft:overworld",
+      "x": -241.5,
+      "y": 66.0,
+      "z": -111.5,
+      "yaw": 0.0,
+      "pitch": 0.0
+    },
+    "npcUuid": "f1b3e523-2fcc-454d-9329-90037c0c1f57",
+    "trainer": {
+      "name": "Gamin Route",
+      "title": "",
+      "skin": "builtin:ace_trainer_m",
+      "format": "singles",
+      "tier": "ag",
+      "ai": "EASY",
+      "levelScale": 0,
+      "inverse": false,
+      "weather": "none",
+      "terrain": "none",
+      "introMessage": "",
+      "defeatMessage": "",
+      "team": [
+        {
+          "species": "caterpie",
+          "form": "",
+          "nickname": "",
+          "level": 5,
+          "nature": "",
+          "ability": "",
+          "gender": "",
+          "shiny": false,
+          "heldItem": "",
+          "ivs": {
+            "hp": 31,
+            "atk": 31,
+            "def": 31,
+            "spa": 31,
+            "spd": 31,
+            "spe": 31
+          },
+          "evs": {
+            "hp": 0,
+            "atk": 0,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 0
+          },
+          "moves": [
+            {
+              "id": "tackle",
+              "ppMax": 0,
+              "pp": -1
+            }
+          ],
+          "teraType": "",
+          "allowMega": false,
+          "allowTera": false
+        }
+      ],
+      "world": {
+        "mode": "normal",
+        "rematchHours": 24,
+        "lossCooldownMinutes": 0,
+        "rematchRewards": false,
+        "bp": 7,
+        "items": [
+          "minecraft:emerald 2"
+        ],
+        "commands": [],
+        "winMessage": ""
+      }
+    }
+  },
+  "champion": {
+    "id": "champion",
+    "location": {
+      "world": "minecraft:overworld",
+      "x": -241.5,
+      "y": 69.0,
+      "z": -101.5,
+      "yaw": 0.0,
+      "pitch": 0.0
+    },
+    "npcUuid": "7aa6dd9b-cfe6-4df3-a085-308677fb3133",
+    "trainer": {
+      "name": "Champion",
+      "title": "",
+      "skin": "builtin:ace_trainer_m",
+      "format": "singles",
+      "tier": "ag",
+      "ai": "HARD",
+      "levelScale": 0,
+      "inverse": false,
+      "weather": "none",
+      "terrain": "none",
+      "introMessage": "",
+      "defeatMessage": "",
+      "team": [
+        {
+          "species": "garchomp",
+          "form": "",
+          "nickname": "",
+          "level": 70,
+          "nature": "",
+          "ability": "",
+          "gender": "",
+          "shiny": false,
+          "heldItem": "",
+          "ivs": {
+            "hp": 31,
+            "atk": 31,
+            "def": 31,
+            "spa": 31,
+            "spd": 31,
+            "spe": 31
+          },
+          "evs": {
+            "hp": 0,
+            "atk": 0,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 0
+          },
+          "moves": [
+            {
+              "id": "dragonclaw",
+              "ppMax": 0,
+              "pp": -1
+            },
+            {
+              "id": "earthquake",
+              "ppMax": 0,
+              "pp": -1
+            }
+          ],
+          "teraType": "",
+          "allowMega": false,
+          "allowTera": false
+        }
+      ],
+      "world": {
+        "mode": "exhibition",
+        "rematchHours": 24,
+        "lossCooldownMinutes": 5,
+        "rematchRewards": false,
+        "bp": 50,
+        "items": [],
+        "commands": [],
+        "winMessage": ""
+      }
+    }
+  }
+}

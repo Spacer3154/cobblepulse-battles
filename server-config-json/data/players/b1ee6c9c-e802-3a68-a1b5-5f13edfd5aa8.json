@@ -1,0 +1,27 @@
+{
+  "uuid": "b1ee6c9c-e802-3a68-a1b5-5f13edfd5aa8",
+  "name": "BTDaily",
+  "bp": 25,
+  "bpEarned": 25,
+  "maxFloor": 0,
+  "completions": 0,
+  "totalWins": 0,
+  "totalLosses": 0,
+  "bestTimeMs": 0,
+  "cooldownUntil": 0,
+  "lastRunAt": 0,
+  "dailyBossDay": "2026-11-28",
+  "dailyBossWins": 1,
+  "dailyBossBeaten": [
+    "selftest_boss"
+  ],
+  "achievements": {},
+  "trainers": {},
+  "towers": {},
+  "pendingExitTower": "",
+  "bestNoKoStreak": 0,
+  "monotypeFloors": 0,
+  "purchases": {},
+  "pendingExit": false,
+  "pendingMessage": ""
+}

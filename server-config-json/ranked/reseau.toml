@@ -1,0 +1,44 @@
+# ═══════════════════════════════════════════════════════════════════════
+#  Ranked : multi-serveur et Discord
+# ═══════════════════════════════════════════════════════════════════════
+
+[multi_serveur]
+# File partagée entre plusieurs serveurs d'un réseau Velocity, via Redis.
+# Tous les serveurs doivent utiliser la même base MySQL (storage.toml) et le même Redis.
+actif = false
+# Nom de CE serveur, identique au nom déclaré dans velocity.toml (ex. "lobby", "survie", "combat")
+id_serveur = "lobby"
+# Serveur où se jouent les matchs (il fait aussi le matchmaking)
+serveur_combat = "combat"
+# velocity : message BungeeCord (activer bungee-plugin-message-channel dans velocity.toml)
+# transfert : paquet de transfert vanilla vers une adresse (accepts-transfers=true sur le serveur cible)
+methode_transfert = "velocity"
+# Secondes entre « match trouvé » et le transfert
+delai_transfert = 5
+# Secondes laissées aux deux joueurs pour arriver sur le serveur de combat
+delai_arrivee = 30
+# Les joueurs retournent sur leur serveur d'origine après le match
+retour_origine = true
+
+# Adresses pour la méthode « transfert » (nom du serveur = "hote:port")
+[multi_serveur.adresses]
+combat = "127.0.0.1:25566"
+lobby = "127.0.0.1:25565"
+
+[redis]
+hote = "127.0.0.1"
+port = 6379
+mot_de_passe = ""
+base = 0
+ssl = false
+# Préfixe des clés (plusieurs réseaux sur un même Redis)
+prefixe = "cpbattles"
+
+[discord]
+actif = false
+webhook = ""
+nom = "CobblePulse Ranked"
+montee_rang = true
+fin_saison = true
+resultat_classe = true
+resultat_amical = false

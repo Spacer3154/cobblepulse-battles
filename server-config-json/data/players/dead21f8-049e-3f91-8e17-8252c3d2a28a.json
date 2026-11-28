@@ -1,0 +1,35 @@
+{
+  "uuid": "dead21f8-049e-3f91-8e17-8252c3d2a28a",
+  "name": "BTMini",
+  "bp": 38,
+  "bpEarned": 38,
+  "maxFloor": 0,
+  "completions": 0,
+  "totalWins": 2,
+  "totalLosses": 0,
+  "bestTimeMs": 0,
+  "cooldownUntil": 0,
+  "lastRunAt": 1795856622097,
+  "dailyBossDay": "",
+  "dailyBossWins": 0,
+  "dailyBossBeaten": [],
+  "achievements": {},
+  "trainers": {},
+  "towers": {
+    "mini": {
+      "maxFloor": 2,
+      "completions": 1,
+      "wins": 2,
+      "losses": 0,
+      "bestTimeMs": 38986,
+      "cooldownUntil": 1795860222097,
+      "lastRunAt": 1795856622097
+    }
+  },
+  "pendingExitTower": "",
+  "bestNoKoStreak": 2,
+  "monotypeFloors": 2,
+  "purchases": {},
+  "pendingExit": false,
+  "pendingMessage": ""
+}

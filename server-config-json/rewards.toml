@@ -1,0 +1,30 @@
+# =====================================================================
+#  CobblePulse Battletower - Gains de Battle Points (BP)
+# =====================================================================
+
+# BP gagnes a chaque victoire selon l'etage : plages "debut-fin" = montant (la derniere plage correspondante gagne)
+[floors]
+"1-10" = 2
+"11-20" = 3
+"21-30" = 4
+"31-40" = 6
+"41-49" = 8
+"50" = 15
+
+# Recompense finale (victoire a l'etage 50) en plus des BP de l'etage
+[final]
+bp = 50
+# Items : "modid:item quantite"
+items = []
+# Commandes console (%player%)
+commands = []
+
+# Recompenses ponctuelles a certains etages (premiere fois uniquement dans chaque ascension)
+# [milestones.25]
+# bp = 10
+# items = ["cobblemon:rare_candy 2"]
+# commands = []
+
+[vip]
+# Multiplicateur applique aux BP de victoire (permission cobblepulse.battletower.vip.bp_boost)
+bp_multiplier = 1.5
