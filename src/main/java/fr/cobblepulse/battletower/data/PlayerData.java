@@ -36,6 +36,25 @@ public final class PlayerData {
         public long lastLossAt;
         public long lastBattleAt;
     }
+    /** Records des tours secondaires (identifiant -> bilan) ; la tour principale garde les champs ci-dessus. */
+    public Map<String, TowerRecord> towers = new LinkedHashMap<>();
+
+    public static final class TowerRecord {
+        public int maxFloor;
+        public int completions;
+        public int wins;
+        public int losses;
+        public long bestTimeMs;
+        public long cooldownUntil;
+        public long lastRunAt;
+    }
+
+    /** Tour dont le hall doit accueillir le joueur a sa prochaine connexion (vide = principale). */
+    public String pendingExitTower = "";
+
+    public TowerRecord tower(String id) {
+        return towers.computeIfAbsent(id, k -> new TowerRecord());
+    }
     public int bestNoKoStreak;
     public int monotypeFloors;
     /** Achats limites de la boutique : id -> nombre. */
@@ -57,6 +76,8 @@ public final class PlayerData {
         if (dailyBossBeaten == null) dailyBossBeaten = new LinkedHashSet<>();
         if (achievements == null) achievements = new LinkedHashMap<>();
         if (trainers == null) trainers = new LinkedHashMap<>();
+        if (towers == null) towers = new LinkedHashMap<>();
+        if (pendingExitTower == null) pendingExitTower = "";
         if (purchases == null) purchases = new HashMap<>();
         if (pendingMessage == null) pendingMessage = "";
     }

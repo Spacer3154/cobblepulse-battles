@@ -97,7 +97,7 @@ public final class NpcEditorTool {
             return;
         }
         int floor = TrainerNpcs.floorOf(npc);
-        if (floor > 0) EditorService.openFloor(p, floor);
+        if (floor > 0) EditorService.openFloor(p, TrainerNpcs.towerOf(npc), floor);
         else Msg.send(p, "tool.not_ours");
     }
 

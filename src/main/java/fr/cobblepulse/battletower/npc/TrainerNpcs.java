@@ -36,6 +36,24 @@ public final class TrainerNpcs {
         return "cpbt_floor_" + floor;
     }
 
+    /** Tags d'un PNJ d'etage : numero d'etage, plus la tour pour une tour secondaire. */
+    public static String[] floorTags(FloorEntry fe) {
+        if (TowerConfig.isMain(fe.tower)) return new String[]{floorTag(fe.floor)};
+        return new String[]{floorTag(fe.floor), "cpbt_tower_" + fe.tower};
+    }
+
+    /** Tour d'un PNJ d'etage ("principale" sans tag de tour). */
+    public static String towerOf(Entity e) {
+        for (String t : e.getTags()) if (t.startsWith("cpbt_tower_")) return t.substring(11);
+        return TowerConfig.MAIN;
+    }
+
+    /** Etage (et tour) d'un PNJ, null si ce n'est pas un dresseur d'etage. */
+    public static FloorEntry floorEntryOf(Entity e) {
+        int floor = floorOf(e);
+        return floor > 0 ? TowerConfig.floor(towerOf(e), floor) : null;
+    }
+
     public static int floorOf(Entity e) {
         for (String t : e.getTags()) {
             if (t.startsWith("cpbt_floor_")) {
@@ -133,10 +151,10 @@ public final class TrainerNpcs {
     public static NPCEntity floorNpc(MinecraftServer server, FloorEntry fe, boolean respawnIfMissing) {
         NPCEntity npc = find(server, fe.npcUuid, fe.npcLocation);
         if (npc == null && respawnIfMissing && fe.npcLocation != null) {
-            npc = spawn(server, fe.npcLocation, displayName(fe.trainer), fe.trainer.skin, floorTag(fe.floor));
+            npc = spawn(server, fe.npcLocation, displayName(fe.trainer), fe.trainer.skin, floorTags(fe));
             if (npc != null) {
                 fe.npcUuid = npc.getUUID().toString();
-                TowerConfig.saveFloors();
+                TowerConfig.saveFloor(fe);
                 Battletower.LOG.info("[Battletower] PNJ de l'etage {} recree a {}", fe.floor, fe.npcLocation.pretty());
             }
         }
@@ -145,11 +163,11 @@ public final class TrainerNpcs {
 
     public static NPCEntity spawnFloor(MinecraftServer server, FloorEntry fe, Loc loc) {
         TrainerNpcs.remove(server, fe.npcUuid, fe.npcLocation);
-        NPCEntity npc = spawn(server, loc, displayName(fe.trainer), fe.trainer.skin, floorTag(fe.floor));
+        NPCEntity npc = spawn(server, loc, displayName(fe.trainer), fe.trainer.skin, floorTags(fe));
         if (npc != null) {
             fe.npcUuid = npc.getUUID().toString();
             fe.npcLocation = loc.copy();
-            TowerConfig.saveFloors();
+            TowerConfig.saveFloor(fe);
         }
         return npc;
     }
@@ -163,7 +181,7 @@ public final class TrainerNpcs {
         if (!isOurs(npc)) return;
         int floor = floorOf(npc);
         if (floor > 0) {
-            FloorEntry fe = TowerConfig.floor(floor);
+            FloorEntry fe = floorEntryOf(npc);
             if (fe != null && npc.getUUID().toString().equals(fe.npcUuid)) configure(npc, displayName(fe.trainer), fe.trainer.skin);
         } else if (npc.getTags().contains(TAG_BOSS)) {
             TrainerSpec t = DailyBoss.current();
@@ -176,9 +194,11 @@ public final class TrainerNpcs {
     }
 
     public static void refreshAll(MinecraftServer server) {
-        for (FloorEntry fe : TowerConfig.floors()) {
-            NPCEntity npc = find(server, fe.npcUuid, fe.npcLocation);
-            if (npc != null) configure(npc, displayName(fe.trainer), fe.trainer.skin);
+        for (TowerData t : TowerConfig.towers()) {
+            for (FloorEntry fe : t.floors) {
+                NPCEntity npc = find(server, fe.npcUuid, fe.npcLocation);
+                if (npc != null) configure(npc, displayName(fe.trainer), fe.trainer.skin);
+            }
         }
         TowerData d = TowerConfig.data();
         NPCEntity boss = find(server, d.bossNpcUuid, d.bossNpcLocation);

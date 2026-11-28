@@ -141,7 +141,8 @@ public final class Battletower implements ModInitializer {
         int floor = TrainerNpcs.floorOf(npc);
         if (floor > 0) {
             var run = TowerManager.run(p.getUUID());
-            if (run != null && !run.daily && run.floor == floor) TowerManager.engage(p);
+            String tower = TrainerNpcs.towerOf(npc);
+            if (run != null && !run.daily && run.floor == floor && TowerManager.towerOf(run).id.equals(tower)) TowerManager.engage(p);
             else fr.cobblepulse.battletower.core.Msg.send(p, "tower.npc_not_yours", "floor", floor);
         }
     }

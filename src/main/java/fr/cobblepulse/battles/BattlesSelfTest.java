@@ -746,6 +746,74 @@ public final class BattlesSelfTest {
         return 1;
     }
 
+    // ------------------------------------------------------------------ Tours secondaires (plus petites que la principale)
+
+    public static int towers(CommandSourceStack src) {
+        fr.cobblepulse.battletower.command.SelfTest.startBot();
+        ServerLevel level = src.getServer().overworld();
+        TowerManager.setOpen(true);
+        if (fr.cobblepulse.battletower.tower.TowerConfig.tower("mini") == null) {
+            fr.cobblepulse.battletower.command.Commands.towerCreate(src, "mini", 2, "Mini Tour");
+        }
+        fr.cobblepulse.battletower.data.TowerData mini = fr.cobblepulse.battletower.tower.TowerConfig.tower("mini");
+        check(src, "towers.created", mini != null && fr.cobblepulse.battletower.tower.TowerConfig.size(mini) == 2 && mini.floors.size() >= 2
+                && fr.cobblepulse.battletower.tower.TowerConfig.towers().size() >= 2, mini == null ? "absente" : mini.id);
+        if (mini == null) {
+            done("towers");
+            return 0;
+        }
+        mini.finalBp = 30;
+        mini.cooldownHours = 1;
+        mini.bpMultiplier = 2.0;
+        int[] dz = {50, 62};
+        for (int i = 1; i <= 2; i++) {
+            fr.cobblepulse.battletower.data.FloorEntry fe = fr.cobblepulse.battletower.tower.TowerConfig.floor(mini, i);
+            fe.trainer = fr.cobblepulse.battletower.command.SelfTest.trainer("Mini " + i, "EASY", mon("caterpie", 5, "tackle"));
+            fe.arrival = loc(level, 24, dz[i - 1]);
+            fr.cobblepulse.battletower.npc.TrainerNpcs.spawnFloor(src.getServer(), fe, loc(level, 27, dz[i - 1]));
+        }
+        fr.cobblepulse.battletower.tower.TowerConfig.save(mini);
+        fr.cobblepulse.battletower.data.FloorEntry fe1 = fr.cobblepulse.battletower.tower.TowerConfig.floor(mini, 1);
+        com.cobblemon.mod.common.entity.npc.NPCEntity npc1 = fr.cobblepulse.battletower.npc.TrainerNpcs.find(src.getServer(), fe1.npcUuid, fe1.npcLocation);
+        check(src, "towers.npc_tags", npc1 != null && "mini".equals(fr.cobblepulse.battletower.npc.TrainerNpcs.towerOf(npc1))
+                && fr.cobblepulse.battletower.npc.TrainerNpcs.floorEntryOf(npc1) == fe1, npc1 == null ? "pas de PNJ" : npc1.getTags().toString());
+        FakePlayer climber = fake(level, "BTMini");
+        party(climber, mon("pikachu", 60, "thunderbolt", "quickattack"));
+        PlayerData d = PlayerStore.get(climber);
+        d.cooldownUntil = System.currentTimeMillis() + 3_600_000L;
+        long bp0 = d.bp;
+        int max0 = d.maxFloor;
+        int comp0 = d.completions;
+        Screens.capture(climber.getUUID(), true);
+        fr.cobblepulse.battletower.menu.Menus.chooseTower(climber);
+        check(src, "screens.tower_choice", Screens.names(climber.getUUID()).stream().anyMatch(n -> n.contains("Mini Tour"))
+                && Screens.names(climber.getUUID()).stream().anyMatch(n -> n.contains("Tour de Combat")), Screens.names(climber.getUUID()).toString());
+        loc(level, 24, dz[0]).teleport(climber);
+        TowerManager.startAssault(climber, "mini");
+        fr.cobblepulse.battletower.data.RunState r = TowerManager.run(climber.getUUID());
+        check(src, "towers.run_started", r != null && "mini".equals(r.tower) && TowerManager.totalFloors(r) == 2,
+                r == null ? "refusee (cooldown de la tour principale ?)" : r.tower + " " + TowerManager.totalFloors(r));
+        long expected = Math.round(fr.cobblepulse.battletower.economy.BattlePoints.forFloor(1, climber) * 2.0)
+                + Math.round(fr.cobblepulse.battletower.economy.BattlePoints.forFloor(2, climber) * 2.0) + 30;
+        waitFor(() -> TowerManager.run(climber.getUUID()) == null, 150, () -> {
+            PlayerData dd = PlayerStore.get(climber);
+            PlayerData.TowerRecord rec = dd.towers.get("mini");
+            check(src, "towers.completed", rec != null && rec.completions == 1 && rec.maxFloor == 2 && rec.bestTimeMs > 0,
+                    rec == null ? "aucun record" : rec.maxFloor + "/" + rec.completions);
+            check(src, "towers.main_untouched", dd.maxFloor == max0 && dd.completions == comp0, dd.maxFloor + " " + dd.completions);
+            check(src, "towers.rewards", dd.bp - bp0 >= expected, (dd.bp - bp0) + " BP (attendu " + expected + ")");
+            check(src, "towers.separate_cooldown", TowerManager.cooldownLeft(dd, mini) == 0 && TowerManager.cooldownLeft(dd) > 0, null);
+            dd.cooldownUntil = 0;
+            TowerManager.startAssault(climber, "mini");
+            TowerManager.abandon(climber);
+            long cd = TowerManager.cooldownLeft(dd, mini);
+            check(src, "towers.own_cooldown", cd > 50 * 60_000L && cd <= 3_600_000L && TowerManager.cooldownLeft(dd) == 0, cd / 60_000 + " min");
+            fr.cobblepulse.battletower.tower.TowerConfig.save(mini);
+            done("towers");
+        });
+        return 1;
+    }
+
     // ------------------------------------------------------------------ Saisons
 
     public static int season(CommandSourceStack src) {
@@ -819,6 +887,12 @@ public final class BattlesSelfTest {
         check(src, "persist.trainer_record", r != null && r.wins == 1 && w != null
                 && WorldTrainers.availability(d, w).status() == WorldTrainers.Status.WAIT_WIN, null);
         check(src, "persist.queue_empty", RankedQueue.localEntries().isEmpty() && MatchManager.all().isEmpty(), null);
+        fr.cobblepulse.battletower.data.TowerData mini = fr.cobblepulse.battletower.tower.TowerConfig.tower("mini");
+        PlayerData dm = PlayerStore.byName("BTMini");
+        PlayerData.TowerRecord rec = dm == null ? null : dm.towers.get("mini");
+        check(src, "persist.extra_tower", mini != null && fr.cobblepulse.battletower.tower.TowerConfig.size(mini) == 2 && mini.finalBp == 30
+                && fr.cobblepulse.battletower.tower.TowerConfig.floor(mini, 2).npcUuid != null && rec != null && rec.completions == 1
+                && TowerManager.cooldownLeft(dm, mini) > 0, rec == null ? "aucun record" : "fins=" + rec.completions);
         // Migration de l'ancien dossier de configuration (cree par la CI avant le premier demarrage)
         boolean migrated = Files.exists(Cfg.skinsDir().resolve("Legacy-Marker.png"));
         check(src, "migration.legacy_config", migrated && (!Files.isDirectory(Cfg.legacyRoot())

@@ -7,6 +7,8 @@ import fr.cobblepulse.battletower.core.Loc;
 import fr.cobblepulse.battletower.core.Msg;
 import fr.cobblepulse.battletower.core.Perms;
 import fr.cobblepulse.battletower.data.FloorEntry;
+import fr.cobblepulse.battletower.data.TowerData;
+import fr.cobblepulse.battletower.gui.ChatInput;
 import fr.cobblepulse.battletower.data.RunState;
 import fr.cobblepulse.battletower.data.TrainerSpec;
 import fr.cobblepulse.battletower.gui.Gui;
@@ -45,10 +47,11 @@ public final class AdminMenus {
             TowerManager.setOpen(!TowerManager.isOpen());
             panel(pl);
         });
-        int configured = 0;
-        for (FloorEntry fe : TowerConfig.floors()) if (fe.floor <= TowerManager.totalFloors() && TowerManager.floorProblem(fe) == null) configured++;
-        gui.button(12, ItemBuilder.of(Items.LADDER).name(Msg.raw("admin.floors")).lore(
-                Msg.format("admin.floors_ready", "ready", configured, "floors", TowerManager.totalFloors())).build(), pl -> floors(pl, 0));
+        int configured = countConfigured(TowerConfig.data());
+        int towers = TowerConfig.towers().size();
+        gui.button(12, ItemBuilder.of(Items.LADDER).name(Msg.raw("admin.towers")).lore(
+                Msg.format("admin.floors_ready", "ready", configured, "floors", TowerManager.totalFloors()),
+                Msg.format("admin.towers_count", "n", towers)).build(), AdminMenus::towers);
         TrainerSpec boss = DailyBoss.current();
         gui.button(14, ItemBuilder.of(Items.WITHER_SKELETON_SKULL).name(Msg.raw("admin.boss")).lore(
                 Msg.format("admin.boss_current", "boss", boss == null ? DailyBoss.currentId() : boss.display())).build(), AdminMenus::bosses);
@@ -75,10 +78,63 @@ public final class AdminMenus {
         gui.open(p);
     }
 
-    public static void floors(ServerPlayer p, int page) {
+    /** Liste des tours (principale + secondaires) et creation d'une nouvelle tour. */
+    public static void towers(ServerPlayer p) {
         List<Paged.Entry> entries = new ArrayList<>();
-        for (FloorEntry fe : TowerConfig.floors()) {
-            if (fe.floor > TowerManager.totalFloors()) continue;
+        for (TowerData t : TowerConfig.towers()) {
+            boolean main = TowerConfig.isMain(t);
+            int size = TowerConfig.size(t);
+            int ready = countConfigured(t);
+            List<String> lore = new ArrayList<>();
+            lore.add(Msg.format("admin.tower_id", "id", t.id));
+            lore.add(Msg.format("admin.floors_ready", "ready", ready, "floors", size));
+            lore.add(Msg.format("admin.tower_exit", "loc", TowerManager.exitOf(t) == null ? "-" : TowerManager.exitOf(t).pretty()));
+            if (!main) {
+                lore.add(Msg.format("admin.tower_settings", "cooldown", t.cooldownHours < 0 ? Cfg.tower.l("defeat_cooldown_hours", 24) : t.cooldownHours,
+                        "bp", t.finalBp, "mult", t.bpMultiplier));
+            }
+            lore.add(Msg.raw("admin.tower_click"));
+            if (!main) lore.add(Msg.raw("admin.tower_click_delete"));
+            entries.add(new Paged.Entry(ItemBuilder.of(Menus.towerIcon(t)).name("&6" + TowerConfig.name(t)).count(Math.max(1, Math.min(64, size)))
+                    .lore(lore).glow(ready >= size).hideExtra().build(), (pl, c) -> {
+                if (!main && c.shift() && c.right()) {
+                    fr.cobblepulse.battletower.command.Commands.towerDelete(pl.createCommandSourceStack(), t.id);
+                    towers(pl);
+                } else if (c.right()) {
+                    t.exit = Loc.of(pl);
+                    TowerConfig.save(t);
+                    Msg.send(pl, "admin.exit_set", "loc", t.exit.pretty());
+                    towers(pl);
+                } else {
+                    floors(pl, t.id, 0);
+                }
+            }));
+        }
+        Paged.open(p, Msg.raw("admin.towers"), entries, 0, AdminMenus::panel, gui -> gui.button(51, ItemBuilder.of(Items.LIME_DYE)
+                .name(Msg.raw("admin.tower_create")).lore(Msg.raw("admin.tower_create_lore")).build(), pl -> ChatInput.ask(pl, "admin.tower_create_ask", text -> {
+            String[] parts = text.trim().split("\\s+", 3);
+            int size;
+            try {
+                size = parts.length < 2 ? 10 : Integer.parseInt(parts[1]);
+            } catch (NumberFormatException e) {
+                size = 10;
+            }
+            fr.cobblepulse.battletower.command.Commands.towerCreate(pl.createCommandSourceStack(), parts[0], Math.max(1, Math.min(200, size)),
+                    parts.length > 2 ? parts[2] : "");
+            towers(pl);
+        }, () -> towers(pl))));
+    }
+
+    public static void floors(ServerPlayer p, int page) {
+        floors(p, TowerConfig.MAIN, page);
+    }
+
+    public static void floors(ServerPlayer p, String towerId, int page) {
+        TowerData tower = TowerConfig.tower(towerId);
+        if (tower == null) return;
+        List<Paged.Entry> entries = new ArrayList<>();
+        for (FloorEntry fe : tower.floors) {
+            if (fe.floor > TowerConfig.size(tower)) continue;
             String problem = TowerManager.floorProblem(fe);
             List<String> lore = new ArrayList<>();
             lore.add("&7" + Menus.floorSummary(fe));
@@ -89,14 +145,19 @@ public final class AdminMenus {
             lore.add(Msg.raw("admin.floor_click"));
             entries.add(new Paged.Entry(ItemBuilder.of(problem == null ? Items.LIME_STAINED_GLASS : Items.ORANGE_STAINED_GLASS)
                     .name("&e" + Msg.format("admin.floor_name", "floor", fe.floor)).count(Math.min(64, fe.floor)).lore(lore).build(),
-                    (pl, c) -> floor(pl, fe.floor)));
+                    (pl, c) -> floor(pl, tower.id, fe.floor)));
         }
-        Paged.open(p, Msg.raw("admin.floors"), entries, page, AdminMenus::panel);
+        Paged.open(p, Msg.raw("admin.floors") + " - " + TowerConfig.name(tower), entries, page, AdminMenus::towers);
     }
 
     public static void floor(ServerPlayer p, int n) {
-        FloorEntry fe = TowerConfig.floor(n);
+        floor(p, TowerConfig.MAIN, n);
+    }
+
+    public static void floor(ServerPlayer p, String towerId, int n) {
+        FloorEntry fe = TowerConfig.floor(towerId, n);
         if (fe == null) return;
+        String tid = fe.tower;
         Gui gui = new Gui(3, Msg.format("admin.floor_name", "floor", n));
         gui.fill(Gui.pane());
         gui.button(10, ItemBuilder.of(Items.ENDER_PEARL).name(Msg.raw("admin.floor_goto")).build(), pl -> {
@@ -105,28 +166,28 @@ public final class AdminMenus {
         });
         gui.button(11, ItemBuilder.of(Items.WRITABLE_BOOK).name(Msg.raw("admin.floor_edit")).lore(Msg.raw("admin.floor_edit_lore")).build(), pl -> {
             fr.cobblepulse.battletower.gui.Gui.close(pl);
-            EditorService.openFloor(pl, n);
+            EditorService.openFloor(pl, tid, n);
         });
         gui.button(13, ItemBuilder.of(Items.COMPASS).name(Msg.raw("admin.floor_settp")).build(), pl -> {
             fe.arrival = Loc.of(pl);
-            TowerConfig.saveFloors();
+            TowerConfig.saveFloor(fe);
             Msg.send(pl, "admin.settp_done", "floor", n, "loc", fe.arrival.pretty());
-            floor(pl, n);
+            floor(pl, tid, n);
         });
         gui.button(15, ItemBuilder.of(Items.ARMOR_STAND).name(Msg.raw("admin.floor_spawn")).build(), pl -> {
             TrainerNpcs.spawnFloor(pl.server, fe, Loc.of(pl));
             Msg.send(pl, "admin.npc_spawned", "floor", n);
-            floor(pl, n);
+            floor(pl, tid, n);
         });
         gui.button(16, ItemBuilder.of(Items.TNT).name(Msg.raw("admin.floor_remove")).build(), pl -> {
             TrainerNpcs.remove(pl.server, fe.npcUuid, fe.npcLocation);
             fe.npcUuid = null;
             fe.npcLocation = null;
-            TowerConfig.saveFloors();
+            TowerConfig.saveFloor(fe);
             Msg.send(pl, "admin.npc_removed", "floor", n);
-            floor(pl, n);
+            floor(pl, tid, n);
         });
-        gui.button(22, ItemBuilder.of(Items.OAK_DOOR).name(Msg.raw("general.back")).build(), pl -> floors(pl, (n - 1) / 45));
+        gui.button(22, ItemBuilder.of(Items.OAK_DOOR).name(Msg.raw("general.back")).build(), pl -> floors(pl, tid, (n - 1) / 45));
         gui.open(p);
     }
 
@@ -166,7 +227,7 @@ public final class AdminMenus {
         List<Paged.Entry> entries = new ArrayList<>();
         for (RunState r : TowerManager.runs()) {
             entries.add(new Paged.Entry(ItemBuilder.of(Items.PLAYER_HEAD).name("&e" + r.name)
-                    .lore("&7" + (r.daily ? "Boss du Jour" : "Etage " + r.floor) + " &8(" + r.phase + ")",
+                    .lore("&7" + (r.daily ? "Boss du Jour" : TowerConfig.name(TowerManager.towerOf(r)) + " - Etage " + r.floor) + " &8(" + r.phase + ")",
                             Msg.raw("admin.runs_click")).build(), (pl, c) -> {
                 if (!Perms.staff(pl, Perms.STAFF_DISQUALIFY)) {
                     Msg.send(pl, "general.no_permission");
@@ -183,8 +244,13 @@ public final class AdminMenus {
     }
 
     public static int countConfigured() {
+        return countConfigured(TowerConfig.data());
+    }
+
+    public static int countConfigured(TowerData t) {
         int n = 0;
-        for (FloorEntry fe : TowerConfig.floors()) if (fe.floor <= Cfg.floors() && TowerManager.floorProblem(fe) == null) n++;
+        int size = TowerConfig.size(t);
+        for (FloorEntry fe : t.floors) if (fe.floor <= size && TowerManager.floorProblem(fe) == null) n++;
         return n;
     }
 }

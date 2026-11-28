@@ -29,6 +29,8 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
+import fr.cobblepulse.battletower.data.TowerData;
+import fr.cobblepulse.battletower.core.Perms;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -48,7 +50,7 @@ public final class TowerManager {
     public static final int BOSS_QUEUE = 0;
 
     private static TowerState state = new TowerState();
-    private static final Map<Integer, Deque<UUID>> QUEUES = new HashMap<>();
+    private static final Map<String, Deque<UUID>> QUEUES = new HashMap<>();
     /** Limite d'etages imposee par l'auto-test (0 = configuration). */
     public static int testFloorLimit;
 
@@ -60,6 +62,35 @@ public final class TowerManager {
 
     public static int totalFloors() {
         return testFloorLimit > 0 ? testFloorLimit : Cfg.floors();
+    }
+
+    /** Nombre d'etages de la tour de cette ascension. */
+    public static int totalFloors(RunState r) {
+        return TowerConfig.size(towerOf(r));
+    }
+
+    /** Tour d'une ascension (la principale si la tour a ete supprimee). */
+    public static TowerData towerOf(RunState r) {
+        TowerData t = r == null ? null : TowerConfig.tower(r.tower);
+        return t == null ? TowerConfig.data() : t;
+    }
+
+    static boolean mainRun(RunState r) {
+        return TowerConfig.isMain(r.tower);
+    }
+
+    static FloorEntry floorEntry(RunState r) {
+        return TowerConfig.floor(towerOf(r), r.floor);
+    }
+
+    /** Cle de file : un dresseur d'etage d'une tour, ou l'arene du Boss du Jour. */
+    private static String key(RunState r) {
+        return r.daily ? "boss" : towerOf(r).id + ":" + r.floor;
+    }
+
+    /** Hall de sortie d'une tour (sinon celui de la tour principale). */
+    public static Loc exitOf(TowerData t) {
+        return t != null && t.exit != null ? t.exit : TowerConfig.data().exit;
     }
 
     // ------------------------------------------------------------------ Chargement / sauvegarde
@@ -134,6 +165,19 @@ public final class TowerManager {
         return Math.max(0, d.cooldownUntil - TimeFmt.now());
     }
 
+    public static long cooldownLeft(PlayerData d, TowerData t) {
+        if (TowerConfig.isMain(t)) return cooldownLeft(d);
+        PlayerData.TowerRecord rec = d.towers.get(t.id);
+        return rec == null ? 0 : Math.max(0, rec.cooldownUntil - TimeFmt.now());
+    }
+
+    /** Record d'etage du joueur dans une tour. */
+    public static int record(PlayerData d, TowerData t) {
+        if (TowerConfig.isMain(t)) return d.maxFloor;
+        PlayerData.TowerRecord rec = d.towers.get(t.id);
+        return rec == null ? 0 : rec.maxFloor;
+    }
+
     // ------------------------------------------------------------------ Lancement
 
     /** Verifie qu'un etage est jouable (point d'arrivee, PNJ, equipe). */
@@ -146,6 +190,20 @@ public final class TowerManager {
     }
 
     public static void startAssault(ServerPlayer p) {
+        startAssault(p, TowerConfig.MAIN);
+    }
+
+    /** Lance une ascension dans la tour indiquee (principale ou secondaire). */
+    public static void startAssault(ServerPlayer p, String towerId) {
+        TowerData tower = TowerConfig.tower(towerId);
+        if (tower == null) {
+            Msg.send(p, "tower.unknown_tower", "tower", towerId);
+            return;
+        }
+        if (!tower.permission.isBlank() && !Perms.player(p, tower.permission)) {
+            Msg.send(p, "tower.tower_locked", "tower", TowerConfig.name(tower));
+            return;
+        }
         PlayerData d = PlayerStore.get(p);
         if (inRun(p.getUUID())) {
             Msg.send(p, "tower.already_running");
@@ -159,9 +217,9 @@ public final class TowerManager {
             Msg.send(p, "tower.closed");
             return;
         }
-        long cd = cooldownLeft(d);
+        long cd = cooldownLeft(d, tower);
         if (cd > 0) {
-            Msg.send(p, "tower.cooldown", "time", TimeFmt.duration(cd));
+            Msg.send(p, "tower.cooldown", "time", TimeFmt.duration(cd), "tower", TowerConfig.name(tower));
             return;
         }
         if (CobblemonBridge.isInBattle(p)) {
@@ -172,7 +230,7 @@ public final class TowerManager {
             Msg.send(p, "tower.no_team");
             return;
         }
-        FloorEntry first = TowerConfig.floor(1);
+        FloorEntry first = TowerConfig.floor(tower, 1);
         String problem = floorProblem(first);
         if (problem != null) {
             Msg.send(p, "tower.not_ready", "reason", problem);
@@ -183,22 +241,29 @@ public final class TowerManager {
         r.uuid = p.getUUID().toString();
         r.name = p.getGameProfile().getName();
         r.floor = 1;
+        r.tower = TowerConfig.isMain(tower) ? "" : tower.id;
         r.startedAt = now;
         r.activeSince = now;
         r.floorSince = now;
         r.phase = Phase.FLOOR;
         state.runs.put(r.uuid, r);
-        if (TowerConfig.data().exit == null) state.returns.put(r.uuid, Loc.of(p));
+        if (exitOf(tower) == null) state.returns.put(r.uuid, Loc.of(p));
         d.lastRunAt = now;
+        if (!TowerConfig.isMain(tower)) d.tower(tower.id).lastRunAt = now;
         PlayerStore.save(d);
         save();
-        Msg.send(p, "tower.assault_started", "floors", totalFloors());
+        Msg.send(p, "tower.assault_started", "floors", totalFloors(r), "tower", TowerConfig.name(tower));
         arriveAtFloor(p, r);
     }
 
     /** Teleporte le joueur sur son etage courant et affiche les informations du dresseur. */
     static void arriveAtFloor(ServerPlayer p, RunState r) {
-        FloorEntry fe = TowerConfig.floor(r.floor);
+        if (!mainRun(r) && TowerConfig.tower(r.tower) == null) {
+            Msg.send(p, "tower.unknown_tower", "tower", r.tower);
+            endRun(p.getUUID(), EndReason.CANCELLED, null);
+            return;
+        }
+        FloorEntry fe = floorEntry(r);
         String problem = floorProblem(fe);
         if (problem != null) {
             // Etage mal configure : on annule sans penalite
@@ -213,7 +278,7 @@ public final class TowerManager {
         fe.arrival.teleport(p);
         TrainerSpec t = fe.trainer;
         TierRules tier = Cfg.tier(t.tier);
-        Fx.title(p, Msg.format("tower.floor_title", "floor", r.floor, "floors", totalFloors()),
+        Fx.title(p, Msg.format("tower.floor_title", "floor", r.floor, "floors", totalFloors(r)),
                 Msg.format("tower.floor_subtitle", "trainer", t.display(), "tier", tier == null ? t.tier : tier.displayName));
         Fx.sound(p, SoundEvents.BEACON_ACTIVATE, 0.6f, 1.4f);
         sendFloorInfo(p, r, fe);
@@ -233,7 +298,7 @@ public final class TowerManager {
         if (t.inverse) mods.add(Msg.raw("tower.mod_inverse"));
         if (!"none".equals(t.weather)) mods.add(Msg.format("tower.mod_weather", "weather", Msg.raw("weather." + t.weather)));
         if (!"none".equals(t.terrain)) mods.add(Msg.format("tower.mod_terrain", "terrain", Msg.raw("terrain." + t.terrain)));
-        p.sendSystemMessage(Msg.get("tower.floor_info", "floor", r.floor, "floors", totalFloors(), "trainer", t.display(),
+        p.sendSystemMessage(Msg.get("tower.floor_info", "floor", r.floor, "floors", totalFloors(r), "trainer", t.display(),
                 "tier", tier == null ? t.tier : tier.displayName, "ai", Msg.raw("ai." + t.aiLevel().name().toLowerCase()),
                 "modifiers", String.join("&7, ", mods), "time", TimeFmt.duration(r.elapsed(TimeFmt.now()))));
         if (!t.introMessage.isBlank()) p.sendSystemMessage(TextUtil.legacy("&e" + t.display() + " &7: &f" + t.introMessage));
@@ -262,7 +327,7 @@ public final class TowerManager {
             return;
         }
         if (r.phase == Phase.TRANSIT) return;
-        int key = r.daily ? BOSS_QUEUE : r.floor;
+        String key = key(r);
         if (isBusy(key, p.getUUID())) {
             Deque<UUID> q = QUEUES.computeIfAbsent(key, k -> new ArrayDeque<>());
             if (!q.contains(p.getUUID())) q.addLast(p.getUUID());
@@ -276,7 +341,7 @@ public final class TowerManager {
     }
 
     private static int queuePosition(RunState r) {
-        Deque<UUID> q = QUEUES.get(r.daily ? BOSS_QUEUE : r.floor);
+        Deque<UUID> q = QUEUES.get(key(r));
         if (q == null) return 1;
         int i = 1;
         for (UUID u : q) {
@@ -287,27 +352,29 @@ public final class TowerManager {
     }
 
     /** Le dresseur de cet etage est-il deja en combat (ou reserve par un autre joueur en compte a rebours) ? */
-    private static boolean isBusy(int key, UUID except) {
+    private static boolean isBusy(String key, UUID except) {
+        RunState sample = null;
         for (RunState o : state.runs.values()) {
+            if (!key(o).equals(key)) continue;
+            sample = o;
             if (except != null && o.uuid.equals(except.toString())) continue;
-            int ok = o.daily ? BOSS_QUEUE : o.floor;
-            if (ok == key && (o.phase == Phase.BATTLE || o.phase == Phase.COUNTDOWN)) return true;
+            if (o.phase == Phase.BATTLE || o.phase == Phase.COUNTDOWN) return true;
         }
-        NPCEntity npc = npcFor(key, false);
+        NPCEntity npc = sample == null ? null : npcFor(sample, false);
         return npc != null && TowerBattle.npcBusy(npc.getUUID());
     }
 
-    private static NPCEntity npcFor(int key, boolean respawn) {
+    private static NPCEntity npcFor(RunState r, boolean respawn) {
         MinecraftServer s = Battletower.server();
         if (s == null) return null;
-        if (key == BOSS_QUEUE) return DailyBoss.npc(s);
-        FloorEntry fe = TowerConfig.floor(key);
+        if (r.daily) return DailyBoss.npc(s);
+        FloorEntry fe = floorEntry(r);
         return fe == null ? null : TrainerNpcs.floorNpc(s, fe, respawn);
     }
 
     private static TrainerSpec trainerFor(RunState r) {
         if (r.daily) return DailyBoss.current();
-        FloorEntry fe = TowerConfig.floor(r.floor);
+        FloorEntry fe = floorEntry(r);
         return fe == null ? null : fe.trainer;
     }
 
@@ -351,8 +418,8 @@ public final class TowerManager {
     }
 
     private static void launch(ServerPlayer p, RunState r, TrainerSpec t) {
-        int key = r.daily ? BOSS_QUEUE : r.floor;
-        NPCEntity npc = npcFor(key, true);
+        String key = key(r);
+        NPCEntity npc = npcFor(r, true);
         if (npc == null) {
             Msg.send(p, "tower.not_ready", "reason", Msg.raw("tower.npc_missing"));
             r.phase = Phase.FLOOR;
@@ -374,7 +441,7 @@ public final class TowerManager {
     }
 
     /** Libere l'etage : le premier joueur en file engage automatiquement. */
-    private static void releaseQueue(int key) {
+    private static void releaseQueue(String key) {
         if (isBusy(key, null)) return;
         Deque<UUID> q = QUEUES.get(key);
         while (q != null && !q.isEmpty()) {
@@ -382,8 +449,7 @@ public final class TowerManager {
             RunState nr = run(next);
             ServerPlayer np = Players.get(next);
             if (nr == null || np == null || nr.phase != Phase.QUEUED) continue;
-            int nk = nr.daily ? BOSS_QUEUE : nr.floor;
-            if (nk != key) continue;
+            if (!key(nr).equals(key)) continue;
             nr.phase = Phase.FLOOR;
             Msg.send(np, "tower.queue_your_turn");
             beginCountdown(np, nr);
@@ -397,7 +463,7 @@ public final class TowerManager {
 
     // ------------------------------------------------------------------ Issue des combats
 
-    private static void onBattleEnd(TowerBattle.Outcome o, RunState r, int key) {
+    private static void onBattleEnd(TowerBattle.Outcome o, RunState r, String key) {
         Scheduler.later(30, () -> releaseQueue(key));
         if (run(o.player()) != r) return;
         ServerPlayer p = Players.get(o.player());
@@ -421,9 +487,17 @@ public final class TowerManager {
 
     private static void onFloorWon(TowerBattle.Outcome o, RunState r, ServerPlayer p) {
         PlayerData d = PlayerStore.getOrCreate(o.player(), r.name);
+        TowerData tower = towerOf(r);
+        boolean main = TowerConfig.isMain(tower);
         r.wins++;
         d.totalWins++;
-        if (r.floor > d.maxFloor) d.maxFloor = r.floor;
+        if (main) {
+            if (r.floor > d.maxFloor) d.maxFloor = r.floor;
+        } else {
+            PlayerData.TowerRecord rec = d.tower(tower.id);
+            rec.wins++;
+            if (r.floor > rec.maxFloor) rec.maxFloor = r.floor;
+        }
         if (o.playerFainted()) r.noKoStreak = 0;
         else {
             r.noKoStreak++;
@@ -431,12 +505,13 @@ public final class TowerManager {
         }
         if (p != null && CobblemonBridge.monotype(p)) d.monotypeFloors++;
         long bp = BattlePoints.forFloor(r.floor, p);
+        if (!main) bp = Math.round(bp * Math.max(0, tower.bpMultiplier));
         BattlePoints.give(d, bp);
         if (p != null) {
             if (Cfg.tower.b("battle.heal_between_floors", true)) CobblemonBridge.heal(p);
             Msg.send(p, "tower.floor_won", "floor", r.floor, "bp", bp, "balance", d.bp);
         }
-        BattlePoints.milestone(r.floor, p, d);
+        if (main) BattlePoints.milestone(r.floor, p, d);
         List<Integer> milestones = new ArrayList<>();
         for (String s : Cfg.tower.list("announce.milestone_floors")) {
             try {
@@ -444,12 +519,12 @@ public final class TowerManager {
             } catch (NumberFormatException ignored) {
             }
         }
-        if (milestones.contains(r.floor) && r.floor < totalFloors()) {
+        if (main && milestones.contains(r.floor) && r.floor < totalFloors()) {
             Msg.broadcast(TextUtil.legacy(Cfg.tower.str("announce.milestone_message", "").replace("%player%", r.name).replace("%floor%", String.valueOf(r.floor))));
         }
         PlayerStore.save(d);
         Achievements.check(d, p);
-        if (r.floor >= totalFloors()) {
+        if (r.floor >= totalFloors(r)) {
             complete(r, p, d);
             return;
         }
@@ -468,6 +543,11 @@ public final class TowerManager {
         long now = TimeFmt.now();
         r.pauseClock(now);
         long time = r.activeMs;
+        TowerData tower = towerOf(r);
+        if (!TowerConfig.isMain(tower)) {
+            completeExtra(r, p, d, tower, time);
+            return;
+        }
         d.completions++;
         boolean record = d.bestTimeMs <= 0 || time < d.bestTimeMs;
         if (record) d.bestTimeMs = time;
@@ -490,6 +570,27 @@ public final class TowerManager {
         endRun(UUID.fromString(r.uuid), EndReason.COMPLETED, null);
     }
 
+    /** Fin d'une tour secondaire : record et recompense propres a cette tour. */
+    private static void completeExtra(RunState r, ServerPlayer p, PlayerData d, TowerData tower, long time) {
+        PlayerData.TowerRecord rec = d.tower(tower.id);
+        rec.completions++;
+        boolean record = rec.bestTimeMs <= 0 || time < rec.bestTimeMs;
+        if (record) rec.bestTimeMs = time;
+        if (tower.finalBp > 0) BattlePoints.give(d, tower.finalBp);
+        if (p != null && !tower.finalCommands.isEmpty()) fr.cobblepulse.battletower.core.Rewards.runCommands(p, r.name, tower.finalCommands);
+        PlayerStore.save(d);
+        Achievements.check(d, p);
+        String name = TowerConfig.name(tower);
+        Msg.broadcast("tower.extra_complete_broadcast", "player", r.name, "tower", name, "floors", TowerConfig.size(tower), "time", TimeFmt.duration(time));
+        if (p != null) {
+            Fx.title(p, Msg.raw("tower.complete_title"), Msg.format("tower.complete_subtitle", "time", TimeFmt.duration(time)));
+            Fx.sound(p, SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, 1f, 1f);
+            Msg.send(p, record ? "tower.extra_complete_record" : "tower.extra_complete", "tower", name, "time", TimeFmt.duration(time),
+                    "completions", rec.completions, "bp", tower.finalBp);
+        }
+        endRun(UUID.fromString(r.uuid), EndReason.COMPLETED, null);
+    }
+
     // ------------------------------------------------------------------ Fin d'ascension
 
     public enum EndReason { COMPLETED, DEFEAT, ABANDON, DISCONNECT, DISQUALIFIED, CANCELLED, DAILY_DONE }
@@ -499,26 +600,38 @@ public final class TowerManager {
         RunState r = state.runs.remove(player.toString());
         if (r == null) return;
         removeFromQueues(player);
-        Loc back = TowerConfig.data().exit != null ? TowerConfig.data().exit : state.returns.get(player.toString());
+        TowerData tower = towerOf(r);
+        boolean main = r.daily || TowerConfig.isMain(tower);
+        Loc towerExit = r.daily ? TowerConfig.data().exit : exitOf(tower);
+        Loc back = towerExit != null ? towerExit : state.returns.get(player.toString());
         state.returns.remove(player.toString());
         if (r.phase == Phase.BATTLE) TowerBattle.forfeit(player, reason.name());
         PlayerData d = PlayerStore.getOrCreate(player, r.name);
         boolean penalty = !r.daily && (reason == EndReason.DEFEAT || reason == EndReason.ABANDON || reason == EndReason.DISCONNECT
                 || reason == EndReason.DISQUALIFIED);
         if (penalty) {
-            d.totalLosses += reason == EndReason.DEFEAT || reason == EndReason.DISCONNECT ? 1 : 0;
-            d.cooldownUntil = TimeFmt.now() + Math.max(0, Cfg.tower.l("defeat_cooldown_hours", 24)) * TimeFmt.HOUR;
+            boolean loss = reason == EndReason.DEFEAT || reason == EndReason.DISCONNECT;
+            d.totalLosses += loss ? 1 : 0;
+            long hours = main || tower.cooldownHours < 0 ? Cfg.tower.l("defeat_cooldown_hours", 24) : tower.cooldownHours;
+            long until = TimeFmt.now() + Math.max(0, hours) * TimeFmt.HOUR;
+            if (main) d.cooldownUntil = until;
+            else {
+                PlayerData.TowerRecord rec = d.tower(tower.id);
+                rec.cooldownUntil = until;
+                rec.losses += loss ? 1 : 0;
+            }
         }
         ServerPlayer p = Players.get(player);
         if (p == null || p.hasDisconnected()) {
             d.pendingExit = back != null;
+            d.pendingExitTower = main ? "" : tower.id;
             if (penalty) d.pendingMessage = Msg.format("tower.ended_while_offline", "floor", r.floor, "reason", Msg.raw("reason." + reason.name().toLowerCase()));
         } else {
             switch (reason) {
-                case DEFEAT -> Msg.send(p, "tower.defeat", "floor", r.floor, "record", d.maxFloor,
-                        "cooldown", TimeFmt.duration(cooldownLeft(d)));
-                case ABANDON -> Msg.send(p, "tower.abandoned", "floor", r.floor, "cooldown", TimeFmt.duration(cooldownLeft(d)));
-                case DISQUALIFIED -> Msg.send(p, "tower.disqualified", "cooldown", TimeFmt.duration(cooldownLeft(d)));
+                case DEFEAT -> Msg.send(p, "tower.defeat", "floor", r.floor, "record", record(d, tower),
+                        "cooldown", TimeFmt.duration(cooldownLeft(d, tower)));
+                case ABANDON -> Msg.send(p, "tower.abandoned", "floor", r.floor, "cooldown", TimeFmt.duration(cooldownLeft(d, tower)));
+                case DISQUALIFIED -> Msg.send(p, "tower.disqualified", "cooldown", TimeFmt.duration(cooldownLeft(d, tower)));
                 case CANCELLED -> Msg.send(p, "tower.cancelled");
                 default -> {
                 }
@@ -534,7 +647,7 @@ public final class TowerManager {
         }
         PlayerStore.save(d);
         save();
-        int key = r.daily ? BOSS_QUEUE : r.floor;
+        String key = key(r);
         Scheduler.later(10, () -> releaseQueue(key));
     }
 
@@ -592,7 +705,8 @@ public final class TowerManager {
             }
         } else if (d.pendingExit) {
             d.pendingExit = false;
-            Loc back = TowerConfig.data().exit;
+            Loc back = exitOf(TowerConfig.tower(d.pendingExitTower));
+            d.pendingExitTower = "";
             if (back != null) Scheduler.later(20, () -> {
                 if (!p.hasDisconnected()) back.teleport(p);
             });
@@ -655,8 +769,8 @@ public final class TowerManager {
                 endRun(id, r.daily ? EndReason.CANCELLED : EndReason.ABANDON, null);
                 continue;
             }
-            if (r.phase == Phase.QUEUED && !isBusy(r.daily ? BOSS_QUEUE : r.floor, id)) {
-                Deque<UUID> q = QUEUES.get(r.daily ? BOSS_QUEUE : r.floor);
+            if (r.phase == Phase.QUEUED && !isBusy(key(r), id)) {
+                Deque<UUID> q = QUEUES.get(key(r));
                 if (q == null || q.peekFirst() == null || q.peekFirst().equals(id)) {
                     if (q != null) q.remove(id);
                     r.phase = Phase.FLOOR;
@@ -664,7 +778,7 @@ public final class TowerManager {
                 }
             }
             if (r.phase == Phase.BATTLE || r.phase == Phase.FLOOR || r.phase == Phase.COUNTDOWN) {
-                Msg.actionBar(p, r.daily ? "daily.actionbar" : "tower.actionbar", "floor", r.floor, "floors", totalFloors(),
+                Msg.actionBar(p, r.daily ? "daily.actionbar" : "tower.actionbar", "floor", r.floor, "floors", totalFloors(r),
                         "time", TimeFmt.clock(r.elapsed(now)));
             }
         }
@@ -672,7 +786,7 @@ public final class TowerManager {
 
     private static Loc anchor(RunState r) {
         if (r.daily) return TowerConfig.data().bossArrival;
-        FloorEntry fe = TowerConfig.floor(r.floor);
+        FloorEntry fe = floorEntry(r);
         return fe == null ? null : fe.arrival;
     }
 

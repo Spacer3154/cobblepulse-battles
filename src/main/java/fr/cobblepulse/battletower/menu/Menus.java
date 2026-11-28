@@ -9,6 +9,7 @@ import fr.cobblepulse.battletower.core.Perms;
 import fr.cobblepulse.battletower.core.TimeFmt;
 import fr.cobblepulse.battletower.data.FloorEntry;
 import fr.cobblepulse.battletower.data.PlayerData;
+import fr.cobblepulse.battletower.data.TowerData;
 import fr.cobblepulse.battletower.data.RunState;
 import fr.cobblepulse.battletower.data.TrainerSpec;
 import fr.cobblepulse.battletower.economy.Achievements;
@@ -48,8 +49,10 @@ public final class Menus {
                 Msg.format("menu.profile_best", "time", d.bestTimeMs > 0 ? TimeFmt.clock(d.bestTimeMs) : "-"),
                 Msg.format("menu.profile_rank", "rank", rank > 0 ? "#" + rank : "-")).build());
         // Slot 10 : assaut
+        boolean several = TowerConfig.towers().size() > 1;
         if (run != null && !run.daily) {
             gui.set(10, ItemBuilder.of(Items.IRON_SWORD).name(Msg.format("menu.run_title", "floor", run.floor)).lore(
+                    Msg.format("menu.run_tower", "tower", TowerConfig.name(TowerManager.towerOf(run)), "floors", TowerManager.totalFloors(run)),
                     Msg.format("menu.run_time", "time", TimeFmt.clock(run.elapsed(TimeFmt.now()))),
                     Msg.raw("menu.run_click"), Msg.raw("menu.run_right")).glow(true).hideExtra().build(), (pl, c) -> {
                 fr.cobblepulse.battletower.gui.Gui.close(pl);
@@ -57,6 +60,12 @@ public final class Menus {
                 else if (c.shift()) confirmAbandon(pl);
                 else TowerManager.engage(pl);
             });
+        } else if (several) {
+            List<String> lore = new ArrayList<>();
+            lore.add(Msg.format("menu.towers_lore", "n", TowerConfig.towers().size()));
+            if (!TowerManager.isOpen()) lore.add(Msg.raw("menu.tower_closed"));
+            else lore.add(Msg.raw("menu.towers_click"));
+            gui.button(10, ItemBuilder.of(Items.DIAMOND_SWORD).name(Msg.raw("menu.assault")).lore(lore).hideExtra().build(), Menus::chooseTower);
         } else {
             List<String> lore = new ArrayList<>();
             lore.add(Msg.format("menu.assault_lore", "floors", TowerManager.totalFloors()));
@@ -89,6 +98,50 @@ public final class Menus {
             gui.button(26, ItemBuilder.of(Items.COMMAND_BLOCK).name(Msg.raw("menu.admin")).build(), AdminMenus::panel);
         }
         gui.open(p);
+    }
+
+    /** Icone d'une tour (champ icon, sinon epee de diamant pour la principale et de fer pour les autres). */
+    public static net.minecraft.world.item.Item towerIcon(TowerData t) {
+        if (t != null && t.icon != null && !t.icon.isBlank()) {
+            var rl = net.minecraft.resources.ResourceLocation.tryParse(t.icon.contains(":") ? t.icon : "minecraft:" + t.icon);
+            if (rl != null) {
+                var item = net.minecraft.core.registries.BuiltInRegistries.ITEM.get(rl);
+                if (item != Items.AIR) return item;
+            }
+        }
+        return TowerConfig.isMain(t) ? Items.DIAMOND_SWORD : Items.IRON_SWORD;
+    }
+
+    /** Choix de la tour a gravir : etages, record, temps, cooldown. */
+    public static void chooseTower(ServerPlayer p) {
+        PlayerData d = PlayerStore.get(p);
+        List<fr.cobblepulse.battletower.gui.Paged.Entry> entries = new ArrayList<>();
+        for (TowerData t : TowerConfig.towers()) {
+            boolean main = TowerConfig.isMain(t);
+            int size = TowerConfig.size(t);
+            PlayerData.TowerRecord rec = main ? null : d.towers.get(t.id);
+            int best = TowerManager.record(d, t);
+            int completions = main ? d.completions : rec == null ? 0 : rec.completions;
+            long bestTime = main ? d.bestTimeMs : rec == null ? 0 : rec.bestTimeMs;
+            long cd = TowerManager.cooldownLeft(d, t);
+            boolean locked = !t.permission.isBlank() && !Perms.player(p, t.permission);
+            List<String> lore = new ArrayList<>();
+            lore.add(Msg.format("menu.tower_floors", "floors", size));
+            lore.add(Msg.format("menu.profile_record", "floor", best, "floors", size));
+            lore.add(Msg.format("menu.profile_completions", "n", completions));
+            lore.add(Msg.format("menu.profile_best", "time", bestTime > 0 ? TimeFmt.clock(bestTime) : "-"));
+            if (!main && t.finalBp > 0) lore.add(Msg.format("menu.tower_final_bp", "bp", t.finalBp));
+            if (locked) lore.add(Msg.raw("menu.tower_locked"));
+            else if (!TowerManager.isOpen()) lore.add(Msg.raw("menu.tower_closed"));
+            else if (cd > 0) lore.add(Msg.format("menu.cooldown", "time", TimeFmt.duration(cd)));
+            else lore.add(Msg.raw("menu.assault_click"));
+            entries.add(new fr.cobblepulse.battletower.gui.Paged.Entry(ItemBuilder.of(towerIcon(t)).name("&6&l" + TowerConfig.name(t))
+                    .count(Math.max(1, Math.min(64, size))).lore(lore).glow(completions > 0).hideExtra().build(), (pl, c) -> {
+                fr.cobblepulse.battletower.gui.Gui.close(pl);
+                TowerManager.startAssault(pl, t.id);
+            }));
+        }
+        fr.cobblepulse.battletower.gui.Paged.open(p, Msg.raw("menu.towers_title"), entries, 0, Menus::main);
     }
 
     public static void confirmAbandon(ServerPlayer p) {

@@ -63,19 +63,28 @@ public final class EditorService {
     }
 
     public static void openFloor(ServerPlayer p, int floor) {
+        openFloor(p, TowerConfig.MAIN, floor);
+    }
+
+    /** Editeur du dresseur d'un etage ; l'identifiant envoye au client est "N" (principale) ou "tour:N". */
+    public static void openFloor(ServerPlayer p, String tower, int floor) {
         if (!Perms.admin(p, Perms.ADMIN_NPC)) {
             Msg.send(p, "general.no_permission");
             return;
         }
-        FloorEntry fe = TowerConfig.floor(floor);
+        fr.cobblepulse.battletower.data.TowerData t = TowerConfig.tower(tower);
+        FloorEntry fe = TowerConfig.floor(t, floor);
         if (fe == null) {
             Msg.send(p, "admin.floor_unknown", "floor", floor);
             return;
         }
-        OPENED.put(p.getUUID(), "floor:" + floor);
+        boolean main = TowerConfig.isMain(t);
+        String id = main ? String.valueOf(floor) : t.id + ":" + floor;
+        OPENED.put(p.getUUID(), "floor:" + id);
         if (!clientReady(p)) return;
-        ServerPlayNetworking.send(p, new Payloads.OpenEditor("floor", String.valueOf(floor), Json.GSON.toJson(fe.trainer),
-                meta(Msg.format("editor.title_floor", "floor", floor))));
+        String title = main ? Msg.format("editor.title_floor", "floor", floor)
+                : Msg.format("editor.title_tower_floor", "floor", floor, "tower", TowerConfig.name(t));
+        ServerPlayNetworking.send(p, new Payloads.OpenEditor("floor", id, Json.GSON.toJson(fe.trainer), meta(title)));
     }
 
     public static void openBoss(ServerPlayer p, String id) {
@@ -194,19 +203,26 @@ public final class EditorService {
             }
         } else {
             int floor;
+            String tower = TowerConfig.MAIN;
+            String raw = payload.id();
+            int colon = raw.lastIndexOf(':');
+            if (colon > 0) {
+                tower = raw.substring(0, colon);
+                raw = raw.substring(colon + 1);
+            }
             try {
-                floor = Integer.parseInt(payload.id());
+                floor = Integer.parseInt(raw);
             } catch (NumberFormatException e) {
                 reply(p, false, "Étage invalide", List.of());
                 return;
             }
-            FloorEntry fe = TowerConfig.floor(floor);
+            FloorEntry fe = TowerConfig.floor(tower, floor);
             if (fe == null) {
                 reply(p, false, "Étage invalide", List.of());
                 return;
             }
             fe.trainer = spec;
-            TowerConfig.saveFloors();
+            TowerConfig.saveFloor(fe);
             NPCEntity npc = TrainerNpcs.find(s, fe.npcUuid, fe.npcLocation);
             if (npc != null) TrainerNpcs.configure(npc, TrainerNpcs.displayName(spec), spec.skin);
         }

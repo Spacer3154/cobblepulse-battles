@@ -160,6 +160,7 @@ TOWER = ["sleep 5", "battletower selftest", "sleep 5", "battletower selftest asc
 BATTLES = ["battletower selftest ranked", "wait 240 SELFTEST-DONE ranked",
            "battletower selftest rankedtimer", "wait 240 SELFTEST-DONE rankedtimer",
            "battletower selftest trainers", "wait 200 SELFTEST-DONE trainers",
+           "battletower selftest towers", "wait 200 SELFTEST-DONE towers",
            "battletower selftest season", "wait 40 SELFTEST-DONE season"]
 STORE = ["battletower selftest rankedstorage", "wait 40 SELFTEST-DONE rankedstorage"]
 END = ["battletower selftest resume", "sleep 3", "battletower selftest report"]

@@ -7,6 +7,8 @@ public final class RunState {
     public String uuid;
     public String name;
     public int floor = 1;
+    /** Tour de l'ascension (vide = tour principale). */
+    public String tower = "";
     public Phase phase = Phase.FLOOR;
     public long startedAt;
     /** Temps d'ascension actif cumule (hors file d'attente et hors arret du serveur). */

@@ -11,6 +11,8 @@ public final class FloorEntry {
     public Loc npcLocation;
     public String npcUuid;
     public TrainerSpec trainer = new TrainerSpec();
+    /** Tour a laquelle appartient l'etage (renseigne au chargement, non enregistre). */
+    public transient String tower = "principale";
 
     public FloorEntry() {}
 

@@ -4,6 +4,9 @@
 
 # Nombre d'etages physiques
 floors = 50
+# Nom de la tour principale (affiché dans le choix de la tour quand des tours secondaires existent).
+# Tours plus petites ou plus grandes : /bt tour creer <id> <étages> [nom] (fichiers data/tours/<id>.json).
+name = "Tour de Combat"
 # Cooldown applique apres une defaite, une disqualification ou un abandon (heures)
 defeat_cooldown_hours = 24
 # Compte a rebours avant chaque combat (secondes)

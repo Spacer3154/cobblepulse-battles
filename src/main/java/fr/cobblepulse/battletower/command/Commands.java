@@ -48,6 +48,10 @@ import static net.minecraft.commands.Commands.literal;
 public final class Commands {
     private static final SuggestionProvider<CommandSourceStack> BOSSES =
             (ctx, b) -> SharedSuggestionProvider.suggest(TowerConfig.bosses().bosses.keySet(), b);
+    private static final SuggestionProvider<CommandSourceStack> TOWERS = (ctx, b) -> SharedSuggestionProvider.suggest(
+            TowerConfig.towers().stream().map(t -> t.id).toList(), b);
+    private static final SuggestionProvider<CommandSourceStack> EXTRA_TOWERS = (ctx, b) -> SharedSuggestionProvider.suggest(
+            TowerConfig.extraTowers().stream().map(t -> t.id).toList(), b);
     private static final SuggestionProvider<CommandSourceStack> KNOWN_PLAYERS =
             (ctx, b) -> SharedSuggestionProvider.suggest(PlayerStore.names(), b);
 
@@ -66,13 +70,43 @@ public final class Commands {
         return IntegerArgumentType.getInteger(ctx, "etage");
     }
 
+    private static String towerArg(CommandContext<CommandSourceStack> ctx) {
+        return StringArgumentType.getString(ctx, "tour");
+    }
+
+    /** {@code <etage>} puis {@code [tour]} facultatif (tour principale par defaut). */
+    private static com.mojang.brigadier.builder.RequiredArgumentBuilder<CommandSourceStack, Integer> floorThenTower(
+            java.util.function.BiConsumer<ServerPlayer, FloorEntry> action) {
+        return argument("etage", IntegerArgumentType.integer(1, 200))
+                .executes(ctx -> player(ctx, p -> withFloor(p, TowerConfig.MAIN, floorArg(ctx), action)))
+                .then(argument("tour", StringArgumentType.word()).suggests(TOWERS)
+                        .executes(ctx -> player(ctx, p -> withFloor(p, towerArg(ctx), floorArg(ctx), action))));
+    }
+
+    private static void withFloor(ServerPlayer p, String tower, int floor, java.util.function.BiConsumer<ServerPlayer, FloorEntry> action) {
+        fr.cobblepulse.battletower.data.TowerData t = TowerConfig.tower(tower);
+        if (t == null) {
+            Msg.send(p, "tower.unknown_tower", "tower", tower);
+            return;
+        }
+        FloorEntry fe = TowerConfig.floor(t, floor);
+        if (fe == null || floor > TowerConfig.size(t)) {
+            Msg.send(p, "admin.floor_unknown", "floor", floor);
+            return;
+        }
+        action.accept(p, fe);
+    }
+
     public static void register(CommandDispatcher<CommandSourceStack> d) {
         LiteralCommandNode<CommandSourceStack> root = d.register(literal("battletower").requires(Perms.playerReq(Perms.USE))
                 .executes(ctx -> player(ctx, Menus::main))
                 .then(literal("top").executes(ctx -> player(ctx, Menus::leaderboard)))
                 .then(literal("succes").executes(ctx -> player(ctx, Menus::achievements)))
                 .then(literal("achievements").executes(ctx -> player(ctx, Menus::achievements)))
-                .then(literal("start").executes(ctx -> player(ctx, TowerManager::startAssault)))
+                .then(literal("start").executes(ctx -> player(ctx, TowerManager::startAssault))
+                        .then(argument("tour", StringArgumentType.word()).suggests(TOWERS)
+                                .executes(ctx -> player(ctx, p -> TowerManager.startAssault(p, towerArg(ctx))))))
+                .then(literal("tours").executes(ctx -> player(ctx, Menus::chooseTower)))
                 .then(literal("engage").executes(ctx -> player(ctx, TowerManager::engage)))
                 .then(literal("pc").executes(ctx -> player(ctx, TowerManager::openPc)))
                 .then(literal("abandon").executes(ctx -> player(ctx, p -> {
@@ -104,19 +138,60 @@ public final class Commands {
                             return 1;
                         })))
                 .then(literal("npc").requires(Perms.adminReq(Perms.ADMIN_NPC))
-                        .then(literal("spawn").then(argument("etage", IntegerArgumentType.integer(1, 200))
-                                .executes(ctx -> player(ctx, p -> npcSpawn(p, floorArg(ctx))))))
-                        .then(literal("settp").then(argument("etage", IntegerArgumentType.integer(1, 200))
-                                .executes(ctx -> player(ctx, p -> npcSetTp(p, floorArg(ctx))))))
+                        .then(literal("spawn").then(floorThenTower(Commands::npcSpawn)))
+                        .then(literal("settp").then(floorThenTower(Commands::npcSetTp)))
                         .then(literal("edit").executes(ctx -> player(ctx, Commands::npcEditTargeted))
-                                .then(argument("etage", IntegerArgumentType.integer(1, 200)).executes(ctx -> player(ctx, p -> EditorService.openFloor(p, floorArg(ctx))))))
-                        .then(literal("remove").then(argument("etage", IntegerArgumentType.integer(1, 200))
-                                .executes(ctx -> player(ctx, p -> npcRemove(p, floorArg(ctx))))))
-                        .then(literal("tp").then(argument("etage", IntegerArgumentType.integer(1, 200)).executes(ctx -> player(ctx, p -> {
-                            FloorEntry fe = TowerConfig.floor(floorArg(ctx));
-                            if (fe != null && fe.arrival != null) fe.arrival.teleport(p);
+                                .then(floorThenTower((p, fe) -> EditorService.openFloor(p, fe.tower, fe.floor))))
+                        .then(literal("remove").then(floorThenTower(Commands::npcRemove)))
+                        .then(literal("tp").then(floorThenTower((p, fe) -> {
+                            if (fe.arrival != null) fe.arrival.teleport(p);
                             else Msg.send(p, "admin.floor_no_tp_admin");
-                        })))))
+                        }))))
+                .then(literal("tour").requires(Perms.adminReq(Perms.ADMIN_NPC))
+                        .executes(ctx -> player(ctx, AdminMenus::towers))
+                        .then(literal("liste").executes(ctx -> {
+                            for (fr.cobblepulse.battletower.data.TowerData t : TowerConfig.towers()) {
+                                Msg.send(ctx.getSource(), "admin.tower_line", "id", t.id, "tower", TowerConfig.name(t), "floors", TowerConfig.size(t),
+                                        "ready", AdminMenus.countConfigured(t));
+                            }
+                            return 1;
+                        }))
+                        .then(literal("creer").then(argument("id", StringArgumentType.word()).then(argument("etages", IntegerArgumentType.integer(1, 200))
+                                .executes(ctx -> towerCreate(ctx.getSource(), StringArgumentType.getString(ctx, "id"), IntegerArgumentType.getInteger(ctx, "etages"), ""))
+                                .then(argument("nom", StringArgumentType.greedyString()).executes(ctx -> towerCreate(ctx.getSource(),
+                                        StringArgumentType.getString(ctx, "id"), IntegerArgumentType.getInteger(ctx, "etages"), StringArgumentType.getString(ctx, "nom")))))))
+                        .then(literal("etages").then(argument("tour", StringArgumentType.word()).suggests(EXTRA_TOWERS)
+                                .then(argument("etages", IntegerArgumentType.integer(1, 200)).executes(ctx -> towerEdit(ctx.getSource(), towerArg(ctx), t -> {
+                                    TowerConfig.resize(t, IntegerArgumentType.getInteger(ctx, "etages"));
+                                })))))
+                        .then(literal("nom").then(argument("tour", StringArgumentType.word()).suggests(EXTRA_TOWERS)
+                                .then(argument("nom", StringArgumentType.greedyString()).executes(ctx -> towerEdit(ctx.getSource(), towerArg(ctx), t -> {
+                                    t.name = StringArgumentType.getString(ctx, "nom");
+                                    TowerConfig.save(t);
+                                })))))
+                        .then(literal("cooldown").then(argument("tour", StringArgumentType.word()).suggests(EXTRA_TOWERS)
+                                .then(argument("heures", IntegerArgumentType.integer(-1, 8760)).executes(ctx -> towerEdit(ctx.getSource(), towerArg(ctx), t -> {
+                                    t.cooldownHours = IntegerArgumentType.getInteger(ctx, "heures");
+                                    TowerConfig.save(t);
+                                })))))
+                        .then(literal("recompense").then(argument("tour", StringArgumentType.word()).suggests(EXTRA_TOWERS)
+                                .then(argument("bp", IntegerArgumentType.integer(0)).executes(ctx -> towerEdit(ctx.getSource(), towerArg(ctx), t -> {
+                                    t.finalBp = IntegerArgumentType.getInteger(ctx, "bp");
+                                    TowerConfig.save(t);
+                                })))))
+                        .then(literal("sortie").then(argument("tour", StringArgumentType.word()).suggests(TOWERS).executes(ctx -> player(ctx, p -> {
+                            fr.cobblepulse.battletower.data.TowerData t = TowerConfig.tower(towerArg(ctx));
+                            if (t == null) {
+                                Msg.send(p, "tower.unknown_tower", "tower", towerArg(ctx));
+                                return;
+                            }
+                            t.exit = Loc.of(p);
+                            TowerConfig.save(t);
+                            Msg.send(p, "admin.exit_set", "loc", t.exit.pretty());
+                        }))))
+                        .then(literal("supprimer").then(argument("tour", StringArgumentType.word()).suggests(EXTRA_TOWERS).executes(ctx -> {
+                            return towerDelete(ctx.getSource(), towerArg(ctx)) ? 1 : 0;
+                        }))))
                 .then(literal("shop").requires(Perms.adminReq(Perms.ADMIN_SHOP))
                         .then(literal("spawn").executes(ctx -> player(ctx, Commands::shopSpawn)))
                         .then(literal("remove").executes(ctx -> player(ctx, Commands::shopRemove))))
@@ -146,6 +221,7 @@ public final class Commands {
                                         return 0;
                                     }
                                     pd.cooldownUntil = 0;
+                                    for (PlayerData.TowerRecord tr : pd.towers.values()) tr.cooldownUntil = 0;
                                     PlayerStore.save(pd);
                                     Battletower.LOG.info("[Battletower] Cooldown de {} reinitialise par {}", pd.name, ctx.getSource().getTextName());
                                     Msg.send(ctx.getSource(), "staff.cooldown_reset", "player", pd.name);
@@ -185,6 +261,7 @@ public final class Commands {
                         .then(literal("ranked").executes(ctx -> fr.cobblepulse.battles.BattlesSelfTest.ranked(ctx.getSource())))
                         .then(literal("rankedtimer").executes(ctx -> fr.cobblepulse.battles.BattlesSelfTest.rankedTimers(ctx.getSource())))
                         .then(literal("trainers").executes(ctx -> fr.cobblepulse.battles.BattlesSelfTest.trainers(ctx.getSource())))
+                        .then(literal("towers").executes(ctx -> fr.cobblepulse.battles.BattlesSelfTest.towers(ctx.getSource())))
                         .then(literal("season").executes(ctx -> fr.cobblepulse.battles.BattlesSelfTest.season(ctx.getSource())))
                         .then(literal("rankedstorage").executes(ctx -> fr.cobblepulse.battles.BattlesSelfTest.storage(ctx.getSource())))
                         .then(literal("rankedpersisted").executes(ctx -> fr.cobblepulse.battles.BattlesSelfTest.storagePersisted(ctx.getSource())))
@@ -222,35 +299,65 @@ public final class Commands {
 
     // ------------------------------------------------------------------ PNJ
 
-    private static void npcSpawn(ServerPlayer p, int floor) {
-        FloorEntry fe = TowerConfig.floor(floor);
-        if (fe == null || floor > TowerManager.totalFloors()) {
-            Msg.send(p, "admin.floor_unknown", "floor", floor);
-            return;
-        }
+    private static void npcSpawn(ServerPlayer p, FloorEntry fe) {
         NPCEntity npc = TrainerNpcs.spawnFloor(p.server, fe, Loc.of(p));
-        Msg.send(p, npc != null ? "admin.npc_spawned" : "admin.npc_spawn_failed", "floor", floor);
+        Msg.send(p, npc != null ? "admin.npc_spawned" : "admin.npc_spawn_failed", "floor", fe.floor);
     }
 
-    private static void npcSetTp(ServerPlayer p, int floor) {
-        FloorEntry fe = TowerConfig.floor(floor);
-        if (fe == null || floor > TowerManager.totalFloors()) {
-            Msg.send(p, "admin.floor_unknown", "floor", floor);
-            return;
-        }
+    private static void npcSetTp(ServerPlayer p, FloorEntry fe) {
         fe.arrival = Loc.of(p);
-        TowerConfig.saveFloors();
-        Msg.send(p, "admin.settp_done", "floor", floor, "loc", fe.arrival.pretty());
+        TowerConfig.saveFloor(fe);
+        Msg.send(p, "admin.settp_done", "floor", fe.floor, "loc", fe.arrival.pretty());
     }
 
-    private static void npcRemove(ServerPlayer p, int floor) {
-        FloorEntry fe = TowerConfig.floor(floor);
-        if (fe == null) return;
+    private static void npcRemove(ServerPlayer p, FloorEntry fe) {
         TrainerNpcs.remove(p.server, fe.npcUuid, fe.npcLocation);
         fe.npcUuid = null;
         fe.npcLocation = null;
-        TowerConfig.saveFloors();
-        Msg.send(p, "admin.npc_removed", "floor", floor);
+        TowerConfig.saveFloor(fe);
+        Msg.send(p, "admin.npc_removed", "floor", fe.floor);
+    }
+
+    // ------------------------------------------------------------------ Tours secondaires
+
+    public static int towerCreate(CommandSourceStack src, String id, int floors, String name) {
+        fr.cobblepulse.battletower.data.TowerData t = TowerConfig.create(id, name, floors);
+        if (t == null) {
+            Msg.send(src, "admin.tower_create_failed", "id", id);
+            return 0;
+        }
+        Msg.send(src, "admin.tower_created", "id", t.id, "tower", TowerConfig.name(t), "floors", TowerConfig.size(t));
+        return 1;
+    }
+
+    private static int towerEdit(CommandSourceStack src, String id, java.util.function.Consumer<fr.cobblepulse.battletower.data.TowerData> change) {
+        fr.cobblepulse.battletower.data.TowerData t = TowerConfig.tower(id);
+        if (t == null || TowerConfig.isMain(t)) {
+            Msg.send(src, "tower.unknown_tower", "tower", id);
+            return 0;
+        }
+        change.accept(t);
+        Msg.send(src, "admin.tower_updated", "id", t.id, "tower", TowerConfig.name(t), "floors", TowerConfig.size(t));
+        return 1;
+    }
+
+    /** Supprime une tour secondaire et ses PNJ (refuse si une ascension y est en cours). */
+    public static boolean towerDelete(CommandSourceStack src, String id) {
+        fr.cobblepulse.battletower.data.TowerData t = TowerConfig.tower(id);
+        if (t == null || TowerConfig.isMain(t)) {
+            Msg.send(src, "tower.unknown_tower", "tower", id);
+            return false;
+        }
+        for (RunState r : TowerManager.runs()) {
+            if (!r.daily && t.id.equals(r.tower)) {
+                Msg.send(src, "admin.tower_busy", "tower", TowerConfig.name(t));
+                return false;
+            }
+        }
+        for (FloorEntry fe : t.floors) TrainerNpcs.remove(src.getServer(), fe.npcUuid, fe.npcLocation);
+        TowerConfig.delete(t.id);
+        Msg.send(src, "admin.tower_deleted", "tower", TowerConfig.name(t));
+        return true;
     }
 
     /** /battletower npc edit sans argument : PNJ vise (6 blocs). */
@@ -261,7 +368,7 @@ public final class Commands {
             return;
         }
         int floor = TrainerNpcs.floorOf(target);
-        if (floor > 0) EditorService.openFloor(p, floor);
+        if (floor > 0) EditorService.openFloor(p, TrainerNpcs.towerOf(target), floor);
         else if (target.getTags().contains(TrainerNpcs.TAG_BOSS)) EditorService.openBoss(p, DailyBoss.currentId());
         else Msg.send(p, "admin.no_target");
     }
