@@ -1,0 +1,28 @@
+mod fabric-api 0.116.18+1.21.1
+mod fabric-language-kotlin 1.14.2+kotlin.2.4.21
+mod luckperms v5.4.140-fabric
+mod placeholder-api 2.4.2+1.21
+mod cobblemon 1.8.4F
+mod cobblemon-mega-showdown 1.4+1.8.4+1.21.1-release
+mod accessories 1.1.0-beta.54+1.21.1
+mod architectury-api 13.0.12+fabric
+mod owo-lib 0.13.0-alpha.15.1+1.21
+mod battles cobblepulse-battles-2.0.0.jar
+serveurs prets : combat=True lobby=True
+[lobby] > battletower selftest multi lobby
+multi-lobby : True
+[combat] > battletower selftest multi combat
+multi-combat : True
+[lobby] > battletower selftest multi check
+multi-check : True
+[lobby] > battletower selftest report
+[combat] > battletower selftest report
+PASS webhook.discord_http - 1 message(s) recu(s) : {"username":"CobblePulse Ranked","embeds":[{"title":"Match classé","description":"**MSAce** bat **MSFish** (Simple)\nMSAce : 1045 (+45)\nMSFish : 1000 (+0)","color":8191118}]}
+[lobby] > stop
+[lobby] [08:54:30] [Server thread/INFO]: [Battletower][selftest] SELFTEST SUMMARY pass=8 fail=0
+[lobby] [08:54:30] [Server thread/INFO]: SELFTEST SUMMARY pass=8 fail=0
+[lobby] exit code 0
+[combat] > stop
+[combat] [08:54:30] [Server thread/INFO]: [Battletower][selftest] SELFTEST SUMMARY pass=8 fail=0
+[combat] [08:54:30] [Server thread/INFO]: SELFTEST SUMMARY pass=8 fail=0
+[combat] exit code 0

@@ -1,0 +1,416 @@
+Downloading Minecraft server
+Installing Fabric Loader 0.19.5(1.21.1) on the server
+Downloading required files
+Downloading library org.ow2.asm:asm:9.10.1
+Downloading library org.ow2.asm:asm-analysis:9.10.1
+Downloading library org.ow2.asm:asm-commons:9.10.1
+Downloading library org.ow2.asm:asm-tree:9.10.1
+Downloading library org.ow2.asm:asm-util:9.10.1
+Downloading library net.fabricmc:sponge-mixin:0.17.4+mixin.0.8.7
+Downloading library net.fabricmc:intermediary:1.21.1
+Downloading library net.fabricmc:fabric-loader:0.19.5
+Generating server launch JAR
+Unpacking 1.21.1/server-1.21.1.jar (versions:1.21.1) to versions/1.21.1/server-1.21.1.jar
+Unpacking com/github/oshi/oshi-core/6.4.10/oshi-core-6.4.10.jar (libraries:com.github.oshi:oshi-core:6.4.10) to libraries/com/github/oshi/oshi-core/6.4.10/oshi-core-6.4.10.jar
+Unpacking com/google/code/gson/gson/2.10.1/gson-2.10.1.jar (libraries:com.google.code.gson:gson:2.10.1) to libraries/com/google/code/gson/gson/2.10.1/gson-2.10.1.jar
+Unpacking com/google/guava/failureaccess/1.0.1/failureaccess-1.0.1.jar (libraries:com.google.guava:failureaccess:1.0.1) to libraries/com/google/guava/failureaccess/1.0.1/failureaccess-1.0.1.jar
+Unpacking com/google/guava/guava/32.1.2-jre/guava-32.1.2-jre.jar (libraries:com.google.guava:guava:32.1.2-jre) to libraries/com/google/guava/guava/32.1.2-jre/guava-32.1.2-jre.jar
+Unpacking com/mojang/authlib/6.0.54/authlib-6.0.54.jar (libraries:com.mojang:authlib:6.0.54) to libraries/com/mojang/authlib/6.0.54/authlib-6.0.54.jar
+Unpacking com/mojang/brigadier/1.3.10/brigadier-1.3.10.jar (libraries:com.mojang:brigadier:1.3.10) to libraries/com/mojang/brigadier/1.3.10/brigadier-1.3.10.jar
+Unpacking com/mojang/datafixerupper/8.0.16/datafixerupper-8.0.16.jar (libraries:com.mojang:datafixerupper:8.0.16) to libraries/com/mojang/datafixerupper/8.0.16/datafixerupper-8.0.16.jar
+Unpacking com/mojang/logging/1.2.7/logging-1.2.7.jar (libraries:com.mojang:logging:1.2.7) to libraries/com/mojang/logging/1.2.7/logging-1.2.7.jar
+Unpacking commons-io/commons-io/2.15.1/commons-io-2.15.1.jar (libraries:commons-io:commons-io:2.15.1) to libraries/commons-io/commons-io/2.15.1/commons-io-2.15.1.jar
+Unpacking io/netty/netty-buffer/4.1.97.Final/netty-buffer-4.1.97.Final.jar (libraries:io.netty:netty-buffer:4.1.97.Final) to libraries/io/netty/netty-buffer/4.1.97.Final/netty-buffer-4.1.97.Final.jar
+Unpacking io/netty/netty-codec/4.1.97.Final/netty-codec-4.1.97.Final.jar (libraries:io.netty:netty-codec:4.1.97.Final) to libraries/io/netty/netty-codec/4.1.97.Final/netty-codec-4.1.97.Final.jar
+Unpacking io/netty/netty-common/4.1.97.Final/netty-common-4.1.97.Final.jar (libraries:io.netty:netty-common:4.1.97.Final) to libraries/io/netty/netty-common/4.1.97.Final/netty-common-4.1.97.Final.jar
+Unpacking io/netty/netty-handler/4.1.97.Final/netty-handler-4.1.97.Final.jar (libraries:io.netty:netty-handler:4.1.97.Final) to libraries/io/netty/netty-handler/4.1.97.Final/netty-handler-4.1.97.Final.jar
+Unpacking io/netty/netty-resolver/4.1.97.Final/netty-resolver-4.1.97.Final.jar (libraries:io.netty:netty-resolver:4.1.97.Final) to libraries/io/netty/netty-resolver/4.1.97.Final/netty-resolver-4.1.97.Final.jar
+Unpacking io/netty/netty-transport/4.1.97.Final/netty-transport-4.1.97.Final.jar (libraries:io.netty:netty-transport:4.1.97.Final) to libraries/io/netty/netty-transport/4.1.97.Final/netty-transport-4.1.97.Final.jar
+Unpacking io/netty/netty-transport-classes-epoll/4.1.97.Final/netty-transport-classes-epoll-4.1.97.Final.jar (libraries:io.netty:netty-transport-classes-epoll:4.1.97.Final) to libraries/io/netty/netty-transport-classes-epoll/4.1.97.Final/netty-transport-classes-epoll-4.1.97.Final.jar
+Unpacking io/netty/netty-transport-native-epoll/4.1.97.Final/netty-transport-native-epoll-4.1.97.Final-linux-x86_64.jar (libraries:io.netty:netty-transport-native-epoll:4.1.97.Final:linux-x86_64) to libraries/io/netty/netty-transport-native-epoll/4.1.97.Final/netty-transport-native-epoll-4.1.97.Final-linux-x86_64.jar
+Unpacking io/netty/netty-transport-native-epoll/4.1.97.Final/netty-transport-native-epoll-4.1.97.Final-linux-aarch_64.jar (libraries:io.netty:netty-transport-native-epoll:4.1.97.Final:linux-aarch_64) to libraries/io/netty/netty-transport-native-epoll/4.1.97.Final/netty-transport-native-epoll-4.1.97.Final-linux-aarch_64.jar
+Unpacking io/netty/netty-transport-native-unix-common/4.1.97.Final/netty-transport-native-unix-common-4.1.97.Final.jar (libraries:io.netty:netty-transport-native-unix-common:4.1.97.Final) to libraries/io/netty/netty-transport-native-unix-common/4.1.97.Final/netty-transport-native-unix-common-4.1.97.Final.jar
+Unpacking it/unimi/dsi/fastutil/8.5.12/fastutil-8.5.12.jar (libraries:it.unimi.dsi:fastutil:8.5.12) to libraries/it/unimi/dsi/fastutil/8.5.12/fastutil-8.5.12.jar
+Unpacking net/java/dev/jna/jna/5.14.0/jna-5.14.0.jar (libraries:net.java.dev.jna:jna:5.14.0) to libraries/net/java/dev/jna/jna/5.14.0/jna-5.14.0.jar
+Unpacking net/java/dev/jna/jna-platform/5.14.0/jna-platform-5.14.0.jar (libraries:net.java.dev.jna:jna-platform:5.14.0) to libraries/net/java/dev/jna/jna-platform/5.14.0/jna-platform-5.14.0.jar
+Unpacking net/sf/jopt-simple/jopt-simple/5.0.4/jopt-simple-5.0.4.jar (libraries:net.sf.jopt-simple:jopt-simple:5.0.4) to libraries/net/sf/jopt-simple/jopt-simple/5.0.4/jopt-simple-5.0.4.jar
+Unpacking org/apache/commons/commons-lang3/3.14.0/commons-lang3-3.14.0.jar (libraries:org.apache.commons:commons-lang3:3.14.0) to libraries/org/apache/commons/commons-lang3/3.14.0/commons-lang3-3.14.0.jar
+Unpacking org/apache/logging/log4j/log4j-api/2.22.1/log4j-api-2.22.1.jar (libraries:org.apache.logging.log4j:log4j-api:2.22.1) to libraries/org/apache/logging/log4j/log4j-api/2.22.1/log4j-api-2.22.1.jar
+Unpacking org/apache/logging/log4j/log4j-core/2.22.1/log4j-core-2.22.1.jar (libraries:org.apache.logging.log4j:log4j-core:2.22.1) to libraries/org/apache/logging/log4j/log4j-core/2.22.1/log4j-core-2.22.1.jar
+Unpacking org/apache/logging/log4j/log4j-slf4j2-impl/2.22.1/log4j-slf4j2-impl-2.22.1.jar (libraries:org.apache.logging.log4j:log4j-slf4j2-impl:2.22.1) to libraries/org/apache/logging/log4j/log4j-slf4j2-impl/2.22.1/log4j-slf4j2-impl-2.22.1.jar
+Unpacking org/joml/joml/1.10.5/joml-1.10.5.jar (libraries:org.joml:joml:1.10.5) to libraries/org/joml/joml/1.10.5/joml-1.10.5.jar
+Unpacking org/lz4/lz4-java/1.8.0/lz4-java-1.8.0.jar (libraries:org.lz4:lz4-java:1.8.0) to libraries/org/lz4/lz4-java/1.8.0/lz4-java-1.8.0.jar
+Unpacking org/slf4j/slf4j-api/2.0.9/slf4j-api-2.0.9.jar (libraries:org.slf4j:slf4j-api:2.0.9) to libraries/org/slf4j/slf4j-api/2.0.9/slf4j-api-2.0.9.jar
+Starting net.fabricmc.loader.impl.game.minecraft.BundlerClassPathCapture
+[08:52:10] [main/INFO]: Loading Minecraft 1.21.1 with Fabric Loader 0.19.5
+[08:52:10] [main/INFO]: Fabric is preparing JARs on first launch, this may take a few seconds...
+[08:52:10] [main/WARN]: Warnings were found!
+ - Mod 'CobblePulse-Battles' (cobblepulse_battles) 2.0.0 recommends any version of cobblepulse, which is missing!
+	 - You should install any version of cobblepulse for the optimal experience.
+[08:52:10] [main/INFO]: Loading 85 mods:
+	- accessories 1.1.0-beta.54+1.21.1
+	- architectury 13.0.12
+	- cobblemon 1.8.4+1.21.1
+	   |-- com_ibm_icu_icu4j 71.1
+	   |-- org_graalvm_js_js 22.3.0
+	   |-- org_graalvm_regex_regex 22.3.0
+	   |-- org_graalvm_sdk_graal-sdk 22.3.0
+	   |-- org_graalvm_truffle_truffle-api 22.3.0
+	   |-- org_mongodb_mongodb-driver-core 4.10.2
+	   \-- org_mongodb_mongodb-driver-sync 4.10.2
+	- cobblepulse_battles 2.0.0
+	   |-- com_electronwill_night-config_core 3.6.7
+	   |-- com_electronwill_night-config_toml 3.6.7
+	   |-- com_mysql_mysql-connector-j 8.4.0
+	   |-- com_zaxxer_hikaricp 5.1.0
+	   |-- org_apache_commons_commons-pool2 2.12.0
+	   |-- org_json_json 20240303
+	   |-- org_xerial_sqlite-jdbc 3.46.1.3
+	   \-- redis_clients_jedis 5.1.5
+	- fabric-api 0.116.18+1.21.1
+	   |-- fabric-api-base 0.4.42+6573ed8c19
+	   |-- fabric-api-lookup-api-v1 1.6.72+7b3d111d19
+	   |-- fabric-biome-api-v1 13.0.31+d527f9fd19
+	   |-- fabric-block-api-v1 1.1.0+0bc3503219
+	   |-- fabric-block-view-api-v2 1.0.11+ebb2264e19
+	   |-- fabric-command-api-v1 1.2.49+f71b366f19
+	   |-- fabric-command-api-v2 2.2.28+6ced4dd919
+	   |-- fabric-commands-v0 0.2.66+df3654b319
+	   |-- fabric-content-registries-v0 8.0.19+b559734419
+	   |-- fabric-convention-tags-v1 2.1.7+7f945d5b19
+	   |-- fabric-convention-tags-v2 2.12.0+c3656daa19
+	   |-- fabric-crash-report-info-v1 0.2.29+0af3f5a719
+	   |-- fabric-data-attachment-api-v1 1.4.7+5b36e0f719
+	   |-- fabric-data-generation-api-v1 20.3.1+7439032a19
+	   |-- fabric-dimensions-v1 4.0.1+65213ef819
+	   |-- fabric-entity-events-v1 1.8.0+2b27e0a419
+	   |-- fabric-events-interaction-v0 0.7.14+ba9dae0619
+	   |-- fabric-game-rule-api-v1 1.0.53+6ced4dd919
+	   |-- fabric-item-api-v1 11.3.0+467044f319
+	   |-- fabric-item-group-api-v1 4.1.7+def88e3a19
+	   |-- fabric-lifecycle-events-v1 2.6.0+0865547519
+	   |-- fabric-loot-api-v2 3.0.15+3f89f5a519
+	   |-- fabric-loot-api-v3 1.0.3+3f89f5a519
+	   |-- fabric-message-api-v1 6.0.14+8aaf3aca19
+	   |-- fabric-networking-api-v1 4.3.1+d30f6a7919
+	   |-- fabric-object-builder-api-v1 15.2.1+40875a9319
+	   |-- fabric-particles-v1 4.0.2+6573ed8c19
+	   |-- fabric-recipe-api-v1 5.0.16+2475392c19
+	   |-- fabric-registry-sync-v0 5.3.2+e3eddc2119
+	   |-- fabric-rendering-data-attachment-v1 0.3.49+73761d2e19
+	   |-- fabric-rendering-fluids-v1 3.1.6+1daea21519
+	   |-- fabric-resource-conditions-api-v1 4.4.0+7439032a19
+	   |-- fabric-resource-loader-v0 1.3.1+5b5275af19
+	   |-- fabric-screen-handler-api-v1 1.3.91+b559734419
+	   |-- fabric-tag-api-v1 1.3.0+1eb36c0719
+	   |-- fabric-transfer-api-v1 5.4.5+9eaf054019
+	   \-- fabric-transitive-access-wideners-v1 6.2.0+45b9699719
+	- fabric-language-kotlin 1.14.2+kotlin.2.4.21
+	   |-- org_jetbrains_kotlin_kotlin-reflect 2.4.21
+	   |-- org_jetbrains_kotlin_kotlin-stdlib 2.4.21
+	   |-- org_jetbrains_kotlin_kotlin-stdlib-jdk7 2.4.21
+	   |-- org_jetbrains_kotlin_kotlin-stdlib-jdk8 2.4.21
+	   |-- org_jetbrains_kotlinx_atomicfu-jvm 0.33.0
+	   |-- org_jetbrains_kotlinx_kotlinx-coroutines-core-jvm 1.11.0
+	   |-- org_jetbrains_kotlinx_kotlinx-coroutines-jdk8 1.11.0
+	   |-- org_jetbrains_kotlinx_kotlinx-datetime-jvm 0.8.0
+	   |-- org_jetbrains_kotlinx_kotlinx-io-bytestring-jvm 0.9.1
+	   |-- org_jetbrains_kotlinx_kotlinx-io-core-jvm 0.9.1
+	   |-- org_jetbrains_kotlinx_kotlinx-serialization-cbor-jvm 1.11.0
+	   |-- org_jetbrains_kotlinx_kotlinx-serialization-core-jvm 1.11.0
+	   \-- org_jetbrains_kotlinx_kotlinx-serialization-json-jvm 1.11.0
+	- fabricloader 0.19.5
+	   \-- mixinextras 0.5.5
+	- java 21
+	- luckperms 5.4.140
+	   \-- fabric-permissions-api-v0 0.3.1
+	- mega_showdown 1.4+1.8.4+1.21.1-release
+	- minecraft 1.21.1
+	- owo 0.13.0-alpha.15.1+1.21
+	   |-- blue_endless_jankson 1.2.2
+	   |-- io_wispforest_endec 0.1.5.1
+	   |-- io_wispforest_endec_gson 0.1.3.1
+	   |-- io_wispforest_endec_jankson 0.1.3.1
+	   \-- io_wispforest_endec_netty 0.1.2
+	- placeholder-api 2.4.2+1.21
+[08:52:10] [main/INFO]: SpongePowered MIXIN Subsystem Version=0.8.7 Source=file:/home/runner/work/cobblepulse-battles/cobblepulse-battles/multi-combat/libraries/net/fabricmc/sponge-mixin/0.17.4+mixin.0.8.7/sponge-mixin-0.17.4+mixin.0.8.7.jar Service=Knot/Fabric Env=SERVER
+[08:52:11] [main/WARN]: Error loading class: juuxel/adorn/block/variant/BlockVariantSets (java.lang.ClassNotFoundException: juuxel/adorn/block/variant/BlockVariantSets)
+[08:52:11] [main/WARN]: @Mixin target juuxel.adorn.block.variant.BlockVariantSets was not found mixins.cobblemon-common.json:invoker.AdornRegisterInvoker from mod cobblemon
+[08:52:11] [main/WARN]: Error loading class: net/minecraft/class_1140 (java.lang.ClassNotFoundException: net/minecraft/class_1140)
+[08:52:11] [main/WARN]: @Mixin target net.minecraft.class_1140 was not found mixins.cobblemon-fabric.json:FabricSoundEngineMixin from mod cobblemon
+[08:52:11] [main/WARN]: Error loading class: xyz/nucleoid/server/translations/impl/language/LanguageReader (java.lang.ClassNotFoundException: xyz/nucleoid/server/translations/impl/language/LanguageReader)
+[08:52:11] [main/WARN]: @Mixin target xyz.nucleoid.server.translations.impl.language.LanguageReader was not found owo.mixins.json:extension.json5.LanguageReaderMixin from mod owo
+[08:52:11] [main/WARN]: Error loading class: xyz/nucleoid/server/translations/impl/language/SystemDelegatedLanguage (java.lang.ClassNotFoundException: xyz/nucleoid/server/translations/impl/language/SystemDelegatedLanguage)
+[08:52:11] [main/WARN]: Error loading class: net/minecraft/class_1044 (java.lang.ClassNotFoundException: net/minecraft/class_1044)
+[08:52:11] [main/WARN]: @Mixin target net.minecraft.class_1044 was not found owo.mixins.json:ui.access.AbstractTextureAccessor from mod owo
+[08:52:11] [main/INFO]: Initializing MixinExtras via com.llamalad7.mixinextras.service.MixinExtrasServiceImpl(version=0.5.5).
+[08:52:17] [main/INFO]: Registering Listeners!
+[08:52:17] [main/WARN]: Error loading class: net/minecraft/class_1132 (java.lang.ClassNotFoundException: net/minecraft/class_1132)
+[08:52:17] [main/INFO]: Booting LaxPermissionValidator, permissions will be checked using Minecrafts permission level system, see https://minecraft.wiki/w/Permission_level
+[08:52:17] [main/INFO]: Launching Cobblemon 1.8.4 
+[08:52:17] [main/INFO]: Booting FabricPermissionValidator, permissions will be checked using fabric-permissions-api, see https://github.com/lucko/fabric-permissions-api
+[08:52:18] [main/ERROR]: No data fixer registered for cobblemon:pokemon
+[08:52:18] [main/ERROR]: No data fixer registered for cobblemon:empty_pokeball
+[08:52:18] [main/ERROR]: No data fixer registered for cobblemon:boat
+[08:52:18] [main/ERROR]: No data fixer registered for cobblemon:chest_boat
+[08:52:18] [main/ERROR]: No data fixer registered for cobblemon:poke_bobber
+[08:52:18] [main/ERROR]: No data fixer registered for cobblemon:generic_bedrock
+[08:52:18] [main/ERROR]: No data fixer registered for cobblemon:npc
+[08:52:19] [main/INFO]: Starting the Best Spawner...
+[08:52:19] [main/INFO]: Loaded 7 spawning condition types.
+[08:52:19] [main/INFO]: Loaded 6 spawnable position types.
+[08:52:19] [main/INFO]: Loaded 4 spawn detail types.
+[08:52:19] [Cobblemon Showdown/INFO]: Starting showdown service...
+[08:52:20] [Cobblemon Showdown/INFO]: MegaShowdown config not found, creating default.
+[08:52:20] [Cobblemon Showdown/INFO]: Loaded fallback file: ./showdown/data/moves.js
+[08:52:20] [Cobblemon Showdown/INFO]: Loaded fallback file: ./showdown/sim/battle-actions.js
+[08:52:20] [Cobblemon Showdown/INFO]: Loaded fallback file: ./showdown/sim/battle.js
+[08:52:20] [Cobblemon Showdown/INFO]: Loaded fallback file: ./showdown/sim/pokemon.js
+[08:52:20] [Cobblemon Showdown/INFO]: Loaded fallback file: ./showdown/data/abilities.js
+[08:52:20] [Cobblemon Showdown/INFO]: Loaded fallback file: ./showdown/sim/side.js
+[08:52:20] [Cobblemon Showdown/INFO]: Loaded fallback file: ./showdown/data/conditions.js
+[08:52:20] [Cobblemon Showdown/INFO]: Loaded fallback file: ./showdown/index.js
+[08:52:20] [Cobblemon Showdown/INFO]: Loaded fallback file: ./showdown/data/mods/cobblemon/items.js
+[08:52:20] [Cobblemon Showdown/INFO]: Loaded fallback file: ./showdown/data/mods/cobblemon/conditions.js
+[08:52:20] [Cobblemon Showdown/INFO]: Loaded fallback file: ./showdown/data/mods/cobblemon/typechart.js
+[08:52:20] [Cobblemon Showdown/INFO]: Loaded fallback file: ./showdown/data/mods/cobblemon/moves.js
+[08:52:20] [Cobblemon Showdown/INFO]: Loaded fallback file: ./showdown/data/mods/cobblemon/abilities.js
+[08:52:20] [Cobblemon Showdown/INFO]: All files are ready!
+[08:52:21] [Cobblemon Showdown/INFO]: Showdown has been started!
+[08:52:21] [main/INFO]: Note: Cobblemon data registries are only loaded once per server instance as Pokémon species are not safe to reload.
+[08:52:21] [main/INFO]: Registered the mega_showdown:mega_showdown/custom_status registry
+[08:52:21] [main/INFO]: Registered the mega_showdown:mega_showdown/showdown/moves registry
+[08:52:21] [main/INFO]: Registered the mega_showdown:mega_showdown/showdown/ability registry
+[08:52:21] [main/INFO]: Registered the mega_showdown:mega_showdown/showdown/conditions registry
+[08:52:21] [main/INFO]: Registered the mega_showdown:mega_showdown/showdown/held_items registry
+[08:52:21] [main/INFO]: Registered the mega_showdown:mega_showdown/showdown/typecharts registry
+[08:52:21] [main/INFO]: Registered the mega_showdown:mega_showdown/showdown/scripts registry
+[08:52:21] [main/INFO]: Registered the cobblemon:molang registry
+[08:52:21] [main/INFO]: Registered the cobblemon:species_features registry
+[08:52:21] [main/INFO]: Registered the cobblemon:global_species_features registry
+[08:52:21] [main/INFO]: Registered the cobblemon:species_feature_assignments registry
+[08:52:21] [main/INFO]: Registered the cobblemon:action_effects registry
+[08:52:21] [main/INFO]: Registered the cobblemon:moves registry
+[08:52:21] [main/INFO]: Registered the cobblemon:moveset_builders registry
+[08:52:21] [main/INFO]: Registered the cobblemon:abilities registry
+[08:52:21] [main/INFO]: Registered the cobblemon:behaviours registry
+[08:52:21] [main/INFO]: Registered the cobblemon:marks registry
+[08:52:21] [main/INFO]: Registered the cobblemon:species registry
+[08:52:21] [main/INFO]: Registered the cobblemon:species_additions registry
+[08:52:21] [main/INFO]: Registered the cobblemon:pokeballs registry
+[08:52:21] [main/INFO]: Registered the cobblemon:properties_tab_completion registry
+[08:52:21] [main/INFO]: Registered the cobblemon:party_pools registry
+[08:52:21] [main/INFO]: Registered the cobblemon:party_compositions registry
+[08:52:21] [main/INFO]: Registered the cobblemon:spawn_detail_presets registry
+[08:52:21] [main/INFO]: Registered the cobblemon:spawn_rules registry
+[08:52:22] [main/INFO]: Registered the cobblemon:mechanics registry
+[08:52:22] [main/INFO]: Registered the cobblemon:bag_items registry
+[08:52:22] [main/INFO]: Registered the cobblemon:held_items registry
+[08:52:22] [main/INFO]: Registered the cobblemon:dialogues registry
+[08:52:22] [main/INFO]: Registered the cobblemon:natural_materials registry
+[08:52:22] [main/INFO]: Registered the cobblemon:fossils registry
+[08:52:22] [main/INFO]: Registered the cobblemon:npc_preset registry
+[08:52:22] [main/INFO]: Registered the cobblemon:npc registry
+[08:52:22] [main/INFO]: Registered the cobblemon:dex_entries registry
+[08:52:22] [main/INFO]: Registered the cobblemon:dex_entry_additions registry
+[08:52:22] [main/INFO]: Registered the cobblemon:dexes registry
+[08:52:22] [main/INFO]: Registered the cobblemon:dex_additions registry
+[08:52:22] [main/INFO]: Registered the cobblemon:cosmetic_items registry
+[08:52:22] [main/INFO]: Registered the cobblemon:callbacks registry
+[08:52:22] [main/INFO]: Registered the cobblemon:unlockable_pc_box_wallpapers registry
+[08:52:22] [main/INFO]: Registered the cobblemon:starters registry
+[08:52:22] [main/INFO]: Registered the cobblemon:spawn_pool_world registry
+[08:52:22] [main/INFO]: Registered the cobblemon:pokerods registry
+[08:52:22] [main/INFO]: Registered the cobblemon:berries registry
+[08:52:22] [main/INFO]: Registered the cobblemon:habitat_pools registry
+[08:52:22] [main/INFO]: Registered the cobblemon:seasonings registry
+[08:52:22] [main/INFO]: Registered the cobblemon:pokemon_interactions registry
+[08:52:22] [main/INFO]: Registered the cobblemon:spawn_bait_effects registry
+[08:52:22] [main/INFO]: Registered the cobblemon:ride_settings registry
+[08:52:22] [main/INFO]: Registered the cobblemon:technical_machines registry
+[08:52:22] [main/INFO]: [Battletower] 10 tiers charges depuis config/cobblepulse_battles/tiers
+[08:52:22] [main/INFO]: [Battletower] Placeholders enregistres (%cobblepulse_bt:top_1_name% ...)
+[08:52:22] [main/INFO]: [Battles] CobblePulse-Battles initialise
+[08:52:22] [main/INFO]: Registering C2S receiver with id mega_showdown:mega_evo
+[08:52:22] [main/INFO]: Registering C2S receiver with id mega_showdown:primal_evo
+[08:52:22] [main/INFO]: Registering C2S receiver with id mega_showdown:crown
+[08:52:22] [main/INFO]: Registering C2S receiver with id mega_showdown:ultra_burst
+[08:52:22] [main/INFO]: Registering C2S receiver with id mega_showdown:secret_sword_move_swap
+[08:52:23] [main/INFO]: glisco: I like this approach, cause it's stateless. And stateless approaches are always good since state management is pain - BasiqueEvangelist: I like french bread
+[08:52:26] [main/INFO]: Environment: Environment[sessionHost=https://sessionserver.mojang.com, servicesHost=https://api.minecraftservices.com, name=PROD]
+[08:52:28] [main/INFO]: No existing world data, creating new world
+[08:52:30] [main/INFO]: Loaded 2360 recipes
+[08:52:30] [main/INFO]: Loaded 2453 advancements
+[08:52:30] [main/INFO]: Loaded custom elemental statuses
+[08:52:33] [main/INFO]: Loaded 11 server scripts and 1 client scripts
+[08:52:35] [main/INFO]: Loaded 936 moves
+[08:52:35] [main/INFO]: Loaded 321 abilities
+[08:52:35] [main/INFO]: Loaded 49 entity behaviours
+[08:52:35] [main/INFO]: Loaded 168 marks
+[08:52:37] [main/INFO]: Finished additions
+[08:52:37] [cobblemon Datafixer Bootstrap/INFO]: 6 Datafixer optimizations took 44 milliseconds
+[08:52:39] [main/INFO]: Loaded 1025 Pokémon species
+[08:52:39] [main/INFO]: Loaded 0 party compositions.
+[08:52:39] [main/INFO]: Loaded 22 spawn detail presets.
+[08:52:39] [main/INFO]: Starting dummy Showdown battle to force it to pre-load data.
+[08:52:40] [main/INFO]: Imported 266 held item IDs from showdown
+[08:52:40] [main/INFO]: Loaded 15 fossils
+[08:52:40] [main/INFO]: Loaded 8 callbacks and 0 client callbacks
+[08:52:42] [main/INFO]: Loaded 70 berries
+[08:52:42] [main/INFO]: Loaded 167 Pokémon interaction sets
+[08:52:45] [main/INFO]: Applied 986 biome modifications to 64 of 64 new biomes in 35.20 ms
+[08:52:45] [Server thread/INFO]:         __    
+[08:52:45] [Server thread/INFO]:   |    |__)   LuckPerms v5.4.140
+[08:52:45] [Server thread/INFO]:   |___ |      Running on Fabric - fabric@0.116.18+1.21.1
+[08:52:45] [Server thread/INFO]: 
+[08:52:45] [Server thread/INFO]: Loading configuration...
+[08:52:45] [Server thread/INFO]: Loading storage provider... [H2]
+[08:52:45] [Server thread/INFO]: Loading internal permission managers...
+[08:52:45] [Server thread/INFO]: Performing initial data load...
+[08:52:46] [Server thread/INFO]: Successfully enabled. (took 792ms)
+[08:52:46] [Server thread/INFO]: Starting minecraft server version 1.21.1
+[08:52:46] [Server thread/INFO]: Loading properties
+[08:52:46] [Server thread/INFO]: Default game type: SURVIVAL
+[08:52:46] [Server thread/INFO]: Generating keypair
+[08:52:46] [Server thread/INFO]: Starting Minecraft server on *:25566
+[08:52:46] [Server thread/INFO]: Using epoll channel type
+[08:52:46] [Server thread/WARN]: **** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!
+[08:52:46] [Server thread/WARN]: The server will make no attempt to authenticate usernames. Beware.
+[08:52:46] [Server thread/WARN]: While this makes the game possible to play without internet access, it also opens up the ability for hackers to connect with any username they choose.
+[08:52:46] [Server thread/WARN]: To change this, set "online-mode" to "true" in the server.properties file.
+[08:52:46] [Server thread/INFO]: Preparing level "world"
+[08:52:58] [Server thread/INFO]: Preparing start region for dimension minecraft:overworld
+[08:52:58] [Worker-Main-1/INFO]: Preparing spawn area: 2%
+[08:52:59] [Worker-Main-2/INFO]: Preparing spawn area: 2%
+[08:52:59] [Worker-Main-1/INFO]: Preparing spawn area: 2%
+[08:52:59] [Worker-Main-1/INFO]: Preparing spawn area: 2%
+[08:53:00] [Worker-Main-2/INFO]: Preparing spawn area: 2%
+[08:53:00] [Worker-Main-2/INFO]: Preparing spawn area: 18%
+[08:53:01] [Worker-Main-1/INFO]: Preparing spawn area: 18%
+[08:53:01] [Worker-Main-1/INFO]: Preparing spawn area: 18%
+[08:53:02] [Worker-Main-3/INFO]: Preparing spawn area: 18%
+[08:53:02] [Worker-Main-3/INFO]: Preparing spawn area: 20%
+[08:53:04] [Worker-Main-1/INFO]: Preparing spawn area: 51%
+[08:53:04] [Worker-Main-1/INFO]: Preparing spawn area: 51%
+[08:53:04] [Worker-Main-1/INFO]: Preparing spawn area: 51%
+[08:53:04] [Worker-Main-3/INFO]: Preparing spawn area: 51%
+[08:53:05] [Worker-Main-3/INFO]: Preparing spawn area: 51%
+[08:53:05] [Worker-Main-1/INFO]: Preparing spawn area: 51%
+[08:53:06] [Worker-Main-2/INFO]: Preparing spawn area: 51%
+[08:53:06] [Worker-Main-3/INFO]: Preparing spawn area: 51%
+[08:53:07] [Server thread/INFO]: Time elapsed: 8959 ms
+[08:53:07] [Server thread/INFO]: Done (20.544s)! For help, type "help"
+[08:53:07] [Server thread/INFO]: Optimizing spawn pools...
+[08:53:07] [Battletower-IO/INFO]: Battletower-MySQL - Starting...
+[08:53:08] [Battletower-IO/INFO]: Battletower-MySQL - Added connection com.mysql.cj.jdbc.ConnectionImpl@76d105fc
+[08:53:08] [Battletower-IO/INFO]: Battletower-MySQL - Start completed.
+[08:53:08] [Server thread/INFO]: [Battletower] Stockage actif : MySQL (127.0.0.1/cobblepulse)
+[08:53:08] [Server thread/INFO]: [Battletower] 0 dossiers joueurs charges
+[08:53:08] [Server thread/INFO]: [Battles] Ranked : 0 profils charges
+[08:53:08] [Server thread/INFO]: [Battles] Multi-serveur actif : serveur combat (combat : combat), Redis 127.0.0.1:6379
+[08:53:08] [Server thread/INFO]: [Battles] Ranked : Saison 1 (preset default)
+[08:53:08] [Server thread/INFO]: [Battles] Ranked prete (6 rangs, 0 arenes, multi-serveur actif)
+[08:53:08] [Server thread/INFO]: [Battletower] Pret en 1106 ms (50 etages, 10 tiers depuis config/cobblepulse_battles/tiers)
+[08:53:37] [Server thread/INFO]: [Battles] Match mx06az88-phu trouve : MSAce (1000) contre MSFish (1000) en simple classe
+[08:53:41] [Server thread/INFO]: [Battletower][selftest] PASS multi.battle_config
+[08:53:41] [Server thread/INFO]: PASS multi.battle_config
+[08:53:41] [Server thread/INFO]: [Battletower][selftest] PASS multi.match_waiting_arrival - ARRIVING
+[08:53:41] [Server thread/INFO]: PASS multi.match_waiting_arrival - ARRIVING
+[08:53:43] [Server thread/INFO]: [Battletower][selftest] zone de test forcee autour de class_2338{x=16, y=68, z=0}
+[08:53:43] [Server thread/INFO]: [Battletower][selftest] PASS multi.empty_local_party
+[08:53:43] [Server thread/INFO]: PASS multi.empty_local_party
+[08:53:49] [Server thread/ERROR]: .old File cobblemonplayerdata for 3078f9b1-b6a7-33f2-94fb-6e4d59aa3f02 is corrupt or missing. Data is lost
+[08:53:49] [Server thread/ERROR]: .old File cobblemonplayerdata for 58859c19-a401-3621-ae00-0bef7fb7263f is corrupt or missing. Data is lost
+[08:53:49] [Server thread/ERROR]: .old File pokedex for 3078f9b1-b6a7-33f2-94fb-6e4d59aa3f02 is corrupt or missing. Data is lost
+[08:53:49] [Server thread/ERROR]: .old File pokedex for 58859c19-a401-3621-ae00-0bef7fb7263f is corrupt or missing. Data is lost
+[08:53:51] [Server thread/INFO]: [Battletower][selftest][diag] MSAce tour=1 started=true ended=false dispatches=13 | PLAYER mustChoose=false request=true sendingOut=0 active=1 [Garchomp ticks=54 alive=true ticking=true] | PLAYER mustChoose=false request=true sendingOut=0 active=1 [Magikarp ticks=45 alive=true ticking=true] | sd=10
+    sideupdate / p2 / |error|[Invalid choice] Can't choose for Team Preview: You're not in a Team Preview phase
+    sideupdate / p1 / |request|{"active":[{"moves":[{"move":"Dragon Claw","id":"dragonclaw","pp":14,"maxpp":15,"target":"normal","disabled":false}],"canDynamax":true,"maxMoves":{"maxMoves":[{"move":"maxwyrmwind","target":"adjacentFoe"}]}}],"side":{"name":"3078f9b1-b6a7-33f2-94fb-6e4d59aa3f02","id":"p1",
+    sideupdate / p2 / |request|{"active":[{"moves":[{"move":"Splash","id":"splash","pp":39,"maxpp":40,"target":"self","disabled":false}],"canDynamax":true,"maxMoves":{"maxMoves":[{"move":"maxguard","target":"self"}]}}],"side":{"name":"58859c19-a401-3621-ae00-0bef7fb7263f","id":"p2","pokemon":[{"ident":"
+    update / | / |t:|1795856031 / |move|p1a: b27fff58-2aea-4db5-b6c8-9a953a1a1883|Dragon Claw|p2a: 9831a21f-7c3c-43c9-bc81-993858febe8b / |split|p2 / |-damage|p2a: 9831a21f-7c3c-43c9-bc81-993858febe8b|7/95 / |-damage|p2a: 9831a21f-7c3c-43c9-bc81-993858febe8b|8/100 / |move|p2a: 9831a21f-7c3c-43c9-bc81-99
+[08:53:51] [Server thread/INFO]: [Battletower][selftest][diag] MSFish tour=1 started=true ended=false dispatches=13 | PLAYER mustChoose=false request=true sendingOut=0 active=1 [Garchomp ticks=54 alive=true ticking=true] | PLAYER mustChoose=false request=true sendingOut=0 active=1 [Magikarp ticks=45 alive=true ticking=true] | sd=10
+    sideupdate / p2 / |error|[Invalid choice] Can't choose for Team Preview: You're not in a Team Preview phase
+    sideupdate / p1 / |request|{"active":[{"moves":[{"move":"Dragon Claw","id":"dragonclaw","pp":14,"maxpp":15,"target":"normal","disabled":false}],"canDynamax":true,"maxMoves":{"maxMoves":[{"move":"maxwyrmwind","target":"adjacentFoe"}]}}],"side":{"name":"3078f9b1-b6a7-33f2-94fb-6e4d59aa3f02","id":"p1",
+    sideupdate / p2 / |request|{"active":[{"moves":[{"move":"Splash","id":"splash","pp":39,"maxpp":40,"target":"self","disabled":false}],"canDynamax":true,"maxMoves":{"maxMoves":[{"move":"maxguard","target":"self"}]}}],"side":{"name":"58859c19-a401-3621-ae00-0bef7fb7263f","id":"p2","pokemon":[{"ident":"
+    update / | / |t:|1795856031 / |move|p1a: b27fff58-2aea-4db5-b6c8-9a953a1a1883|Dragon Claw|p2a: 9831a21f-7c3c-43c9-bc81-993858febe8b / |split|p2 / |-damage|p2a: 9831a21f-7c3c-43c9-bc81-993858febe8b|7/95 / |-damage|p2a: 9831a21f-7c3c-43c9-bc81-993858febe8b|8/100 / |move|p2a: 9831a21f-7c3c-43c9-bc81-99
+[08:53:51] [Server thread/INFO]: [Battletower][selftest] PASS multi.party_from_lobby - 4 Pokemon
+[08:53:51] [Server thread/INFO]: PASS multi.party_from_lobby - 4 Pokemon
+[08:53:51] [Server thread/INFO]: [Battletower][selftest] PASS multi.battle_started - BATTLE
+[08:53:51] [Server thread/INFO]: PASS multi.battle_started - BATTLE
+[08:53:56] [Server thread/INFO]: [Battletower][selftest][diag] MSAce tour=2 started=true ended=false dispatches=5 | PLAYER mustChoose=false request=true sendingOut=0 active=1 [Garchomp ticks=154 alive=true ticking=true] | PLAYER mustChoose=false request=true sendingOut=0 active=1 [Magikarp ticks=145 alive=true ticking=true] | sd=13
+    update / | / |t:|1795856031 / |move|p1a: b27fff58-2aea-4db5-b6c8-9a953a1a1883|Dragon Claw|p2a: 9831a21f-7c3c-43c9-bc81-993858febe8b / |split|p2 / |-damage|p2a: 9831a21f-7c3c-43c9-bc81-993858febe8b|7/95 / |-damage|p2a: 9831a21f-7c3c-43c9-bc81-993858febe8b|8/100 / |move|p2a: 9831a21f-7c3c-43c9-bc81-99
+    sideupdate / p1 / |request|{"wait":true,"side":{"name":"3078f9b1-b6a7-33f2-94fb-6e4d59aa3f02","id":"p1","pokemon":[{"ident":"p1: Garchomp","details":"Garchomp, b27fff58-2aea-4db5-b6c8-9a953a1a1883, L50, F","condition":"183/183","active":true,"stats":{"atk":135,"def":115,"spa":100,"spd":115,"spe":122
+    sideupdate / p2 / |request|{"forceSwitch":[true],"side":{"name":"58859c19-a401-3621-ae00-0bef7fb7263f","id":"p2","pokemon":[{"ident":"p2: Magikarp","details":"Magikarp, 9831a21f-7c3c-43c9-bc81-993858febe8b, L50, F","condition":"0 fnt","active":true,"stats":{"atk":27,"def":75,"spa":38,"spd":40,"spe":
+    update / | / |t:|1795856036 / |move|p1a: b27fff58-2aea-4db5-b6c8-9a953a1a1883|Dragon Claw|p2a: 9831a21f-7c3c-43c9-bc81-993858febe8b / |split|p2 / |-damage|p2a: 9831a21f-7c3c-43c9-bc81-993858febe8b|0 fnt / |-damage|p2a: 9831a21f-7c3c-43c9-bc81-993858febe8b|0 fnt / |faint|p2a: 9831a21f-7c3c-43c9-bc81-
+[08:53:56] [Server thread/INFO]: [Battletower][selftest][diag] MSFish tour=2 started=true ended=false dispatches=5 | PLAYER mustChoose=false request=true sendingOut=0 active=1 [Garchomp ticks=154 alive=true ticking=true] | PLAYER mustChoose=false request=true sendingOut=0 active=1 [Magikarp ticks=145 alive=true ticking=true] | sd=13
+    update / | / |t:|1795856031 / |move|p1a: b27fff58-2aea-4db5-b6c8-9a953a1a1883|Dragon Claw|p2a: 9831a21f-7c3c-43c9-bc81-993858febe8b / |split|p2 / |-damage|p2a: 9831a21f-7c3c-43c9-bc81-993858febe8b|7/95 / |-damage|p2a: 9831a21f-7c3c-43c9-bc81-993858febe8b|8/100 / |move|p2a: 9831a21f-7c3c-43c9-bc81-99
+    sideupdate / p1 / |request|{"wait":true,"side":{"name":"3078f9b1-b6a7-33f2-94fb-6e4d59aa3f02","id":"p1","pokemon":[{"ident":"p1: Garchomp","details":"Garchomp, b27fff58-2aea-4db5-b6c8-9a953a1a1883, L50, F","condition":"183/183","active":true,"stats":{"atk":135,"def":115,"spa":100,"spd":115,"spe":122
+    sideupdate / p2 / |request|{"forceSwitch":[true],"side":{"name":"58859c19-a401-3621-ae00-0bef7fb7263f","id":"p2","pokemon":[{"ident":"p2: Magikarp","details":"Magikarp, 9831a21f-7c3c-43c9-bc81-993858febe8b, L50, F","condition":"0 fnt","active":true,"stats":{"atk":27,"def":75,"spa":38,"spd":40,"spe":
+    update / | / |t:|1795856036 / |move|p1a: b27fff58-2aea-4db5-b6c8-9a953a1a1883|Dragon Claw|p2a: 9831a21f-7c3c-43c9-bc81-993858febe8b / |split|p2 / |-damage|p2a: 9831a21f-7c3c-43c9-bc81-993858febe8b|0 fnt / |-damage|p2a: 9831a21f-7c3c-43c9-bc81-993858febe8b|0 fnt / |faint|p2a: 9831a21f-7c3c-43c9-bc81-
+[08:54:01] [Server thread/INFO]: [Battletower][selftest][diag] MSAce tour=2 started=true ended=false dispatches=8 | PLAYER mustChoose=false request=true sendingOut=0 active=1 [Garchomp ticks=254 alive=true ticking=true] | PLAYER mustChoose=false request=true sendingOut=0 active=1 [Feebas ticks=9 alive=true ticking=true] | sd=16
+    update / | / |t:|1795856036 / |move|p1a: b27fff58-2aea-4db5-b6c8-9a953a1a1883|Dragon Claw|p2a: 9831a21f-7c3c-43c9-bc81-993858febe8b / |split|p2 / |-damage|p2a: 9831a21f-7c3c-43c9-bc81-993858febe8b|0 fnt / |-damage|p2a: 9831a21f-7c3c-43c9-bc81-993858febe8b|0 fnt / |faint|p2a: 9831a21f-7c3c-43c9-bc81-
+    sideupdate / p1 / |request|{"active":[{"moves":[{"move":"Dragon Claw","id":"dragonclaw","pp":13,"maxpp":15,"target":"normal","disabled":false}],"canDynamax":true,"maxMoves":{"maxMoves":[{"move":"maxwyrmwind","target":"adjacentFoe"}]}}],"side":{"name":"3078f9b1-b6a7-33f2-94fb-6e4d59aa3f02","id":"p1",
+    sideupdate / p2 / |request|{"active":[{"moves":[{"move":"Splash","id":"splash","pp":40,"maxpp":40,"target":"self","disabled":false}],"canDynamax":true,"maxMoves":{"maxMoves":[{"move":"maxguard","target":"self"}]}}],"side":{"name":"58859c19-a401-3621-ae00-0bef7fb7263f","id":"p2","pokemon":[{"ident":"
+    update / | / |t:|1795856041 / |split|p2 / |switch|p2a: d320127e-57c1-44f1-bac7-f319888c50dc|Feebas, d320127e-57c1-44f1-bac7-f319888c50dc, L50, F|95/95 / |switch|p2a: d320127e-57c1-44f1-bac7-f319888c50dc|Feebas, d320127e-57c1-44f1-bac7-f319888c50dc, L50, F|100/100 / |turn|3 / |pp_update|p1: b27fff58-
+[08:54:01] [Server thread/INFO]: [Battletower][selftest][diag] MSFish tour=2 started=true ended=false dispatches=8 | PLAYER mustChoose=false request=true sendingOut=0 active=1 [Garchomp ticks=254 alive=true ticking=true] | PLAYER mustChoose=false request=true sendingOut=0 active=1 [Feebas ticks=9 alive=true ticking=true] | sd=16
+    update / | / |t:|1795856036 / |move|p1a: b27fff58-2aea-4db5-b6c8-9a953a1a1883|Dragon Claw|p2a: 9831a21f-7c3c-43c9-bc81-993858febe8b / |split|p2 / |-damage|p2a: 9831a21f-7c3c-43c9-bc81-993858febe8b|0 fnt / |-damage|p2a: 9831a21f-7c3c-43c9-bc81-993858febe8b|0 fnt / |faint|p2a: 9831a21f-7c3c-43c9-bc81-
+    sideupdate / p1 / |request|{"active":[{"moves":[{"move":"Dragon Claw","id":"dragonclaw","pp":13,"maxpp":15,"target":"normal","disabled":false}],"canDynamax":true,"maxMoves":{"maxMoves":[{"move":"maxwyrmwind","target":"adjacentFoe"}]}}],"side":{"name":"3078f9b1-b6a7-33f2-94fb-6e4d59aa3f02","id":"p1",
+    sideupdate / p2 / |request|{"active":[{"moves":[{"move":"Splash","id":"splash","pp":40,"maxpp":40,"target":"self","disabled":false}],"canDynamax":true,"maxMoves":{"maxMoves":[{"move":"maxguard","target":"self"}]}}],"side":{"name":"58859c19-a401-3621-ae00-0bef7fb7263f","id":"p2","pokemon":[{"ident":"
+    update / | / |t:|1795856041 / |split|p2 / |switch|p2a: d320127e-57c1-44f1-bac7-f319888c50dc|Feebas, d320127e-57c1-44f1-bac7-f319888c50dc, L50, F|95/95 / |switch|p2a: d320127e-57c1-44f1-bac7-f319888c50dc|Feebas, d320127e-57c1-44f1-bac7-f319888c50dc, L50, F|100/100 / |turn|3 / |pp_update|p1: b27fff58-
+[08:54:06] [Server thread/INFO]: [Battletower][selftest][diag] MSAce tour=3 started=true ended=false dispatches=3 | PLAYER mustChoose=false request=true sendingOut=0 active=1 [Garchomp ticks=354 alive=true ticking=true] | PLAYER mustChoose=false request=true sendingOut=0 active=1 [Feebas ticks=109 alive=false ticking=true] | sd=19
+    update / | / |t:|1795856041 / |split|p2 / |switch|p2a: d320127e-57c1-44f1-bac7-f319888c50dc|Feebas, d320127e-57c1-44f1-bac7-f319888c50dc, L50, F|95/95 / |switch|p2a: d320127e-57c1-44f1-bac7-f319888c50dc|Feebas, d320127e-57c1-44f1-bac7-f319888c50dc, L50, F|100/100 / |turn|3 / |pp_update|p1: b27fff58-
+    sideupdate / p1 / |request|{"wait":true,"side":{"name":"3078f9b1-b6a7-33f2-94fb-6e4d59aa3f02","id":"p1","pokemon":[{"ident":"p1: Garchomp","details":"Garchomp, b27fff58-2aea-4db5-b6c8-9a953a1a1883, L50, F","condition":"183/183","active":true,"stats":{"atk":135,"def":115,"spa":100,"spd":115,"spe":122
+    sideupdate / p2 / |request|{"forceSwitch":[true],"side":{"name":"58859c19-a401-3621-ae00-0bef7fb7263f","id":"p2","pokemon":[{"ident":"p2: Feebas","details":"Feebas, d320127e-57c1-44f1-bac7-f319888c50dc, L50, F","condition":"0 fnt","active":true,"stats":{"atk":35,"def":36,"spa":30,"spd":75,"spe":110}
+    update / | / |t:|1795856043 / |move|p1a: b27fff58-2aea-4db5-b6c8-9a953a1a1883|Dragon Claw|p2a: d320127e-57c1-44f1-bac7-f319888c50dc / |split|p2 / |-damage|p2a: d320127e-57c1-44f1-bac7-f319888c50dc|0 fnt / |-damage|p2a: d320127e-57c1-44f1-bac7-f319888c50dc|0 fnt / |faint|p2a: d320127e-57c1-44f1-bac7-
+[08:54:06] [Server thread/INFO]: [Battletower][selftest][diag] MSFish tour=3 started=true ended=false dispatches=3 | PLAYER mustChoose=false request=true sendingOut=0 active=1 [Garchomp ticks=354 alive=true ticking=true] | PLAYER mustChoose=false request=true sendingOut=0 active=1 [Feebas ticks=109 alive=false ticking=true] | sd=19
+    update / | / |t:|1795856041 / |split|p2 / |switch|p2a: d320127e-57c1-44f1-bac7-f319888c50dc|Feebas, d320127e-57c1-44f1-bac7-f319888c50dc, L50, F|95/95 / |switch|p2a: d320127e-57c1-44f1-bac7-f319888c50dc|Feebas, d320127e-57c1-44f1-bac7-f319888c50dc, L50, F|100/100 / |turn|3 / |pp_update|p1: b27fff58-
+    sideupdate / p1 / |request|{"wait":true,"side":{"name":"3078f9b1-b6a7-33f2-94fb-6e4d59aa3f02","id":"p1","pokemon":[{"ident":"p1: Garchomp","details":"Garchomp, b27fff58-2aea-4db5-b6c8-9a953a1a1883, L50, F","condition":"183/183","active":true,"stats":{"atk":135,"def":115,"spa":100,"spd":115,"spe":122
+    sideupdate / p2 / |request|{"forceSwitch":[true],"side":{"name":"58859c19-a401-3621-ae00-0bef7fb7263f","id":"p2","pokemon":[{"ident":"p2: Feebas","details":"Feebas, d320127e-57c1-44f1-bac7-f319888c50dc, L50, F","condition":"0 fnt","active":true,"stats":{"atk":35,"def":36,"spa":30,"spd":75,"spe":110}
+    update / | / |t:|1795856043 / |move|p1a: b27fff58-2aea-4db5-b6c8-9a953a1a1883|Dragon Claw|p2a: d320127e-57c1-44f1-bac7-f319888c50dc / |split|p2 / |-damage|p2a: d320127e-57c1-44f1-bac7-f319888c50dc|0 fnt / |-damage|p2a: d320127e-57c1-44f1-bac7-f319888c50dc|0 fnt / |faint|p2a: d320127e-57c1-44f1-bac7-
+[08:54:11] [Server thread/INFO]: [Battletower][selftest][diag] MSAce tour=4 started=true ended=false dispatches=13 | PLAYER mustChoose=false request=false sendingOut=0 active=1 [Garchomp ticks=454 alive=true ticking=true] | PLAYER mustChoose=false request=false sendingOut=0 active=1 [Hoppip ticks=69 alive=true ticking=true] | sd=24
+    sideupdate / p2 / |request|{"active":[{"moves":[{"move":"Splash","id":"splash","pp":40,"maxpp":40,"target":"self","disabled":false}],"canDynamax":true,"maxMoves":{"maxMoves":[{"move":"maxguard","target":"self"}]}}],"side":{"name":"58859c19-a401-3621-ae00-0bef7fb7263f","id":"p2","pokemon":[{"ident":"
+    update / | / |t:|1795856048 / |split|p2 / |switch|p2a: ac58c129-3d64-49fa-8bef-217cdb562283|Hoppip, ac58c129-3d64-49fa-8bef-217cdb562283, L50, M|110/110 / |switch|p2a: ac58c129-3d64-49fa-8bef-217cdb562283|Hoppip, ac58c129-3d64-49fa-8bef-217cdb562283, L50, M|100/100 / |turn|4 / |pp_update|p1: b27fff5
+    update / | / |t:|1795856050 / |move|p1a: b27fff58-2aea-4db5-b6c8-9a953a1a1883|Dragon Claw|p2a: ac58c129-3d64-49fa-8bef-217cdb562283 / |split|p2 / |-damage|p2a: ac58c129-3d64-49fa-8bef-217cdb562283|0 fnt / |-damage|p2a: ac58c129-3d64-49fa-8bef-217cdb562283|0 fnt / |faint|p2a: ac58c129-3d64-49fa-8bef-
+    end / {"winner":"3078f9b1-b6a7-33f2-94fb-6e4d59aa3f02","seed":[353,45076,25119,35350],"turns":4,"p1":"3078f9b1-b6a7-33f2-94fb-6e4d59aa3f02","p2":"58859c19-a401-3621-ae00-0bef7fb7263f","p1team":[{"name":"Garchomp","species":"garchomp","uuid":"b27fff58-2aea-4db5-b6c8-9a953a1a1883","currentHealth":183,
+[08:54:11] [Server thread/INFO]: [Battletower][selftest][diag] MSFish tour=4 started=true ended=false dispatches=13 | PLAYER mustChoose=false request=false sendingOut=0 active=1 [Garchomp ticks=454 alive=true ticking=true] | PLAYER mustChoose=false request=false sendingOut=0 active=1 [Hoppip ticks=69 alive=true ticking=true] | sd=24
+    sideupdate / p2 / |request|{"active":[{"moves":[{"move":"Splash","id":"splash","pp":40,"maxpp":40,"target":"self","disabled":false}],"canDynamax":true,"maxMoves":{"maxMoves":[{"move":"maxguard","target":"self"}]}}],"side":{"name":"58859c19-a401-3621-ae00-0bef7fb7263f","id":"p2","pokemon":[{"ident":"
+    update / | / |t:|1795856048 / |split|p2 / |switch|p2a: ac58c129-3d64-49fa-8bef-217cdb562283|Hoppip, ac58c129-3d64-49fa-8bef-217cdb562283, L50, M|110/110 / |switch|p2a: ac58c129-3d64-49fa-8bef-217cdb562283|Hoppip, ac58c129-3d64-49fa-8bef-217cdb562283, L50, M|100/100 / |turn|4 / |pp_update|p1: b27fff5
+    update / | / |t:|1795856050 / |move|p1a: b27fff58-2aea-4db5-b6c8-9a953a1a1883|Dragon Claw|p2a: ac58c129-3d64-49fa-8bef-217cdb562283 / |split|p2 / |-damage|p2a: ac58c129-3d64-49fa-8bef-217cdb562283|0 fnt / |-damage|p2a: ac58c129-3d64-49fa-8bef-217cdb562283|0 fnt / |faint|p2a: ac58c129-3d64-49fa-8bef-
+    end / {"winner":"3078f9b1-b6a7-33f2-94fb-6e4d59aa3f02","seed":[353,45076,25119,35350],"turns":4,"p1":"3078f9b1-b6a7-33f2-94fb-6e4d59aa3f02","p2":"58859c19-a401-3621-ae00-0bef7fb7263f","p1team":[{"name":"Garchomp","species":"garchomp","uuid":"b27fff58-2aea-4db5-b6c8-9a953a1a1883","currentHealth":183,
+[08:54:16] [Server thread/INFO]: [Battletower][selftest][diag] MSAce tour=4 started=true ended=false dispatches=9 | PLAYER mustChoose=false request=false sendingOut=0 active=1 [Garchomp ticks=554 alive=true ticking=true] | PLAYER mustChoose=false request=false sendingOut=0 active=1 | sd=24
+    sideupdate / p2 / |request|{"active":[{"moves":[{"move":"Splash","id":"splash","pp":40,"maxpp":40,"target":"self","disabled":false}],"canDynamax":true,"maxMoves":{"maxMoves":[{"move":"maxguard","target":"self"}]}}],"side":{"name":"58859c19-a401-3621-ae00-0bef7fb7263f","id":"p2","pokemon":[{"ident":"
+    update / | / |t:|1795856048 / |split|p2 / |switch|p2a: ac58c129-3d64-49fa-8bef-217cdb562283|Hoppip, ac58c129-3d64-49fa-8bef-217cdb562283, L50, M|110/110 / |switch|p2a: ac58c129-3d64-49fa-8bef-217cdb562283|Hoppip, ac58c129-3d64-49fa-8bef-217cdb562283, L50, M|100/100 / |turn|4 / |pp_update|p1: b27fff5
+    update / | / |t:|1795856050 / |move|p1a: b27fff58-2aea-4db5-b6c8-9a953a1a1883|Dragon Claw|p2a: ac58c129-3d64-49fa-8bef-217cdb562283 / |split|p2 / |-damage|p2a: ac58c129-3d64-49fa-8bef-217cdb562283|0 fnt / |-damage|p2a: ac58c129-3d64-49fa-8bef-217cdb562283|0 fnt / |faint|p2a: ac58c129-3d64-49fa-8bef-
+    end / {"winner":"3078f9b1-b6a7-33f2-94fb-6e4d59aa3f02","seed":[353,45076,25119,35350],"turns":4,"p1":"3078f9b1-b6a7-33f2-94fb-6e4d59aa3f02","p2":"58859c19-a401-3621-ae00-0bef7fb7263f","p1team":[{"name":"Garchomp","species":"garchomp","uuid":"b27fff58-2aea-4db5-b6c8-9a953a1a1883","currentHealth":183,
+[08:54:16] [Server thread/INFO]: [Battletower][selftest][diag] MSFish tour=4 started=true ended=false dispatches=9 | PLAYER mustChoose=false request=false sendingOut=0 active=1 [Garchomp ticks=554 alive=true ticking=true] | PLAYER mustChoose=false request=false sendingOut=0 active=1 | sd=24
+    sideupdate / p2 / |request|{"active":[{"moves":[{"move":"Splash","id":"splash","pp":40,"maxpp":40,"target":"self","disabled":false}],"canDynamax":true,"maxMoves":{"maxMoves":[{"move":"maxguard","target":"self"}]}}],"side":{"name":"58859c19-a401-3621-ae00-0bef7fb7263f","id":"p2","pokemon":[{"ident":"
+    update / | / |t:|1795856048 / |split|p2 / |switch|p2a: ac58c129-3d64-49fa-8bef-217cdb562283|Hoppip, ac58c129-3d64-49fa-8bef-217cdb562283, L50, M|110/110 / |switch|p2a: ac58c129-3d64-49fa-8bef-217cdb562283|Hoppip, ac58c129-3d64-49fa-8bef-217cdb562283, L50, M|100/100 / |turn|4 / |pp_update|p1: b27fff5
+    update / | / |t:|1795856050 / |move|p1a: b27fff58-2aea-4db5-b6c8-9a953a1a1883|Dragon Claw|p2a: ac58c129-3d64-49fa-8bef-217cdb562283 / |split|p2 / |-damage|p2a: ac58c129-3d64-49fa-8bef-217cdb562283|0 fnt / |-damage|p2a: ac58c129-3d64-49fa-8bef-217cdb562283|0 fnt / |faint|p2a: ac58c129-3d64-49fa-8bef-
+    end / {"winner":"3078f9b1-b6a7-33f2-94fb-6e4d59aa3f02","seed":[353,45076,25119,35350],"turns":4,"p1":"3078f9b1-b6a7-33f2-94fb-6e4d59aa3f02","p2":"58859c19-a401-3621-ae00-0bef7fb7263f","p1team":[{"name":"Garchomp","species":"garchomp","uuid":"b27fff58-2aea-4db5-b6c8-9a953a1a1883","currentHealth":183,
+[08:54:19] [Server thread/INFO]: [Battletower][selftest] PASS multi.result - victoire:MSAce:victoire:1000->1045:1000->1000
+[08:54:19] [Server thread/INFO]: PASS multi.result - victoire:MSAce:victoire:1000->1045:1000->1000
+[08:54:19] [Server thread/INFO]: [Battletower][selftest] PASS multi.discord
+[08:54:19] [Server thread/INFO]: PASS multi.discord
+[08:54:20] [Server thread/INFO]: [Battles] (test) transfert de MSAce vers lobby
+[08:54:20] [Server thread/INFO]: [Battles] (test) transfert de MSFish vers lobby
+[08:54:25] [Server thread/INFO]: [Battletower][selftest] PASS multi.return_to_origin - {3078f9b1-b6a7-33f2-94fb-6e4d59aa3f02=lobby, 58859c19-a401-3621-ae00-0bef7fb7263f=lobby}
+[08:54:25] [Server thread/INFO]: PASS multi.return_to_origin - {3078f9b1-b6a7-33f2-94fb-6e4d59aa3f02=lobby, 58859c19-a401-3621-ae00-0bef7fb7263f=lobby}
+[08:54:25] [Server thread/INFO]: [Battletower][selftest] SELFTEST-DONE multi-combat
+[08:54:30] [Server thread/INFO]: [Battletower][selftest] SELFTEST SUMMARY pass=8 fail=0
+[08:54:30] [Server thread/INFO]: SELFTEST SUMMARY pass=8 fail=0
+[08:54:34] [Server thread/INFO]: Stopping the server
+[08:54:35] [Server thread/INFO]: Battletower-MySQL - Shutdown initiated...
+[08:54:35] [Server thread/INFO]: Battletower-MySQL - Shutdown completed.
+[08:54:35] [Server thread/INFO]: Starting shutdown process...
+[08:54:35] [Server thread/INFO]: Closing storage...
+[08:54:35] [Server thread/INFO]: Goodbye!
+[08:54:35] [Server thread/INFO]: Stopping server
+[08:54:35] [Server thread/INFO]: Saving players
+[08:54:35] [Server thread/INFO]: Saving worlds
+[08:54:35] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:overworld
+[08:54:35] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_nether
+[08:54:35] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_end
+[08:54:35] [Server thread/INFO]: ThreadedAnvilChunkStorage (world): All chunks are saved
+[08:54:35] [Server thread/INFO]: ThreadedAnvilChunkStorage (DIM-1): All chunks are saved
+[08:54:35] [Server thread/INFO]: ThreadedAnvilChunkStorage (DIM1): All chunks are saved
+[08:54:35] [Server thread/INFO]: ThreadedAnvilChunkStorage: All dimensions are saved
